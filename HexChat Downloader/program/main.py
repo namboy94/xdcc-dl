@@ -8,3 +8,11 @@ Modified on May 6, 2015
 @author Hermann Krumrey
 @version 0.1
 """
+
+#TODOS
+
+# Server File Parser
+# PacklistParser
+# ScriptCreator
+# ScriptMover
+# HexStarter
