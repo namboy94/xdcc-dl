@@ -9,6 +9,9 @@ Modified on May 7, 2015
 @version 0.1
 """
 
+#imports
+from program.objects.Bot import Bot
+
 """
 serverParse
 method that parses a server file, saves the information to Bot objects
