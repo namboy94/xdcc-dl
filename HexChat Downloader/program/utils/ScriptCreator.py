@@ -22,9 +22,22 @@ class ScriptCreator(object):
     """
     Constructor
     Initializes a new ScriptCreator object
+    It combines a packList with a botList
     @param packList - list of packs to be downloaded
     @param botList - list of bots 
     """
     def __init__(self,packList,botList):
+        
         self.botList = botList
-        self.packList = packList
+        for pack in packList:
+            added = False
+            for bot in self.botList:
+                if bot.botName == pack.botName:
+                    bot.addPack(pack)
+                    added = True
+            if not added:
+                print "Bot %s not found." % (pack.botName)
+                    
+    """
+    packWriter
+    """
