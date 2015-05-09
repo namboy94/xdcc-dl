@@ -28,3 +28,12 @@ class Bot(object):
         self.botName = botName
         self.serverName = serverName
         self.channelName = channelName
+        self.packs = []
+        
+    """
+    addPack
+    adds a new pack to the internal packList
+    @param pack - the pack to be added
+    """
+    def addPack(self,pack):
+        self.packs.append(pack)
