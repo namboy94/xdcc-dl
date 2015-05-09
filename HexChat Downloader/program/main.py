@@ -12,7 +12,8 @@ Modified on May 7, 2015
 #imports
 import sys
 import platform
-from program.parsers.serverParser import serverParse
+from program.parsers.parserCollection import serverParse
+from program.parsers.parserCollection import packParse
 
 #OS check and setup
 if platform.system() == "Linux":
@@ -22,8 +23,9 @@ if platform.system() == "Linux":
     upperDirectory = sys.argv[0][:-lengthToCut]
     sys.path.append(upperDirectory)
     
-    #set serverFile
+    #set inputFiles
     serverFile = upperDirectory + "/program/data/servers.config"
+    packFile = upperDirectory + "/program/data/packs.txt"
 
 elif platform.system() == "Windows":
     print "Sorry, Windows is not supported yet"
@@ -34,7 +36,10 @@ else:
 
 botList = []
 serverParse(serverFile,botList)
+packList = []
+packParse(packFile,packList)
 
+print 1
 #TODOS
 
 # Server File Parser (Complete)
