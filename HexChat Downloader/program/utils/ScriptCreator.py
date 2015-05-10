@@ -49,13 +49,15 @@ class ScriptCreator(object):
     """
     def botPackWriter(self,bot):
         
+        print 'hello'
         for pack in bot.packs:
-            self.scriptFile.write("def join_" + pack.botName + pack.packNumber + "(word, word_eol, userdata):\n")
-            self.scriptFile.write("\t'hexchat.command(msg " + pack.botName + " xdcc send #" + pack.packnumber + "'\n")
-            self.scriptFile.write("\treturn hexchat.EAT_HEXCHAT\n")
+            self.scriptFile.write("def join_" + pack.packNumber + "(word, word_eol, userdata):\n")
+            self.scriptFile.write("\thexchat.command('msg " + pack.botName + " xdcc send #" + pack.packNumber + "')\n")
+            self.scriptFile.write("\treturn hexchat.EAT_HEXCHAT\n\n")
             self.scriptFile.write("hexchat.command('newserver irc://" + bot.serverName + "/" + bot.channelName + "')\n")
-            self.scriptFile.write("hexchat.hook_print(\"You Join\", join_" + pack.botName + pack.packNumber + ")\n")
-            self.scriptFile.write("hexchat.hook_print(\"DCC RECV Complete\", quitChannel\n\n")
+            self.scriptFile.write("if packCounter == " + str(self.packCounter) + ":\n")
+            self.scriptFile.write("\thexchat.hook_print(\"You Join\", join_" + pack.packNumber + ")\n\n")
+            self.packCounter += 1
         
         
     """
@@ -70,6 +72,10 @@ class ScriptCreator(object):
         self.scriptFile.write("import hexchat\n\n")
         self.scriptFile.write("def quitChannel(word, word_eol, userdata):\n")
         self.scriptFile.write("\thexchat.command('quit')\n")
-        self.scriptFile.write("\t return hexchat.EAT-HEXCHAT\n\n")
+        self.scriptFile.write("\tpackCounter += 1\n")
+        self.scriptFile.write("\treturn hexchat.EAT-HEXCHAT\n\n")
+        self.scriptFile.write("hexchat.hook_print(\"DCC RECV Complete\", quitChannel)\n\n")
+        self.scriptFile.write("packCounter = 0\n\n")
+        self.packCounter = 0
         
         

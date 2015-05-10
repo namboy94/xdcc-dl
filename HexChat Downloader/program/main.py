@@ -14,6 +14,7 @@ import sys
 import platform
 from program.parsers.parserCollection import serverParse
 from program.parsers.parserCollection import packParse
+from program.utils.ScriptCreator import ScriptCreator
 
 #OS check and setup
 if platform.system() == "Linux":
@@ -26,6 +27,7 @@ if platform.system() == "Linux":
     #set inputFiles
     serverFile = upperDirectory + "/program/data/servers.config"
     packFile = upperDirectory + "/program/data/packs.txt"
+    scriptFile = upperDirectory + "/program/data/temp/script.py"
 
 elif platform.system() == "Windows":
     print "Sorry, Windows is not supported yet"
@@ -38,8 +40,8 @@ botList = []
 serverParse(serverFile,botList)
 packList = []
 packParse(packFile,packList)
+scriptWriter = ScriptCreator(packList, botList, scriptFile)
 
-print 1
 #TODOS
 
 # Server File Parser (Complete)

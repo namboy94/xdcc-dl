@@ -46,7 +46,7 @@ def packParse(packFile, packList):
     lines = [line.rstrip('\n') for line in open(packFile)]
     
     for line in lines:
-        if not "#" in line:
+        if not "###" in line:
             splitAtXdccSend = line.split(" xdcc send #")
             packNumber = splitAtXdccSend[1]
             botName = splitAtXdccSend[0].split("/msg ")[1]
