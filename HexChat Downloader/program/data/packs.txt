@@ -1,3 +1,1 @@
-/msg Ginpachi-Sensei xdcc send #3896
-...1
-/msg Ginpachi-Sensei xdcc send #3910
+/msg CR-ARCHIVE|1080p xdcc send #1497
