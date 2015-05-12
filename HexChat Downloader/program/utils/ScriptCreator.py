@@ -41,6 +41,7 @@ class ScriptCreator(object):
         self.scriptInitializer(scriptFile)
         for bot in self.botList:
             self.botPackWriter(bot)
+        self.scriptFinalizer()
             
         self.scriptFile.close()
                     
@@ -48,17 +49,15 @@ class ScriptCreator(object):
     botPackWriter
     """
     def botPackWriter(self,bot):
-        
-        print 'hello'
+
         for pack in bot.packs:
-            self.scriptFile.write("def join_" + pack.packNumber + "(word, word_eol, userdata):\n")
-            self.scriptFile.write("\thexchat.command('msg " + pack.botName + " xdcc send #" + pack.packNumber + "')\n")
-            self.scriptFile.write("\treturn hexchat.EAT_HEXCHAT\n\n")
-            self.scriptFile.write("hexchat.command('newserver irc://" + bot.serverName + "/" + bot.channelName + "')\n")
-            self.scriptFile.write("if packCounter == " + str(self.packCounter) + ":\n")
-            self.scriptFile.write("\thexchat.hook_print(\"You Join\", join_" + pack.packNumber + ")\n\n")
-            self.packCounter += 1
-        
+            channelString = "newserver irc://" + bot.serverName + "/" + bot.channelName
+            packString = "msg " + bot.botName + " xdcc send #" + pack.packNumber
+            
+            self.scriptFile.write("channels.append(\"" + channelString + "\")\n")
+            self.scriptFile.write("packs.append(\"" + packString + "\")\n")
+            
+        self.scriptFile.write("\n")
         
     """
     scriptInitializer
@@ -69,13 +68,50 @@ class ScriptCreator(object):
         self.scriptFile.write("__module_name__ = \"xdcc_executer\"\n")
         self.scriptFile.write("__module_version__ = \"0.1\"\n")
         self.scriptFile.write("__module_description__ = \"Python XDCC Executer\"\n\n")
-        self.scriptFile.write("import hexchat\n\n")
-        self.scriptFile.write("def quitChannel(word, word_eol, userdata):\n")
+        
+        self.scriptFile.write("import hexchat\n")
+        self.scriptFile.write("import sys\n\n")
+        
+        self.scriptFile.write("def download(word, word_eol, userdata):\n")
+        self.scriptFile.write("\thexchat.command(packs[0])\n")
+        self.scriptFile.write("\treturn hexchat.EAT_HEXCHAT\n\n")
+        
+        self.scriptFile.write("def downloadComplete(word, word_eol, userdata):\n")
         self.scriptFile.write("\thexchat.command('quit')\n")
-        self.scriptFile.write("\tpackCounter += 1\n")
-        self.scriptFile.write("\treturn hexchat.EAT-HEXCHAT\n\n")
-        self.scriptFile.write("hexchat.hook_print(\"DCC RECV Complete\", quitChannel)\n\n")
-        self.scriptFile.write("packCounter = 0\n\n")
-        self.packCounter = 0
+        self.scriptFile.write("\tchannels.pop(0)\n")
+        self.scriptFile.write("\tpacks.pop(0)\n")
+        self.scriptFile.write("\tif len(channels) == 0:\n")
+        self.scriptFile.write("\t\tprint \"DOWNLOADS COMPLETE\"\n")
+        self.scriptFile.write("\t\tsys.exit(1)\n")
+        self.scriptFile.write("\telse:\n")
+        self.scriptFile.write("\t\thexchat.command(channels[0])\n")
+        self.scriptFile.write("\treturn hexchat.EAT_HEXCHAT\n\n")
         
+        self.scriptFile.write("def downloadFailed(word, word_eol, userdata):\n")
+        self.scriptFile.write("\tfailed.append(packs[0])\n")
+        self.scriptFile.write("\thexchat.command('quit')\n")
+        self.scriptFile.write("\tchannels.pop(0)\n")
+        self.scriptFile.write("\tpacks.pop(0)\n")
+        self.scriptFile.write("\tif len(channels) == 0:\n")
+        self.scriptFile.write("\t\tprint \"DOWNLOADS COMPLETE\"\n")
+        self.scriptFile.write("\t\tsys.exit(1)\n")
+        self.scriptFile.write("\telse:\n")
+        self.scriptFile.write("\t\thexchat.command(channels[0])\n")
+        self.scriptFile.write("\treturn hexchat.EAT_HEXCHAT\n\n")
         
+        self.scriptFile.write("failed = []\n")
+        self.scriptFile.write("channels = []\n")
+        self.scriptFile.write("packs = []\n\n")
+        
+    """
+    scriptFinalizer
+    """    
+    def scriptFinalizer(self):
+        
+        self.scriptFile.write("hexchat.command(channels[0])\n")
+        self.scriptFile.write("hexchat.hook_print(\"You Join\", download)\n")
+        self.scriptFile.write("hexchat.hook_print(\"DCC RECV Complete\", downloadComplete)\n")
+        self.scriptFile.write("hexchat.hook_print(\"DCC STALL\", downloadFailed)\n")
+        self.scriptFile.write("hexchat.hook_print(\"DCC RECV Abort\", downloadFailed)\n")
+        self.scriptFile.write("hexchat.hook_print(\"DCC RECV Failed\", downloadFailed)\n")
+        self.scriptFile.write("hexchat.hook_print(\"DCC Timeout\", downloadFailed)\n\n")

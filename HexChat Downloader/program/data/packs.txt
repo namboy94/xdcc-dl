@@ -1,2 +1,2 @@
-/msg Doki|Homura xdcc send #6336
-/msg Doki|Kyou xdcc send #1237
+/msg CR-HOLLAND|NEW xdcc send #3366
+/msg CR-FRANCE|NEW xdcc send #30
