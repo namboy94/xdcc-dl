@@ -1,2 +1,4 @@
-/msg CR-HOLLAND|NEW xdcc send #3366
-/msg CR-FRANCE|NEW xdcc send #30
+/msg CR-HOLLAND|NEW xdcc send #100
+...1
+/msg CR-HOLLAND|NEW xdcc send #500
+

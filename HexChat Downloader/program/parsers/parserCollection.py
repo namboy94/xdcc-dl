@@ -46,13 +46,31 @@ def packParse(packFile, packList):
     #Saves all lines in the file to a list
     lines = [line.rstrip('\n') for line in open(packFile)]
     
+    #variables for better input parsing
+    episodeHopper = 0
+    hopping = False
+    
     for line in lines:
-        if not "###" in line:
-            splitAtXdccSend = line.split(" xdcc send #")
-            packNumber = splitAtXdccSend[1]
-            botName = splitAtXdccSend[0].split("/msg ")[1]
-            pack = Pack(botName,packNumber)
-            packList.append(pack)
+        if not "###" in line and line != "":
+            if "..." in line:
+                hopping = True
+                episodeHopper = int(line.split("...")[1])
+                previousPack = packList[len(packList) - 1]
+            elif hopping:
+                hopping = False
+                splitAtXdccSend = line.split(" xdcc send #")
+                botName = splitAtXdccSend[0].split("/msg ")[1]
+                episodeHop = int(previousPack.packNumber) + episodeHopper
+                while episodeHop <= int(splitAtXdccSend[1]):
+                    pack = Pack(botName, str(episodeHop))
+                    packList.append(pack)
+                    episodeHop += episodeHopper
+            else:
+                splitAtXdccSend = line.split(" xdcc send #")
+                packNumber = splitAtXdccSend[1]
+                botName = splitAtXdccSend[0].split("/msg ")[1]
+                pack = Pack(botName,packNumber)
+                packList.append(pack)
             
             
 """
