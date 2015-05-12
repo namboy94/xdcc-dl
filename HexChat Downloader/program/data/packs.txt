@@ -1,4 +1,3 @@
-/msg CR-HOLLAND|NEW xdcc send #100
+/msg Ginpachi-Sensei xdcc send #3896
 ...1
-/msg CR-HOLLAND|NEW xdcc send #500
-
+/msg Ginpachi-Sensei xdcc send #3910
