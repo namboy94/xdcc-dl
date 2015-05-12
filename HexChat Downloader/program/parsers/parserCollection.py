@@ -77,8 +77,10 @@ def inputParser(packFile, serverFile, scriptWriter):
         elif userInput == "quit":
             running = False
         elif userInput == "edit packs":
-            os.system("gedit " + packFile)
+            os.system("gedit '" + packFile + "'")
+            userInput = raw_input("What would you like to do?\n")
         elif userInput == "edit servers":
-            os.system("gedit " + serverFile)
+            os.system("gedit '" + serverFile + "'")
+            userInput = raw_input("What would you like to do?\n")
         else:
             userInput = raw_input("Input was not understood")
