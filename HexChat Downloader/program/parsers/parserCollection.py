@@ -2,15 +2,16 @@
 parserCollection
 collection of methods that parse files.
 Created on May 9, 2015
-Modified on May 9, 2015
+Modified on May 12, 2015
 
 @author Hermann Krumrey
-@version 0.1
+@version 1.0
 """
 
 #imports
 from program.objects.Bot import Bot
 from program.objects.Pack import Pack
+import os
 
 """
 serverParse
@@ -52,3 +53,32 @@ def packParse(packFile, packList):
             botName = splitAtXdccSend[0].split("/msg ")[1]
             pack = Pack(botName,packNumber)
             packList.append(pack)
+            
+            
+"""
+inputParser
+parses user input and acts accordingly
+@param packFile - the location of the packfile
+@param serverFile - the location of the serverfile
+@param scriptWriter - the scriptwriter loaded with the information of the pack- and server files.
+"""
+def inputParser(packFile, serverFile, scriptWriter):
+    
+    running = True
+    
+    print "Welcome to the HexChat XDCC Downloader"
+    userInput = raw_input("What would you like to do?\n")
+    
+    while running:
+        
+        if userInput == "start":
+            running = False
+            scriptWriter.scriptExecuter()
+        elif userInput == "quit":
+            running = False
+        elif userInput == "edit packs":
+            os.system("gedit " + packFile)
+        elif userInput == "edit servers":
+            os.system("gedit " + serverFile)
+        else:
+            userInput = raw_input("Input was not understood")

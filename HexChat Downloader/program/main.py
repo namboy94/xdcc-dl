@@ -3,17 +3,19 @@ main
 The main part of the program that combines all the different submodules to form a working program.
 
 Created on May 6, 2015
-Modified on May 9, 2015
+Modified on May 12, 2015
 
 @author Hermann Krumrey
-@version 0.1
+@version 1.0
 """
 
 #imports
 import sys
 import platform
+import getpass
 from program.parsers.parserCollection import serverParse
 from program.parsers.parserCollection import packParse
+from program.parsers.parserCollection import inputParser
 from program.utils.ScriptCreator import ScriptCreator
 
 #OS check and setup
@@ -40,5 +42,6 @@ botList = []
 serverParse(serverFile,botList)
 packList = []
 packParse(packFile,packList)
-scriptWriter = ScriptCreator(packList, botList, scriptFile)
-scriptWriter.scriptExecuter("/home/hermann/.config/hexchat/addons")
+hexChatScriptDirectory = "/home/" + getpass.getuser() + "/.config/hexchat/addons"
+scriptWriter = ScriptCreator(packList, botList, scriptFile, hexChatScriptDirectory)
+inputParser(packFile, serverFile, scriptWriter)
