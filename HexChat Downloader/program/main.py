@@ -41,11 +41,4 @@ serverParse(serverFile,botList)
 packList = []
 packParse(packFile,packList)
 scriptWriter = ScriptCreator(packList, botList, scriptFile)
-
-#TODOS
-
-# Server File Parser (Complete)
-# PacklistParser
-# ScriptCreator
-# ScriptMover
-# HexStarter
+scriptWriter.scriptExecuter("/home/hermann/.config/hexchat/addons")
