@@ -17,6 +17,7 @@ from program.parsers.parserCollection import serverParse
 from program.parsers.parserCollection import packParse
 from program.parsers.parserCollection import inputParser
 from program.utils.ScriptCreator import ScriptCreator
+from program.utils.Logger import Logger
 
 #OS check and setup
 if platform.system() == "Linux":
@@ -44,4 +45,5 @@ packList = []
 packParse(packFile,packList)
 hexChatScriptDirectory = "/home/" + getpass.getuser() + "/.config/hexchat/addons"
 scriptWriter = ScriptCreator(packList, botList, scriptFile, hexChatScriptDirectory)
-inputParser(packFile, serverFile, scriptWriter)
+logger = Logger(scriptWriter)
+inputParser(packFile, serverFile, scriptWriter, logger)

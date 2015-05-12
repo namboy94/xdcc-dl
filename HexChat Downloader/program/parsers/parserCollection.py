@@ -80,7 +80,7 @@ parses user input and acts accordingly
 @param serverFile - the location of the serverfile
 @param scriptWriter - the scriptwriter loaded with the information of the pack- and server files.
 """
-def inputParser(packFile, serverFile, scriptWriter):
+def inputParser(packFile, serverFile, scriptWriter, logger):
     
     running = True
     
@@ -99,7 +99,7 @@ def inputParser(packFile, serverFile, scriptWriter):
         elif userInput == "edit servers":
             os.system("gedit '" + serverFile + "'")
         elif userInput == "print":
-            printLogToConsole()
+            logger.printLogToConsole()
         else:
             print ("Input was not understood")
             
