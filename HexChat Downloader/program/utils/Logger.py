@@ -11,8 +11,9 @@ Modified on May 12, 2015
 
 #imports
 import smtplib
-from aptdaemon.config import log
-from twisted.spread.ui.gtk2util import login
+import email
+from email.mime.multipart import MIMEMultipart
+from email.MIMEText import MIMEText
 
 """
 Logger
@@ -47,20 +48,22 @@ class Logger(object):
         mailSender = "python@krumreyh.com"
         mailReceiver = "hermann@krumreyh.com"
         
-        smtpMessage = """From: Python <python@krumreyh.com>
-        To: Hermann Krumrey <hermann@krumreyh.com>
-        Subject: Python log
+        msg = MIMEMultipart()
         
-        This is the python's log'
-        """
+        msg['From'] = 'python@krumreyh.com'
+        msg['To'] = 'hermann@krumreyh.com'
+        msg['Subject'] = 'Python Test'
+        
+        textMessage = MIMEText("Hello, this is a friendly test.", 'plain')
+        
+        msg.attach(textMessage)
         
         smtp = smtplib.SMTP('smtp.strato.de', 25)
         smtp.set_debuglevel(1)
-        #smtp.ehlo()
         smtp.starttls()
         smtp.login('python@krumreyh.com', 'KrUFcb@com3Y')
         
         
-        smtp.sendmail(mailSender, mailReceiver, smtpMessage)
+        smtp.sendmail(mailSender, mailReceiver, msg.as_string())
         smtp.quit()
         
