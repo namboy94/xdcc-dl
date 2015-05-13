@@ -39,11 +39,21 @@ else:
     print "Sorry, this operating system is not supported"
     sys.exit(1)
 
+#Variable Declarations
 botList = []
-serverParse(serverFile,botList)
 packList = []
-packParse(packFile,packList)
+
+#Variable Initializations
 hexChatScriptDirectory = "/home/" + getpass.getuser() + "/.config/hexchat/addons"
+emailSender = "python@krumreyh.com"
+emailReceiver = "hermann@krumreyh.com"
+emailServer = "smtp.strato.de"
+emailPort = 25
+emailPass = "KrUFcb@com3Y"
+
+#Execution
+serverParse(serverFile,botList)
+packParse(packFile,packList)
 scriptWriter = ScriptCreator(packList, botList, scriptFile, hexChatScriptDirectory)
-logger = Logger(scriptWriter)
+logger = Logger(scriptWriter,emailSender,emailReceiver,emailServer,emailPort,emailPass)
 inputParser(packFile, serverFile, scriptWriter, logger)
