@@ -1,16 +1,1 @@
 /msg CR-ARCHIVE|1080p xdcc send #1497
-...5
-/msg CR-ARCHIVE|1080p xdcc send #1597
-/msg Ginpach-Sensei xdcc send #111
-/msg Ginpachi-Sensei xdcc send #11881
-/msg Ginpachi-Sensei xdcc send #11881
-/msg Ginpachi-Sensei xdcc send #11881
-/msg Ginpachi-Sensei xdcc send #11881
-/msg Ginpachi-Sensei xdcc send #11881
-/msg Ginpachi-Sensei xdcc send #11881
-/msg Ginpachi-Sensei xdcc send #11881
-/msg Doki|Michiko xdcc send #4
-/msg Doki|Michiko xdcc send #44
-/msg Doki|Michiko xdcc send #444
-/msg Doki|Michiko xdcc send #4444
-/msg Doki|Michiko xdcc send #45444

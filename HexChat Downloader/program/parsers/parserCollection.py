@@ -11,6 +11,8 @@ Modified on May 12, 2015
 #imports
 from program.objects.Bot import Bot
 from program.objects.Pack import Pack
+from program.utils.ScriptCreator import ScriptCreator
+from program.utils.Logger import Logger
 import os
 
 """
@@ -80,7 +82,7 @@ parses user input and acts accordingly
 @param serverFile - the location of the serverfile
 @param scriptWriter - the scriptwriter loaded with the information of the pack- and server files.
 """
-def inputParser(packFile, serverFile, scriptWriter, logger):
+def inputParser(packFile, serverFile, scriptFile, scriptWriter, logger):
     
     running = True
     
@@ -92,8 +94,10 @@ def inputParser(packFile, serverFile, scriptWriter, logger):
         if userInput == "start":
             running = False
             scriptWriter.scriptExecuter()
+            logger.emailLog()
         elif userInput == "quit":
             running = False
+            break
         elif userInput == "edit packs":
             os.system("gedit '" + packFile + "'")
         elif userInput == "edit servers":
@@ -104,5 +108,12 @@ def inputParser(packFile, serverFile, scriptWriter, logger):
             logger.emailLog()
         else:
             print ("Input was not understood")
+        
+        botList = []
+        packList = []    
+        serverParse(serverFile,botList)
+        packParse(packFile,packList)
+        scriptWriter = ScriptCreator(packList, botList, scriptFile, scriptWriter.hexChatLocation)
+        logger = Logger(scriptWriter,logger.emailSender,logger.emailReceiver,logger.emailServer,logger.emailPort,logger.emailPass)
             
         userInput = raw_input("What would you like to do?\n")
