@@ -10,6 +10,9 @@ Modified on May 12, 2015
 """
 
 #imports
+import smtplib
+from aptdaemon.config import log
+from twisted.spread.ui.gtk2util import login
 
 """
 Logger
@@ -39,3 +42,25 @@ class Logger(object):
                 for pack in bot.packs:
                     print "\t\tpack " + str(counter) + ": " + pack.packNumber
                     counter += 1
+    
+    def emailLog(self):
+        mailSender = "python@krumreyh.com"
+        mailReceiver = "hermann@krumreyh.com"
+        
+        smtpMessage = """From: Python <python@krumreyh.com>
+        To: Hermann Krumrey <hermann@krumreyh.com>
+        Subject: Python log
+        
+        This is the python's log'
+        """
+        
+        smtp = smtplib.SMTP('smtp.strato.de', 25)
+        smtp.set_debuglevel(1)
+        #smtp.ehlo()
+        smtp.starttls()
+        smtp.login('python@krumreyh.com', 'KrUFcb@com3Y')
+        
+        
+        smtp.sendmail(mailSender, mailReceiver, smtpMessage)
+        smtp.quit()
+        

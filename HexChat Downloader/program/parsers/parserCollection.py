@@ -100,6 +100,8 @@ def inputParser(packFile, serverFile, scriptWriter, logger):
             os.system("gedit '" + serverFile + "'")
         elif userInput == "print":
             logger.printLogToConsole()
+        elif userInput == "email log":
+            logger.emailLog()
         else:
             print ("Input was not understood")
             
