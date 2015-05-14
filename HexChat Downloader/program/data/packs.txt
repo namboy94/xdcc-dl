@@ -1,1 +1,4 @@
-/msg CR-ARCHIVE|1080p xdcc send #1497
+/msg [UFW]Kirino xdcc send #23
+/msg [UFW]Kirino xdcc send #25
+/msg [UFW]Kirino xdcc send #27
+/msg HentaiTake xdcc send #1173

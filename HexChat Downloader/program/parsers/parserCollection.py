@@ -28,7 +28,7 @@ def serverParse(serverFile, botList):
     lines = [line.rstrip('\n') for line in open(serverFile)]
     
     for line in lines:
-        if not "#" in line:
+        if not "#" in line and line != "":
             botName = line.split(" @ ")[0]
             serverChannel = line.split(" @ ")[1]
             serverName = serverChannel.split("/")[0]
@@ -95,6 +95,7 @@ def inputParser(packFile, serverFile, scriptFile, scriptWriter, logger):
             running = False
             scriptWriter.scriptExecuter()
             logger.emailLog()
+            break
         elif userInput == "quit":
             running = False
             break
@@ -106,9 +107,20 @@ def inputParser(packFile, serverFile, scriptFile, scriptWriter, logger):
             logger.printLogToConsole()
         elif userInput == "email log":
             logger.emailLog()
+        elif userInput.startswith("/msg ") and " xdcc send #" in userInput:
+            bot = userInput.split("/msg ")[1].split(" xdcc send #")[0]
+            packno = userInput.split(" xdcc send #")[1]
+            pack = Pack(bot, packno)
+            tempPackList = [pack]
+            tempScriptWriter = ScriptCreator(tempPackList, scriptWriter.botList, scriptFile, scriptWriter.hexChatLocation)
+            tempLogger = Logger(tempScriptWriter,logger.emailSender,logger.emailReceiver,logger.emailServer,logger.emailPort,logger.emailPass)
+            tempScriptWriter.scriptExecuter()
+            tempLogger.emailLog()
+            print "Downloaded Single Pack " + userInput
         else:
             print ("Input was not understood")
         
+        #refresh information
         botList = []
         packList = []    
         serverParse(serverFile,botList)
