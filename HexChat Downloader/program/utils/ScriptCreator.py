@@ -4,14 +4,15 @@ Class that creates a hexchat python script, moves it into the hexchat auto load 
 and finally executes hexchat
 
 Created on May 9, 2015
-Modified on May 12, 2015
+Modified on May 15, 2015
 
 @author Hermann Krumrey
-@version 1.0
+@version 1.1
 """
 
 #imports
 import os
+import platform
 
 """
 ScriptCreator
@@ -139,9 +140,13 @@ class ScriptCreator(object):
     """
     def scriptExecuter(self):
         
-        if not self.hexChatLocation.endswith("/"): self.hexChatLocation += "/"
-        os.system("cp '" + self.scriptFileLocation + "' '" + self.hexChatLocation + "xdccScript.py'")
-        os.system("hexchat")
-        os.system("rm '" + self.hexChatLocation + "xdccScript.py'")
+        if platform.system() == "Linux":
+            if not self.hexChatLocation.endswith("/"): self.hexChatLocation += "/"
+            os.system("cp '" + self.scriptFileLocation + "' '" + self.hexChatLocation + "xdccScript.py'")
+            os.system("hexchat")
+            os.system("rm '" + self.hexChatLocation + "xdccScript.py'")
         
+        if platform.system() == "Windows":
+            print "Windows is not yet supported"
+            #TODO
         
