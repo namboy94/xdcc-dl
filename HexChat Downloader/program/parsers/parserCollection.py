@@ -112,9 +112,11 @@ def inputParser(packFile, serverFile, scriptFile, scriptWriter, logger):
             packno = userInput.split(" xdcc send #")[1]
             pack = Pack(bot, packno)
             tempPackList = [pack]
-            tempScriptWriter = ScriptCreator(tempPackList, scriptWriter.botList, scriptFile, scriptWriter.hexChatLocation)
+            tempBotList = []
+            serverParse(serverFile, tempBotList)
+            tempScriptWriter = ScriptCreator(tempPackList, tempBotList, scriptFile, scriptWriter.hexChatLocation)
             tempLogger = Logger(tempScriptWriter,logger.emailSender,logger.emailReceiver,logger.emailServer,logger.emailPort,logger.emailPass)
-            tempScriptWriter.scriptExecuter()
+            #tempScriptWriter.scriptExecuter()
             tempLogger.emailLog()
             print "Downloaded Single Pack " + userInput
         else:
