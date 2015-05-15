@@ -6,7 +6,7 @@ Created on May 12, 2015
 Modified on May 12, 2015
 
 @author Hermann Krumrey
-@version 0.1
+@version 1.0
 """
 
 #imports

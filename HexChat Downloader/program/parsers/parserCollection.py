@@ -2,10 +2,10 @@
 parserCollection
 collection of methods that parse files.
 Created on May 9, 2015
-Modified on May 12, 2015
+Modified on May 15, 2015
 
 @author Hermann Krumrey
-@version 1.0
+@version 1.1
 """
 
 #imports
@@ -82,7 +82,7 @@ parses user input and acts accordingly
 @param serverFile - the location of the serverfile
 @param scriptWriter - the scriptwriter loaded with the information of the pack- and server files.
 """
-def inputParser(packFile, serverFile, scriptFile, scriptWriter, logger):
+def inputParser(packFile, serverFile, scriptFile, scriptWriter, logger, config):
     
     running = True
     
@@ -105,14 +105,14 @@ def inputParser(packFile, serverFile, scriptFile, scriptWriter, logger):
             running = False
             break
         
-        #allows to edit packs with gedit
+        #allows to edit packs with a text editor
         if userInput == "edit packs":
-            os.system("gedit '" + packFile + "'")
+            os.system(config.textEditor + " '" + packFile + "'")
             validInput = True
             
-        #allows to edit the server config with gedit
+        #allows to edit the server config with editor
         if userInput == "edit servers":
-            os.system("gedit '" + serverFile + "'")
+            os.system(config.textEditor + " '" + serverFile + "'")
             validInput = True
         
         #prints the parsed packs to the console    
