@@ -149,4 +149,6 @@ class ScriptCreator(object):
         if platform.system() == "Windows":
             print "Windows is not yet supported"
             #TODO
-        
+            os.system("xcopy \"" + self.scriptFileLocation + "\" \"" + self.hexChatLocation + "xdccScript.py\" /E /C /H /R /K /O /Y")
+            os.system("hexchat location")
+            os.system("del \"" + self.hexChatLocation + "xdccScript.py\"")

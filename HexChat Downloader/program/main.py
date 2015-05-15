@@ -34,10 +34,22 @@ if platform.system() == "Linux":
     configFile = upperDirectory + "/program/data/config.ini"
     scriptFile = upperDirectory + "/program/data/temp/script.py"
     hexChatScriptDirectory = "/home/" + getpass.getuser() + "/.config/hexchat/addons"
-
 elif platform.system() == "Windows":
     print "Sorry, Windows is not supported yet"
     sys.exit(1)
+    
+    #fix pythonpath
+    splitPath = sys.argv[0].split("\\")
+    lengthToCut = len(splitPath[len(splitPath) - 1]) + len(splitPath[len(splitPath) - 2]) + 2
+    upperDirectory = sys.argv[0][:-lengthToCut]
+    sys.path.append(upperDirectory)
+    
+    #set inputFiles
+    serverFile = upperDirectory + "\\program\\data\\servers.config"
+    packFile = upperDirectory + "\\program\\data\\packs.txt"
+    configFile = upperDirectory + "\\program\\data\\config.ini"
+    scriptFile = upperDirectory + "\\program\\data\\temp\\script.py"
+    hexChatScriptDirectory = "unknown"
 else:
     print "Sorry, this operating system is not supported"
     sys.exit(1)
