@@ -91,23 +91,42 @@ def inputParser(packFile, serverFile, scriptFile, scriptWriter, logger):
     
     while running:
         
+        validInput = False
+        
+        #downloads all packs from the packlist file
         if userInput == "start":
             running = False
             scriptWriter.scriptExecuter()
             logger.emailLog()
             break
-        elif userInput == "quit":
+        
+        #quits the program
+        if userInput == "quit":
             running = False
             break
-        elif userInput == "edit packs":
+        
+        #allows to edit packs with gedit
+        if userInput == "edit packs":
             os.system("gedit '" + packFile + "'")
-        elif userInput == "edit servers":
+            validInput = True
+            
+        #allows to edit the server config with gedit
+        if userInput == "edit servers":
             os.system("gedit '" + serverFile + "'")
-        elif userInput == "print":
+            validInput = True
+        
+        #prints the parsed packs to the console    
+        if userInput == "print":
             logger.printLogToConsole()
-        elif userInput == "email log":
+            validInput = True
+            
+        #sends an email to the user containing all packs to be downloaded
+        if userInput == "email log":
             logger.emailLog()
-        elif userInput.startswith("/msg ") and " xdcc send #" in userInput:
+            validInput = True
+            
+        #downloads a single pack
+        if userInput.startswith("/msg ") and " xdcc send #" in userInput:
             bot = userInput.split("/msg ")[1].split(" xdcc send #")[0]
             packno = userInput.split(" xdcc send #")[1]
             pack = Pack(bot, packno)
@@ -119,7 +138,10 @@ def inputParser(packFile, serverFile, scriptFile, scriptWriter, logger):
             #tempScriptWriter.scriptExecuter()
             tempLogger.emailLog()
             print "Downloaded Single Pack " + userInput
-        else:
+            validInput = True
+        
+        #Input not understood
+        if not validInput:
             print ("Input was not understood")
         
         #refresh information
@@ -130,4 +152,5 @@ def inputParser(packFile, serverFile, scriptFile, scriptWriter, logger):
         scriptWriter = ScriptCreator(packList, botList, scriptFile, scriptWriter.hexChatLocation)
         logger = Logger(scriptWriter,logger.emailSender,logger.emailReceiver,logger.emailServer,logger.emailPort,logger.emailPass)
             
+        #next prompt
         userInput = raw_input("What would you like to do?\n")
