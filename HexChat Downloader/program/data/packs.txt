@@ -1,4 +1,3 @@
-/msg [UFW]Kirino xdcc send #23
-/msg [UFW]Kirino xdcc send #25
-/msg [UFW]Kirino xdcc send #27
-/msg HentaiTake xdcc send #1173
+/msg NIBL|Arutha xdcc send #8188
+...1
+/msg NIBL|Arutha xdcc send #8199

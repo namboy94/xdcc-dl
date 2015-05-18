@@ -29,9 +29,10 @@ class ScriptCreator(object):
     @param scriptFile - the location of the script file to be written to
     @param hexChatLocation - the location of the hexchat scripts.
     """
-    def __init__(self,packList,botList,scriptFile,hexChatLocation):
+    def __init__(self,packList,botList,scriptFile,hexChatLocation, hexChatCommand):
         
         self.hexChatLocation = hexChatLocation
+        self.hexChatCommand = hexChatCommand
         self.scriptFileLocation = scriptFile
         self.botList = botList
         self.botPackMerger(packList)
@@ -141,14 +142,13 @@ class ScriptCreator(object):
     def scriptExecuter(self):
         
         if platform.system() == "Linux":
-            if not self.hexChatLocation.endswith("/"): self.hexChatLocation += "/"
             os.system("cp '" + self.scriptFileLocation + "' '" + self.hexChatLocation + "xdccScript.py'")
-            os.system("hexchat")
+            os.system(self.hexChatCommand)
             os.system("rm '" + self.hexChatLocation + "xdccScript.py'")
         
         if platform.system() == "Windows":
             print "Windows is not yet supported"
             #TODO
-            os.system("xcopy \"" + self.scriptFileLocation + "\" \"" + self.hexChatLocation + "xdccScript.py\" /E /C /H /R /K /O /Y")
-            os.system("hexchat location")
+            os.system("COPY \"" + self.scriptFileLocation + "\" \"" + self.hexChatLocation + "xdccScript.py\"")
+            os.system(self.hexChatCommand)
             os.system("del \"" + self.hexChatLocation + "xdccScript.py\"")

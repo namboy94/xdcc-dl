@@ -135,7 +135,7 @@ def inputParser(packFile, serverFile, scriptFile, scriptWriter, logger, config):
             serverParse(serverFile, tempBotList)
             tempScriptWriter = ScriptCreator(tempPackList, tempBotList, scriptFile, scriptWriter.hexChatLocation)
             tempLogger = Logger(tempScriptWriter,logger.emailSender,logger.emailReceiver,logger.emailServer,logger.emailPort,logger.emailPass)
-            #tempScriptWriter.scriptExecuter()
+            tempScriptWriter.scriptExecuter()
             tempLogger.emailLog()
             print "Downloaded Single Pack " + userInput
             validInput = True

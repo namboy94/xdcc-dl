@@ -33,7 +33,8 @@ if platform.system() == "Linux":
     packFile = upperDirectory + "/program/data/packs.txt"
     configFile = upperDirectory + "/program/data/config.ini"
     scriptFile = upperDirectory + "/program/data/temp/script.py"
-    hexChatScriptDirectory = "/home/" + getpass.getuser() + "/.config/hexchat/addons"
+    hexChatScriptDirectory = "/home/" + getpass.getuser() + "/.config/hexchat/addons/"
+    hexChatCommand = "hexchat"
 elif platform.system() == "Windows":
     print "Sorry, Windows is not supported yet"
     sys.exit(1)
@@ -49,7 +50,8 @@ elif platform.system() == "Windows":
     packFile = upperDirectory + "\\program\\data\\packs.txt"
     configFile = upperDirectory + "\\program\\data\\config.ini"
     scriptFile = upperDirectory + "\\program\\data\\temp\\script.py"
-    hexChatScriptDirectory = "unknown"
+    hexChatScriptDirectory = "C:\\Users\\" + getpass.getuser() + "\\AppData\\Roaming\\HexChat\\addons\\"
+    hexChatCommand = "C:\\Program Files\\HexChat\\hexchat.exe"
 else:
     print "Sorry, this operating system is not supported"
     sys.exit(1)
@@ -63,6 +65,6 @@ packList = []
 #Execution
 serverParse(serverFile,botList)
 packParse(packFile,packList)
-scriptWriter = ScriptCreator(packList, botList, scriptFile, hexChatScriptDirectory)
+scriptWriter = ScriptCreator(packList, botList, scriptFile, hexChatScriptDirectory, hexChatCommand)
 logger = Logger(scriptWriter, config.emailSender, config.emailReceiver, config.emailServer, config.emailPort, config.emailPassword)
 inputParser(packFile, serverFile, scriptFile, scriptWriter, logger, config)
