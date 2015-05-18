@@ -147,7 +147,6 @@ class ScriptCreator(object):
             os.system("rm '" + self.hexChatLocation + "xdccScript.py'")
         
         if platform.system() == "Windows":
-            print "Windows is not yet supported"
             #TODO
             os.system("COPY \"" + self.scriptFileLocation + "\" \"" + self.hexChatLocation + "xdccScript.py\"")
             os.system(self.hexChatCommand)

@@ -36,9 +36,6 @@ if platform.system() == "Linux":
     hexChatScriptDirectory = "/home/" + getpass.getuser() + "/.config/hexchat/addons/"
     hexChatCommand = "hexchat"
 elif platform.system() == "Windows":
-    print "Sorry, Windows is not supported yet"
-    sys.exit(1)
-    
     #fix pythonpath
     splitPath = sys.argv[0].split("\\")
     lengthToCut = len(splitPath[len(splitPath) - 1]) + len(splitPath[len(splitPath) - 2]) + 2
@@ -67,4 +64,4 @@ serverParse(serverFile,botList)
 packParse(packFile,packList)
 scriptWriter = ScriptCreator(packList, botList, scriptFile, hexChatScriptDirectory, hexChatCommand)
 logger = Logger(scriptWriter, config.emailSender, config.emailReceiver, config.emailServer, config.emailPort, config.emailPassword)
-inputParser(packFile, serverFile, scriptFile, scriptWriter, logger, config)
+inputParser(packFile, serverFile, scriptFile, scriptWriter, logger, config, hexChatCommand)

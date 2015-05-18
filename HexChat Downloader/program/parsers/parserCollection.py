@@ -82,7 +82,7 @@ parses user input and acts accordingly
 @param serverFile - the location of the serverfile
 @param scriptWriter - the scriptwriter loaded with the information of the pack- and server files.
 """
-def inputParser(packFile, serverFile, scriptFile, scriptWriter, logger, config):
+def inputParser(packFile, serverFile, scriptFile, scriptWriter, logger, config, hexChatCommand):
     
     running = True
     
@@ -133,7 +133,7 @@ def inputParser(packFile, serverFile, scriptFile, scriptWriter, logger, config):
             tempPackList = [pack]
             tempBotList = []
             serverParse(serverFile, tempBotList)
-            tempScriptWriter = ScriptCreator(tempPackList, tempBotList, scriptFile, scriptWriter.hexChatLocation)
+            tempScriptWriter = ScriptCreator(tempPackList, tempBotList, scriptFile, scriptWriter.hexChatLocation, hexChatCommand)
             tempLogger = Logger(tempScriptWriter,logger.emailSender,logger.emailReceiver,logger.emailServer,logger.emailPort,logger.emailPass)
             tempScriptWriter.scriptExecuter()
             tempLogger.emailLog()
@@ -149,7 +149,7 @@ def inputParser(packFile, serverFile, scriptFile, scriptWriter, logger, config):
         packList = []    
         serverParse(serverFile,botList)
         packParse(packFile,packList)
-        scriptWriter = ScriptCreator(packList, botList, scriptFile, scriptWriter.hexChatLocation)
+        scriptWriter = ScriptCreator(packList, botList, scriptFile, scriptWriter.hexChatLocation, hexChatCommand)
         logger = Logger(scriptWriter,logger.emailSender,logger.emailReceiver,logger.emailServer,logger.emailPort,logger.emailPass)
             
         #next prompt
