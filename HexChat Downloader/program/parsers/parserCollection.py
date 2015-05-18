@@ -14,6 +14,7 @@ from program.objects.Pack import Pack
 from program.utils.ScriptCreator import ScriptCreator
 from program.utils.Logger import Logger
 import os
+import platform
 
 """
 serverParse
@@ -107,12 +108,18 @@ def inputParser(packFile, serverFile, scriptFile, scriptWriter, logger, config, 
         
         #allows to edit packs with a text editor
         if userInput == "edit packs":
-            os.system(config.textEditor + " '" + packFile + "'")
+            if platform.system() == "Linux":
+                os.system(config.textEditor + " '" + packFile + "'")
+            if platform.system() == "Windows":
+                os.system("\"" + config.textEditor + "\" \"" + packFile + "\"")
             validInput = True
             
         #allows to edit the server config with editor
         if userInput == "edit servers":
-            os.system(config.textEditor + " '" + serverFile + "'")
+            if platform.system() == "Linux":
+                os.system(config.textEditor + " '" + serverFile + "'")
+            if platform.system() == "Windows":
+                os.system("\"" + config.textEditor + "\" \"" + serverFile + "\"")
             validInput = True
         
         #prints the parsed packs to the console    
