@@ -111,7 +111,7 @@ def inputParser(packFile, serverFile, scriptFile, scriptWriter, logger, config, 
             if platform.system() == "Linux":
                 os.system(config.textEditor + " '" + packFile + "'")
             if platform.system() == "Windows":
-                os.system("\"" + config.textEditor + "\" \"" + packFile + "\"")
+                os.system("call \"" + config.textEditor + "\" \"" + packFile + "\"")
             validInput = True
             
         #allows to edit the server config with editor
@@ -119,7 +119,7 @@ def inputParser(packFile, serverFile, scriptFile, scriptWriter, logger, config, 
             if platform.system() == "Linux":
                 os.system(config.textEditor + " '" + serverFile + "'")
             if platform.system() == "Windows":
-                os.system("\"" + config.textEditor + "\" \"" + serverFile + "\"")
+                os.system("call \"" + config.textEditor + "\" \"" + serverFile + "\"")
             validInput = True
         
         #prints the parsed packs to the console    

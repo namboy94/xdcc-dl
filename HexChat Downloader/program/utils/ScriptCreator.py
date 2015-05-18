@@ -149,5 +149,5 @@ class ScriptCreator(object):
         if platform.system() == "Windows":
             #TODO
             os.system("COPY \"" + self.scriptFileLocation + "\" \"" + self.hexChatLocation + "xdccScript.py\"")
-            os.system(self.hexChatCommand)
+            os.system("\"" + self.hexChatCommand + "\"")
             os.system("del \"" + self.hexChatLocation + "xdccScript.py\"")
