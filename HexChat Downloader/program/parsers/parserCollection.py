@@ -98,7 +98,7 @@ def inputParser(packFile, serverFile, scriptFile, scriptWriter, logger, config, 
         if userInput == "start":
             running = False
             scriptWriter.scriptExecuter()
-            logger.emailLog()
+            if config.emailSwitch: logger.emailLog()
             break
         
         #quits the program
@@ -143,7 +143,7 @@ def inputParser(packFile, serverFile, scriptFile, scriptWriter, logger, config, 
             tempScriptWriter = ScriptCreator(tempPackList, tempBotList, scriptFile, scriptWriter.hexChatLocation, hexChatCommand)
             tempLogger = Logger(tempScriptWriter,logger.emailSender,logger.emailReceiver,logger.emailServer,logger.emailPort,logger.emailPass)
             tempScriptWriter.scriptExecuter()
-            tempLogger.emailLog()
+            if config.emailSwitch: tempLogger.emailLog()
             print "Downloaded Single Pack " + userInput
             validInput = True
         

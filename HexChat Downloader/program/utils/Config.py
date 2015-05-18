@@ -27,7 +27,7 @@ class Config(object):
         
         lines = [line.rstrip('\n') for line in open(configFile)]
         
-        ConfigCompleteChecker = [False, False, False, False, False, False]
+        ConfigCompleteChecker = [False, False, False, False, False, False, False]
         
         for line in lines:
             if line.startswith("email sender = "):
@@ -48,6 +48,12 @@ class Config(object):
             if line.startswith("text editor = "):
                 self.textEditor = line.split("text editor = ")[1]
                 ConfigCompleteChecker[5] = True
+            if line == "email active = true":
+                self.emailSwitch = True
+                ConfigCompleteChecker[6] = True
+            if line == "email active = false":
+                self.emailSwitch = False
+                ConfigCompleteChecker[6] = True
         
         for check in ConfigCompleteChecker:
             if not check:
