@@ -47,8 +47,8 @@ elif platform.system() == "Windows":
     packFile = upperDirectory + "\\program\\data\\packs.txt"
     configFile = upperDirectory + "\\program\\data\\config.ini"
     scriptFile = upperDirectory + "\\program\\data\\temp\\script.py"
-    hexChatScriptDirectory = "C:\\Users\\" + getpass.getuser() + "\\AppData\\Roaming\\HexChat\\addons\\"
-    hexChatCommand = "C:\\Program Files\\HexChat\\hexchat.exe"
+    hexChatScriptDirectory = upperDirectory + "\\resources\\HexChat 2.10.2 (x64) Portable\\HexChat\\config\\addons\\"
+    hexChatCommand = upperDirectory + "\\resources\\HexChat 2.10.2 (x64) Portable\\HexChat\\hexchat.exe"
 else:
     print "Sorry, this operating system is not supported"
     sys.exit(1)
