@@ -1,8 +1,1 @@
-/msg Doki|Homura xdcc send #715
-...5
-/msg Doki|Homura xdcc send #730
-/msg Doki|Homura xdcc send #640
-...5
-/msg Doki|Homura xdcc send #710
-/msg E-D|Mashiro xdcc send #450
-/msg Ginpachi-Sensei xdcc send #360
+#packs come here
