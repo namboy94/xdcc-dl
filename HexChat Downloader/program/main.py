@@ -13,12 +13,6 @@ Modified on May 15, 2015
 import sys
 import platform
 import getpass
-from program.parsers.parserCollection import serverParse
-from program.parsers.parserCollection import packParse
-from program.parsers.parserCollection import inputParser
-from program.utils.ScriptCreator import ScriptCreator
-from program.utils.Logger import Logger
-from program.utils.Config import Config
 
 #OS check and setup
 if platform.system() == "Linux":
@@ -52,6 +46,14 @@ elif platform.system() == "Windows":
 else:
     print "Sorry, this operating system is not supported"
     sys.exit(1)
+    
+#Secondary Imports (Needed Pythonpath fix)
+from program.parsers.parserCollection import serverParse
+from program.parsers.parserCollection import packParse
+from program.parsers.parserCollection import inputParser
+from program.utils.ScriptCreator import ScriptCreator
+from program.utils.Logger import Logger
+from program.utils.Config import Config
 
 config = Config(configFile)
 
