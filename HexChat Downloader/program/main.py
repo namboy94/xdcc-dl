@@ -3,10 +3,10 @@ main
 The main part of the program that combines all the different submodules to form a working program.
 
 Created on May 6, 2015
-Modified on May 15, 2015
+Modified on May 30, 2015
 
 @author Hermann Krumrey
-@version 1.1
+@version 1.2
 """
 
 #imports
@@ -60,6 +60,8 @@ from program.utils.Logger import Logger
 from program.utils.Config import Config
 
 config = Config(configFile)
+while not config.configComplete:
+    config = Config(configFile)
 
 #Variable Declarations
 botList = []

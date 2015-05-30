@@ -3,15 +3,17 @@ Config
 Class that parses a config file and stores these values
 
 Created on May 15, 2015
-Modified on May 27, 2015
+Modified on May 30, 2015
 
 @author Hermann Krumrey
-@version 1.1
+@version 1.2
 """
 
 #imports
 import sys
 import re
+import os
+import platform
 
 """
 Config
@@ -26,34 +28,41 @@ class Config(object):
     """
     def __init__(self,configFile):
         
+        self.configFile = configFile
         lines = [line.rstrip('\n') for line in open(configFile)]
         
         ConfigCompleteChecker = [False, False, False, False, False, False, False]
         
         for line in lines:
+            if line.startswith("text editor = "):
+                self.textEditor = line.split("text editor = ")[1]
+                ConfigCompleteChecker[0] = True
+                if len(self.textEditor) == 1: ConfigCompleteChecker[0] = False
+                
+        if not ConfigCompleteChecker[0]:
+            print "No text editor set. Please set a text editor in the config file"
+            sys.exit(1)
+        
+        for line in lines:
             if line.startswith("email sender = "):
                 self.emailSender = line.split("email sender = ")[1]
                 self.checkEmailAdress(self.emailSender)
-                ConfigCompleteChecker[0] = True
+                ConfigCompleteChecker[1] = True
             if line.startswith("email receiver = "):
                 self.emailReceiver = line.split("email receiver = ")[1]
                 self.checkEmailAdress(self.emailReceiver)
-                ConfigCompleteChecker[1] = True
+                ConfigCompleteChecker[2] = True
             if line.startswith("email password = "):
                 self.emailPassword = line.split("email password = ")[1]
-                ConfigCompleteChecker[2] = True
+                ConfigCompleteChecker[3] = True
             if line.startswith("email server = "):
                 self.emailServer = line.split("email server = ")[1]
                 self.checkServer(self.emailServer)
-                ConfigCompleteChecker[3] = True
+                ConfigCompleteChecker[4] = True
             if line.startswith("email port = "):
                 self.emailPort = int(line.split("email port = ")[1])
                 self.checkPort(self.emailPort)
-                ConfigCompleteChecker[4] = True
-            if line.startswith("text editor = "):
-                self.textEditor = line.split("text editor = ")[1]
                 ConfigCompleteChecker[5] = True
-            if line.lower() == "email active = true":
                 self.emailSwitch = True
                 ConfigCompleteChecker[6] = True
             if line == "email active = false":
@@ -62,8 +71,11 @@ class Config(object):
         
         for check in ConfigCompleteChecker:
             if not check:
-                print "Config File incomplete, please use a complete config file."
-                sys.exit(1)
+                print "Config File incomplete, please edit the config file."
+                self.openConfigFile()
+                self.configComplete = False
+        self.configComplete = True
+                
                 
     """
     checkEmailAdress
@@ -75,7 +87,7 @@ class Config(object):
         emailRegex = re.compile("[^ ]+@[^ ]+.[^ ]+")
         if not emailRegex.match(email):
             print "Invalid email adress " + email
-            sys.exit(1)
+            self.openConfigFile()
             
     """
     checkPort
@@ -87,7 +99,7 @@ class Config(object):
         try: port = int(port)
         except ValueError:
             print "Invalid SMTP port " + str(port)
-            sys.exit(1)
+            self.openConfigFile()
             
     """
     checkServer
@@ -99,4 +111,14 @@ class Config(object):
         serverRegex = re.compile("smtp.[^ ]+.[^ ]+")
         if not serverRegex.match(server):
             print "Invalid SMTP server " + server
-            sys.exit(1)
+            self.openConfigFile()
+           
+    """
+    openConfigFile
+    opens the config file for editing
+    """ 
+    def openConfigFile(self):
+        if platform.system() == "Linux":
+            os.system(self.textEditor + " '" + self.configFile + "'")
+        if platform.system() == "Windows":
+            os.system("call \"" + self.textEditor + "\" \"" + self.configFile + "\"")
