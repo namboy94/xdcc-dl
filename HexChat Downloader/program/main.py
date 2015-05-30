@@ -13,6 +13,7 @@ Modified on May 15, 2015
 import sys
 import platform
 import getpass
+import os
 
 #OS check and setup
 if platform.system() == "Linux":
@@ -41,8 +42,11 @@ elif platform.system() == "Windows":
     packFile = upperDirectory + "\\program\\data\\packs.txt"
     configFile = upperDirectory + "\\program\\data\\config.ini"
     scriptFile = upperDirectory + "\\program\\data\\temp\\script.py"
-    hexChatScriptDirectory = upperDirectory + "\\resources\\HexChat 2.10.2 (x64) Portable\\HexChat\\config\\addons\\"
+    hexChatScriptDirectory = "C:\\Users\\" + getpass.getuser() + "\\AppData\\Roaming\\HexChat\\addons"
     hexChatCommand = upperDirectory + "\\resources\\HexChat 2.10.2 (x64) Portable\\HexChat\\hexchat.exe"
+    
+    if not os.path.isdir(hexChatScriptDirectory):
+        os.system("\"" + hexChatCommand + "\"")
 else:
     print "Sorry, this operating system is not supported"
     sys.exit(1)
