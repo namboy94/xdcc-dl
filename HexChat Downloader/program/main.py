@@ -42,8 +42,8 @@ elif platform.system() == "Windows":
     packFile = upperDirectory + "\\program\\data\\packs.txt"
     configFile = upperDirectory + "\\program\\data\\config.ini"
     scriptFile = upperDirectory + "\\program\\data\\temp\\script.py"
-    hexChatScriptDirectory = "C:\\Users\\" + getpass.getuser() + "\\AppData\\Roaming\\HexChat\\addons"
-    hexChatCommand = upperDirectory + "\\program\\resources\\HexChat 2.10.2 (x64) Portable\\HexChat\\hexchat.exe\\"
+    hexChatScriptDirectory = "C:\\Users\\" + getpass.getuser() + "\\AppData\\Roaming\\HexChat\\addons\\"
+    hexChatCommand = upperDirectory + "\\program\\resources\\HexChat 2.10.2 (x64) Portable\\HexChat\\hexchat.exe"
     
     if not os.path.isdir(hexChatScriptDirectory):
         os.system("\"" + hexChatCommand + "\"")
