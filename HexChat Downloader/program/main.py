@@ -58,6 +58,7 @@ from program.parsers.parserCollection import inputParser
 from program.utils.ScriptCreator import ScriptCreator
 from program.utils.Logger import Logger
 from program.utils.Config import Config
+from program.utils.GUI import guiStart
 
 config = Config(configFile)
 while not config.configComplete:
@@ -72,4 +73,9 @@ serverParse(serverFile,botList)
 packParse(packFile,packList)
 scriptWriter = ScriptCreator(packList, botList, scriptFile, hexChatScriptDirectory, hexChatCommand)
 logger = Logger(scriptWriter, config.emailSender, config.emailReceiver, config.emailServer, config.emailPort, config.emailPassword)
-inputParser(packFile, serverFile, scriptFile, scriptWriter, logger, config, hexChatCommand)
+
+#Starts user interface
+if config.guiSwitch:
+    guiStart(packFile, serverFile, scriptFile, scriptWriter, logger, config, hexChatCommand)
+else:
+    inputParser(packFile, serverFile, scriptFile, scriptWriter, logger, config, hexChatCommand)

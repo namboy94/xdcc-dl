@@ -31,7 +31,7 @@ class Config(object):
         self.configFile = configFile
         lines = [line.rstrip('\n') for line in open(configFile)]
         
-        ConfigCompleteChecker = [False, False, False, False, False, False, False]
+        ConfigCompleteChecker = [False, False, False, False, False, False, False, False]
         
         for line in lines:
             if line.startswith("text editor = "):
@@ -63,11 +63,18 @@ class Config(object):
                 self.emailPort = int(line.split("email port = ")[1])
                 self.checkPort(self.emailPort)
                 ConfigCompleteChecker[5] = True
+            if line.lower() == "email active = true": 
                 self.emailSwitch = True
                 ConfigCompleteChecker[6] = True
             if line == "email active = false":
                 self.emailSwitch = False
                 ConfigCompleteChecker[6] = True
+            if line.lower == "gui on = true":
+                self.guiSwitch = True
+                ConfigCompleteChecker[7] = True
+            if line.lower() == "gui on = false":
+                self.guiSwitch = False
+                ConfigCompleteChecker[7] = True
         
         for check in ConfigCompleteChecker:
             if not check:
