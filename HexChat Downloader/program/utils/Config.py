@@ -69,7 +69,7 @@ class Config(object):
             if line == "email active = false":
                 self.emailSwitch = False
                 ConfigCompleteChecker[6] = True
-            if line.lower == "gui on = true":
+            if line.lower() == "gui on = true":
                 self.guiSwitch = True
                 ConfigCompleteChecker[7] = True
             if line.lower() == "gui on = false":

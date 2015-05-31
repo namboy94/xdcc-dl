@@ -58,7 +58,7 @@ from program.parsers.parserCollection import inputParser
 from program.utils.ScriptCreator import ScriptCreator
 from program.utils.Logger import Logger
 from program.utils.Config import Config
-from program.utils.GUI import guiStart
+from program.utils.GUI import DownloadGUI
 
 config = Config(configFile)
 while not config.configComplete:
@@ -76,6 +76,7 @@ logger = Logger(scriptWriter, config.emailSender, config.emailReceiver, config.e
 
 #Starts user interface
 if config.guiSwitch:
-    guiStart(packFile, serverFile, scriptFile, scriptWriter, logger, config, hexChatCommand)
+    gui = DownloadGUI(packFile, serverFile, scriptFile, scriptWriter, logger, config, hexChatCommand)
+    gui.guiStart()
 else:
     inputParser(packFile, serverFile, scriptFile, scriptWriter, logger, config, hexChatCommand)
