@@ -14,6 +14,10 @@ import os
 import platform
 from Tkinter import Tk
 from Tkinter import Button
+from Tkinter import Checkbutton
+from Tkinter import IntVar
+from Tkinter import Label
+from Tkinter import Entry
 
 class DownloadGUI(object):
 
@@ -33,23 +37,33 @@ class DownloadGUI(object):
     def guiStart(self):
         
         #Initialize GUI
-        gui = Tk()
-        gui.geometry("200x90+200+200")
-        gui.title("HexChat Downloader GUI")
+        self.gui = Tk()
+        self.gui.geometry("300x200+200+200")
+        self.gui.title("HexChat Downloader GUI")
         
         #Add button for editing packs
-        editPackButton = Button(gui, text="Edit Packs", width=20, command=self.editPacks)
+        editPackButton = Button(self.gui, text="Edit Packs", width=30, command=self.editPacks)
         editPackButton.pack()
         
         #Add button for editing servers
-        editPackButton = Button(gui, text="Edit Servers", width=20, command=self.editServers)
+        editPackButton = Button(self.gui, text="Edit Servers", width=30, command=self.editServers)
         editPackButton.pack()
         
         #Add button for starting the download
-        editPackButton = Button(gui, text="Start Download", width=20, command=self.startDownload)
+        editPackButton = Button(self.gui, text="Start Download", width=30, command=self.startDownload)
         editPackButton.pack()
+        
+        #Add Checkbox for email log
+        self.emailLogVar = IntVar()
+        emailLogCheckBox = Checkbutton(self.gui, text="Email Log", variable=self.emailLogVar, command=self.emailCheckBox)
+        if self.config.emailSwitch: emailLogCheckBox.toggle()
+        emailLogCheckBox.pack()
+        
+        #Add button to switch to CLI mode
+        changeToCLIButton = Button(self.gui, text="Switch to Command Line Interface", width=30, command=self.changeToCLI)
+        changeToCLIButton.pack()
     
-        gui.mainloop()
+        self.gui.mainloop()
         
     """
     editPacks
@@ -78,3 +92,40 @@ class DownloadGUI(object):
     def startDownload(self):  
         self.scriptWriter.scriptExecuter()
         if self.config.emailSwitch: self.logger.emailLog()
+        
+    """
+    emailCheckBox
+    handles the checkbox for the email log
+    """
+    def emailCheckBox(self):
+        lines = [line.rstrip('\n') for line in open(self.config.configFile)]
+        configFile = open(self.config.configFile, "w")
+        
+        for line in lines:
+            if line.startswith("email active = "):
+                if self.config.emailSwitch:
+                    configFile.write("email active = false\n")
+                    self.config.emailSwitch = False
+                else:
+                    configFile.write("email active = true\n")
+                    self.config.emailSwitch = True
+            else:
+                configFile.write(line + "\n")
+        configFile.close()
+        
+    """
+    changeToCLI
+    changes the inerface to the userInputParser-powered CLI/Terminal/Command Line Interface
+    """
+    def changeToCLI(self):
+        lines = [line.rstrip('\n') for line in open(self.config.configFile)]
+        configFile = open(self.config.configFile, "w")
+        
+        for line in lines:
+            if line.startswith("gui on = "):
+                self.config.guiSwitch = False
+                configFile.write("gui on = false\n")
+            else:
+                configFile.write(line + "\n")
+        configFile.close()
+        self.gui.destroy()

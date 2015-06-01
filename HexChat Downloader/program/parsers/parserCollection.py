@@ -146,6 +146,19 @@ def inputParser(packFile, serverFile, scriptFile, scriptWriter, logger, config, 
             if config.emailSwitch: tempLogger.emailLog()
             print "Downloaded Single Pack " + userInput
             validInput = True
+            
+        #switches to GUI
+        if userInput == "switch":
+            lines = [line.rstrip('\n') for line in open(config.configFile)]
+            configFile = open(config.configFile, "w")
+            for line in lines:
+                if line.startswith("gui on = "):
+                    config.guiSwitch = True
+                    configFile.write("gui on = true\n")
+                else:
+                    configFile.write(line + "\n")
+            configFile.close()
+            break
         
         #Input not understood
         if not validInput:

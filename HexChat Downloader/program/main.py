@@ -75,8 +75,13 @@ scriptWriter = ScriptCreator(packList, botList, scriptFile, hexChatScriptDirecto
 logger = Logger(scriptWriter, config.emailSender, config.emailReceiver, config.emailServer, config.emailPort, config.emailPassword)
 
 #Starts user interface
-if config.guiSwitch:
-    gui = DownloadGUI(packFile, serverFile, scriptFile, scriptWriter, logger, config, hexChatCommand)
-    gui.guiStart()
-else:
-    inputParser(packFile, serverFile, scriptFile, scriptWriter, logger, config, hexChatCommand)
+while True:
+    if config.guiSwitch:
+        gui = DownloadGUI(packFile, serverFile, scriptFile, scriptWriter, logger, config, hexChatCommand)
+        gui.guiStart()
+        if config.guiSwitch:
+            break
+    else:
+        inputParser(packFile, serverFile, scriptFile, scriptWriter, logger, config, hexChatCommand)
+        if not config.guiSwitch:
+            break
