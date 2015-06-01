@@ -17,8 +17,12 @@ from Tkinter import Button
 from Tkinter import Checkbutton
 from Tkinter import IntVar
 from Tkinter import StringVar
-from Tkinter import Label
 from Tkinter import Entry
+from program.objects.Pack import Pack
+from program.parsers.parserCollection import serverParse
+from program.utils.ScriptCreator import ScriptCreator
+from program.utils.Logger import Logger
+import tkMessageBox
 
 class DownloadGUI(object):
 
@@ -29,7 +33,7 @@ class DownloadGUI(object):
         self.scriptWriter = scriptWriter
         self.logger = logger
         self.config = config
-        self.hexchatCommand = hexChatCommand
+        self.hexChatCommand = hexChatCommand
     
     """
     guiStart
@@ -68,8 +72,7 @@ class DownloadGUI(object):
         self.singlePackVar = StringVar()
         singlePackEntry = Entry(self.gui, textvariable=self.singlePackVar)
         singlePackEntry.pack()
-        
-        changeToCLIButton2 = Button(self.gui, text="test", width=30, command=self.singlePack)
+        changeToCLIButton2 = Button(self.gui, text="Start single pack download", width=30, command=self.singlePack)
         changeToCLIButton2.pack()
     
         self.gui.mainloop()
@@ -144,4 +147,18 @@ class DownloadGUI(object):
     downloads a single XDCC pack
     """
     def singlePack(self):
-        print self.singlePackVar.get()
+        userInput = self.singlePackVar.get()
+        if userInput.startswith("/msg ") and " xdcc send #" in userInput:   
+            bot = userInput.split("/msg ")[1].split(" xdcc send #")[0]
+            packno = userInput.split(" xdcc send #")[1]
+            pack = Pack(bot, packno)
+            tempPackList = [pack]
+            tempBotList = []
+            serverParse(self.serverFile, tempBotList)
+            tempScriptWriter = ScriptCreator(tempPackList, tempBotList, self.scriptFile, self.scriptWriter.hexChatLocation, self.hexChatCommand)
+            tempLogger = Logger(tempScriptWriter,self.logger.emailSender,self.logger.emailReceiver,self.logger.emailServer,self.logger.emailPort,self.logger.emailPass)
+            tempScriptWriter.scriptExecuter()
+            if self.config.emailSwitch: tempLogger.emailLog()
+            tkMessageBox.showinfo("Download Complete", "Download of pack " + userInput + " completed")
+        else:
+            tkMessageBox.showerror("Error", "Incorrect Syntax")
