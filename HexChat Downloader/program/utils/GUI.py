@@ -3,17 +3,17 @@ GUI
 Class that implements a simple GUI
 
 Created on May 31, 2015
-Modified on May 31, 2015
+Modified on June 1, 2015
 
 @author Hermann Krumrey
-@version 0.1
+@version 1.0
 """
 
 #imports
-import sys
 import os
 import platform
-from Tkinter import *
+from Tkinter import Tk
+from Tkinter import Button
 
 class DownloadGUI(object):
 
@@ -34,7 +34,7 @@ class DownloadGUI(object):
         
         #Initialize GUI
         gui = Tk()
-        gui.geometry("450x300+200+200")
+        gui.geometry("200x90+200+200")
         gui.title("HexChat Downloader GUI")
         
         #Add button for editing packs
