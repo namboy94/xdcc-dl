@@ -16,6 +16,7 @@ from Tkinter import Tk
 from Tkinter import Button
 from Tkinter import Checkbutton
 from Tkinter import IntVar
+from Tkinter import StringVar
 from Tkinter import Label
 from Tkinter import Entry
 
@@ -62,6 +63,14 @@ class DownloadGUI(object):
         #Add button to switch to CLI mode
         changeToCLIButton = Button(self.gui, text="Switch to Command Line Interface", width=30, command=self.changeToCLI)
         changeToCLIButton.pack()
+        
+        #Entry Fields
+        self.singlePackVar = StringVar()
+        singlePackEntry = Entry(self.gui, textvariable=self.singlePackVar)
+        singlePackEntry.pack()
+        
+        changeToCLIButton2 = Button(self.gui, text="test", width=30, command=self.singlePack)
+        changeToCLIButton2.pack()
     
         self.gui.mainloop()
         
@@ -115,7 +124,7 @@ class DownloadGUI(object):
         
     """
     changeToCLI
-    changes the inerface to the userInputParser-powered CLI/Terminal/Command Line Interface
+    changes the interface to the userInputParser-powered CLI/Terminal/Command Line Interface
     """
     def changeToCLI(self):
         lines = [line.rstrip('\n') for line in open(self.config.configFile)]
@@ -129,3 +138,10 @@ class DownloadGUI(object):
                 configFile.write(line + "\n")
         configFile.close()
         self.gui.destroy()
+        
+    """
+    singlePack
+    downloads a single XDCC pack
+    """
+    def singlePack(self):
+        print self.singlePackVar.get()
