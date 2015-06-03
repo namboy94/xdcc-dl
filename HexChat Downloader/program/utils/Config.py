@@ -14,6 +14,7 @@ import sys
 import re
 import os
 import platform
+import tkMessageBox
 
 """
 Config
@@ -41,6 +42,7 @@ class Config(object):
                 
         if not ConfigCompleteChecker[0]:
             print "No text editor set. Please set a text editor in the config file"
+            tkMessageBox.showerror("Error", "No Text Editor set in the config file")
             sys.exit(1)
         
         for line in lines:

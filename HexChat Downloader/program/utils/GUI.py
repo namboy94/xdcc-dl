@@ -43,16 +43,15 @@ class DownloadGUI(object):
         
         #Initialize GUI
         self.gui = Tk()
-        self.gui.geometry("300x200+200+200")
+        self.gui.geometry("300x100+200+200")
         self.gui.title("HexChat Downloader GUI")
         
-        #Add button for editing packs
-        editPackButton = Button(self.gui, text="Edit Packs", width=30, command=self.editPacks)
-        editPackButton.pack()
-        
-        #Add button for editing servers
-        editPackButton = Button(self.gui, text="Edit Servers", width=30, command=self.editServers)
-        editPackButton.pack()
+        #Simple Single Download Interface
+        self.singlePackVar = StringVar()
+        singlePackEntry = Entry(self.gui, textvariable=self.singlePackVar)
+        singlePackEntry.pack()
+        startSingleDowloadButton = Button(self.gui, text="Start single pack download", width=30, command=self.singlePack)
+        startSingleDowloadButton.pack()
         
         #Add button for starting the download
         editPackButton = Button(self.gui, text="Start Download", width=30, command=self.startDownload)
@@ -68,12 +67,10 @@ class DownloadGUI(object):
         changeToCLIButton = Button(self.gui, text="Switch to Command Line Interface", width=30, command=self.changeToCLI)
         changeToCLIButton.pack()
         
-        #Entry Fields
-        self.singlePackVar = StringVar()
-        singlePackEntry = Entry(self.gui, textvariable=self.singlePackVar)
-        singlePackEntry.pack()
-        changeToCLIButton2 = Button(self.gui, text="Start single pack download", width=30, command=self.singlePack)
-        changeToCLIButton2.pack()
+        #Advanced Options Checkbox
+        self.advancedVar = IntVar()
+        self.advancedCheckBox = Checkbutton(self.gui, text="Advanced Mode", variable=self.advancedVar, command=self.advancedGUIStart)
+        self.advancedCheckBox.pack()
     
         self.gui.mainloop()
         
@@ -162,3 +159,22 @@ class DownloadGUI(object):
             tkMessageBox.showinfo("Download Complete", "Download of pack " + userInput + " completed")
         else:
             tkMessageBox.showerror("Error", "Incorrect Syntax")
+            
+    """
+    advancedGUIStart
+    starts the advanced GUI
+    """
+    def advancedGUIStart(self):
+        if self.advancedVar.get() == 1:
+            self.gui.geometry("300x200+200+200")
+            
+            #Add button for editing packs
+            editPackButton = Button(self.gui, text="Edit Packs", width=30, command=self.editPacks)
+            editPackButton.pack()
+            
+            #Add button for editing servers
+            editPackButton = Button(self.gui, text="Edit Servers", width=30, command=self.editServers)
+            editPackButton.pack()
+            
+        else:
+            self.gui.removeAll()
