@@ -1,11 +1,11 @@
 """
 parserCollection
 collection of methods that parse files.
+
 Created on May 9, 2015
-Modified on May 15, 2015
 
 @author Hermann Krumrey
-@version 1.1
+@version 1.5
 """
 
 #imports

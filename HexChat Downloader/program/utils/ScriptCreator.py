@@ -4,10 +4,9 @@ Class that creates a hexchat python script, moves it into the hexchat auto load 
 and finally executes hexchat
 
 Created on May 9, 2015
-Modified on May 15, 2015
 
 @author Hermann Krumrey
-@version 1.1
+@version 1.5
 """
 
 #imports

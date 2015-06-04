@@ -3,10 +3,9 @@ Logger
 Class that handles all kinds of logging
 
 Created on May 12, 2015
-Modified on May 12, 2015
 
 @author Hermann Krumrey
-@version 1.0
+@version 1.5
 """
 
 #imports

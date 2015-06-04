@@ -3,10 +3,9 @@ GUI
 Class that implements a simple GUI
 
 Created on May 31, 2015
-Modified on June 1, 2015
 
 @author Hermann Krumrey
-@version 1.0
+@version 1.5
 """
 
 #imports

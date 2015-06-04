@@ -3,10 +3,9 @@ Config
 Class that parses a config file and stores these values
 
 Created on May 15, 2015
-Modified on May 30, 2015
 
 @author Hermann Krumrey
-@version 1.2
+@version 1.5
 """
 
 #imports
