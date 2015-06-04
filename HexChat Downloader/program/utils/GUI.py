@@ -18,6 +18,8 @@ from Tkinter import Button
 from Tkinter import Checkbutton
 from Tkinter import Label
 import tkMessageBox
+import platform
+import os
 from program.parsers.parserCollection import serverParse, packParse
 from program.utils.ScriptCreator import ScriptCreator
 from program.utils.Logger import Logger
@@ -72,8 +74,8 @@ class DownloadGUI(object):
         self.addCheckBox(self.emailLog, "Send log Email?", 250, 50, 150, 40, self.toggleEmail)
         
         #Add UI Elements (Advanced Mode)
-        self.addButton("Edit Packs", 10, 100, 200, 40, self.test)
-        self.addButton("Edit Servers", 230, 100, 200, 40, self.test)
+        self.addButton("Edit Packs", 10, 100, 200, 40, self.editPacks)
+        self.addButton("Edit Servers", 230, 100, 200, 40, self.editPacks)
         self.addButton("Start Batch Download", 125, 150, 200, 40, self.test)
         self.addButton("Switch to CLI", 50, 200, 100, 20, self.test)
         
@@ -202,7 +204,26 @@ class DownloadGUI(object):
     """
     def downloadSinglePackOnEnter(self, dummy):
         self.downloadSinglePack()
+        
+    """
+    opens the server file with a text editor
+    """
+    def editServers(self):
+        if platform.system() == "Linux":
+            os.system(self.config.textEditor + " '" + self.serverFile + "'")
+        if platform.system() == "Windows":
+            os.system("call \"" + self.config.textEditor + "\" \"" + self.serverFile + "\"")
     
+    """
+    opens the pack file with a text editor
+    """
+    def editPacks(self):
+        if platform.system() == "Linux":
+            os.system(self.config.textEditor + " '" + self.packFile + "'")
+        if platform.system() == "Windows":
+            os.system("call \"" + self.config.textEditor + "\" \"" + self.packFile + "\"")
+            
+       
     def test(self):
         print self.advancedGUI.get()
     def test2(self, helpervar):
