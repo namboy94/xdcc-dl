@@ -224,6 +224,13 @@ class DownloadGUI(object):
         if platform.system() == "Windows":
             os.system("call \"" + self.config.textEditor + "\" \"" + self.packFile + "\"")
         self.refreshInformation()
+        
+    """
+    starts a new batch download
+    """
+    def startBatchDownload(self):
+        self.scriptWriter.scriptExecuter()
+        if self.config.emailSwitch: self.logger.emailLog()
        
     def test(self):
         print self.advancedGUI.get()
