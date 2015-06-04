@@ -213,6 +213,7 @@ class DownloadGUI(object):
             os.system(self.config.textEditor + " '" + self.serverFile + "'")
         if platform.system() == "Windows":
             os.system("call \"" + self.config.textEditor + "\" \"" + self.serverFile + "\"")
+        self.refreshInformation()
     
     """
     opens the pack file with a text editor
@@ -222,7 +223,7 @@ class DownloadGUI(object):
             os.system(self.config.textEditor + " '" + self.packFile + "'")
         if platform.system() == "Windows":
             os.system("call \"" + self.config.textEditor + "\" \"" + self.packFile + "\"")
-            
+        self.refreshInformation()
        
     def test(self):
         print self.advancedGUI.get()
