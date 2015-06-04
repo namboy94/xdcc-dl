@@ -74,7 +74,7 @@ class DownloadGUI(object):
         
         #Add UI Elements (Advanced Mode)
         self.addButton("Edit Packs", 10, 100, 200, 40, self.editPacks)
-        self.addButton("Edit Servers", 230, 100, 200, 40, self.editPacks)
+        self.addButton("Edit Servers", 230, 100, 200, 40, self.editServers)
         self.addButton("Start Batch Download", 125, 155, 200, 40, self.startBatchDownload)
         self.addButton("Switch to CLI", 320, 210, 100, 20, self.switchToCLI)
         
