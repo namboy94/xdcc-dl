@@ -36,23 +36,42 @@ class CLI(object):
     Starts the CLI.
     """
     def mainLoop(self):
-        running = True
+        self.running = True
         
-        while running:
+        while self.running:
             
             self.userInput = raw_input("What would you like to do?\n")
             self.validInput = False
             
-            if self.userInput.lower() == "help": self.placeHolder()
+            if self.userInput.lower() == "help": self.showHelp()
             if self.userInput.startswith("/msg ") and " xdcc send #" in self.userInput: self.downloadSinglePack()
-            if self.userInput.lower() == "edit packs": self.placeHolder()
-            if self.userInput.lower() == "edit servers": self.placeHolder()
+            if self.userInput.lower() == "edit packs": self.editPacks()
+            if self.userInput.lower() == "edit servers": self.editServers()
             if self.userInput.lower() == "print": self.placeHolder()
             if self.userInput.lower() == "email log": self.placeHolder()
             if self.userInput.lower() == "start": self.placeHolder()
+            if self.userInput.lower() == "switch": self.placeHolder()
             if self.userInput.lower() == "quit": self.placeHolder()
             
+            if not self.validInput:
+                print "Input was not understood. Enter help for a list of valid commands"
             
+    """
+    prints all currently available commands to the console
+    """
+    def showHelp(self):
+        print "List of commands:\n"
+        print "help                                                lists all available commands"
+        print "print                                               prints all currently loaded packs from the packfile"
+        print "email log                                           sends an email with all currently loaded packs from the packfile"
+        print "edit packs                                          opens the packfile with a text editor"
+        print "edit servers                                        opens the server list with a text editor"
+        print "start                                               starts a batch download of all packs in the packfile"
+        print "/msg <botname> xdcc send #<packnumber>              starts a download of a single pack"
+        print "switch                                              switches to a GUI interface"
+        print "quit                                                closes the program\n"
+        self.validInput = True
+    
     """
     Downloads a single pack
     """
@@ -67,22 +86,45 @@ class CLI(object):
         tempLogger = Logger(tempScriptWriter,self.logger.emailSender,self.logger.emailReceiver,self.logger.emailServer,self.logger.emailPort,self.logger.emailPass)
         tempScriptWriter.scriptExecuter()
         if self.config.emailSwitch: tempLogger.emailLog()
-        print "Download of pack " + self.userInput + " completed"
+        print "Download of pack " + self.userInput + " completed\n"
         self.validInput = True
         
+    """
+    Opens the pack file with a text editor
+    """
+    def editPacks(self):
+        if platform.system() == "Linux":
+            os.system(self.config.textEditor + " '" + self.packFile + "'")
+        if platform.system() == "Windows":
+            os.system("call \"" + self.config.textEditor + "\" \"" + self.packFile + "\"")
+        self.refreshInformation()
+        self.validInput = True
+        
+    """
+    Opens the server file with a text editor
+    """
+    def editServers(self):
+        if platform.system() == "Linux":
+            os.system(self.config.textEditor + " '" + self.serverFile + "'")
+        if platform.system() == "Windows":
+            os.system("call \"" + self.config.textEditor + "\" \"" + self.serverFile + "\"")
+        self.refreshInformation()
+        self.validInput = True
 
+    """
+    Refreshes information from the data files
+    """
+    def refreshInformation(self):
+        botList = []
+        packList = []    
+        serverParse(self.serverFile,botList)
+        packParse(self.packFile,packList)
+        self.scriptWriter = ScriptCreator(packList, botList, self.scriptFile, self.scriptWriter.hexChatLocation, self.hexChatCommand)
+        self.logger = Logger(self.scriptWriter,self.logger.emailSender,self.logger.emailReceiver,self.logger.emailServer,self.logger.emailPort,self.logger.emailPass)
 
     def placeHolder(self):
         print 1
-
-
-
-
-
-
-
-
-
+        self.validInput = True
 
 """
 inputParser

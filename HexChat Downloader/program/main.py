@@ -53,7 +53,7 @@ else:
 #Secondary Imports (Needed Pythonpath fix)
 from program.parsers.parserCollection import serverParse
 from program.parsers.parserCollection import packParse
-from program.parsers.parserCollection import inputParser
+from program.parsers.CLI import CLI
 from program.utils.ScriptCreator import ScriptCreator
 from program.utils.Logger import Logger
 from program.utils.Config import Config
@@ -81,6 +81,7 @@ while True:
         if config.guiSwitch:
             break
     else:
-        inputParser(packFile, serverFile, scriptFile, scriptWriter, logger, config, hexChatCommand)
+        cli = CLI(packFile, serverFile, scriptFile, scriptWriter, logger, config, hexChatCommand)
+        cli.mainLoop()
         if not config.guiSwitch:
             break
