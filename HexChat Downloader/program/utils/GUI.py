@@ -54,14 +54,19 @@ class DownloadGUI(object):
         #variables used by gui elements
         self.singlePackVar = StringVar()
         self.advancedGUI = IntVar()
+        self.emailLog = IntVar()
         
         #Add UI Elements (Simple Mode)
         self.addButton("Single Pack Download", 10, 10, 200, 40, self.test)
         self.addTextBox(self.singlePackVar, 230, 10, 200, 40, self.test2)
-        self.addCheckBox(self.advancedGUI, "Advanced Mode", 150, 50, 150, 40, self.toggleAdvanced)
+        self.addCheckBox(self.advancedGUI, "Advanced Mode", 50, 50, 150, 40, self.toggleAdvanced)
+        self.addCheckBox(self.emailLog, "Send log Email?", 250, 50, 150, 40, self.test)
         
         #Add UI Elements (Advanced Mode)
-        
+        self.addButton("Edit Packs", 10, 100, 200, 40, self.test)
+        self.addButton("Edit Servers", 230, 100, 200, 40, self.test)
+        self.addButton("Start Batch Download", 125, 150, 200, 40, self.test)
+        self.addButton("Switch to CLI", 50, 200, 100, 20, self.test)
         
         #Start GUI
         self.gui.mainloop()
