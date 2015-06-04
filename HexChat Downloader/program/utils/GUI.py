@@ -17,6 +17,9 @@ from Tkinter import Entry
 from Tkinter import Button
 from Tkinter import Checkbutton
 from Tkinter import Label
+from program.parsers.parserCollection import serverParse, packParse
+from program.utils.ScriptCreator import ScriptCreator
+from program.utils.Logger import Logger
 
 """
 The Main GUI Class
@@ -137,6 +140,17 @@ class DownloadGUI(object):
             self.gui.geometry("450x300")
         else:
             self.gui.geometry("450x100")
+            
+    """
+    Refreshes information from the data files
+    """
+    def refreshInformation(self):
+        botList = []
+        packList = []    
+        serverParse(self.serverFile,botList)
+        packParse(self.packFile,packList)
+        self.scriptWriter = ScriptCreator(packList, botList, self.scriptFile, self.scriptWriter.hexChatLocation, self.hexChatCommand)
+        self.logger = Logger(self.scriptWriter,self.logger.emailSender,self.logger.emailReceiver,self.logger.emailServer,self.logger.emailPort,self.logger.emailPass)
                 
     def test(self):
         print self.advancedGUI.get()
