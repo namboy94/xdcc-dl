@@ -76,8 +76,8 @@ class DownloadGUI(object):
         #Add UI Elements (Advanced Mode)
         self.addButton("Edit Packs", 10, 100, 200, 40, self.editPacks)
         self.addButton("Edit Servers", 230, 100, 200, 40, self.editPacks)
-        self.addButton("Start Batch Download", 125, 150, 200, 40, self.test)
-        self.addButton("Switch to CLI", 50, 200, 100, 20, self.test)
+        self.addButton("Start Batch Download", 125, 155, 200, 40, self.startBatchDownload)
+        self.addButton("Switch to CLI", 320, 210, 100, 20, self.switchToCLI)
         
         #Start GUI
         self.gui.mainloop()
@@ -144,7 +144,7 @@ class DownloadGUI(object):
     """
     def toggleAdvanced(self):
         if self.advancedGUI.get() == 1:
-            self.gui.geometry("450x300")
+            self.gui.geometry("450x250")
         else:
             self.gui.geometry("450x100")
             
@@ -231,8 +231,20 @@ class DownloadGUI(object):
     def startBatchDownload(self):
         self.scriptWriter.scriptExecuter()
         if self.config.emailSwitch: self.logger.emailLog()
-       
-    def test(self):
-        print self.advancedGUI.get()
-    def test2(self, helpervar):
-        print 2
+        tkMessageBox.showinfo("Batch Download Complete", "Download of all packs in packs.txt complete")
+        
+    """
+    Switches the User Interface from GUI to CLI
+    """
+    def switchToCLI(self):
+        lines = [line.rstrip('\n') for line in open(self.config.configFile)]
+        configFile = open(self.config.configFile, "w")
+        
+        for line in lines:
+            if line.startswith("gui on = "):
+                self.config.guiSwitch = False
+                configFile.write("gui on = false\n")
+            else:
+                configFile.write(line + "\n")
+        configFile.close()
+        self.gui.destroy()
