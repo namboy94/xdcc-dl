@@ -47,7 +47,7 @@ class DownloadGUI(object):
         
         #Initialize GUI
         self.gui = Tk()
-        self.gui.geometry("800x800+300+300")
+        self.gui.geometry("450x100+300+300")
         self.gui.title("HexChat Downloader GUI")
         self.gui.wm_resizable(False, False)
         
@@ -55,9 +55,10 @@ class DownloadGUI(object):
         self.singlePackVar = StringVar()
         self.advancedGUI = IntVar()
         
+        #Add UI Elements
         self.addButton("Single Pack Download", 10, 10, 200, 40, self.test)
-        self.addTextBox(self.singlePackVar, 400, 10, 200, 40, self.test2)
-        self.addCheckBox(self.advancedGUI, "Advanced Mode", 100, 400, 150, 40, self.test)
+        self.addTextBox(self.singlePackVar, 230, 10, 200, 40, self.test2)
+        self.addCheckBox(self.advancedGUI, "Advanced Mode", 150, 50, 150, 40, self.test)
         
         #Start GUI
         self.gui.mainloop()
@@ -105,7 +106,7 @@ class DownloadGUI(object):
         checkBox = Checkbutton(self.gui, command=command, text=text, variable=variable)
         checkBox.pack()
         checkBox.place(x=xPos, y=yPos, width=xSize, height=ySize)
-        
+    
     def test(self):
         print self.advancedGUI.get()
     def test2(self, helpervar):
