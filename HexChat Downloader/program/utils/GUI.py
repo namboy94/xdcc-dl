@@ -16,6 +16,7 @@ from Tkinter import IntVar
 from Tkinter import Entry
 from Tkinter import Button
 from Tkinter import Checkbutton
+from Tkinter import Label
 
 """
 The Main GUI Class
@@ -114,6 +115,19 @@ class DownloadGUI(object):
         checkBox = Checkbutton(self.gui, command=command, text=text, variable=variable)
         checkBox.pack()
         checkBox.place(x=xPos, y=yPos, width=xSize, height=ySize)
+        
+    """
+    adds a label to the GUI
+    @param text - the text to be displayed by the label
+    @param xPos - the x position in the window
+    @param yPos - the y position in the window
+    @param xSize - the width of the label
+    @param ySize - the height of the label
+    """
+    def addLabel(self, text, xPos, yPos, xSize, ySize):
+        label = Label(self.gui, text=text)
+        label.pack()
+        label.place(x=xPos, y=yPos, width=xSize, height=ySize)
         
     """
     toggles advanced and simple UI mode
