@@ -55,10 +55,13 @@ class DownloadGUI(object):
         self.singlePackVar = StringVar()
         self.advancedGUI = IntVar()
         
-        #Add UI Elements
+        #Add UI Elements (Simple Mode)
         self.addButton("Single Pack Download", 10, 10, 200, 40, self.test)
         self.addTextBox(self.singlePackVar, 230, 10, 200, 40, self.test2)
-        self.addCheckBox(self.advancedGUI, "Advanced Mode", 150, 50, 150, 40, self.test)
+        self.addCheckBox(self.advancedGUI, "Advanced Mode", 150, 50, 150, 40, self.toggleAdvanced)
+        
+        #Add UI Elements (Advanced Mode)
+        
         
         #Start GUI
         self.gui.mainloop()
@@ -106,7 +109,16 @@ class DownloadGUI(object):
         checkBox = Checkbutton(self.gui, command=command, text=text, variable=variable)
         checkBox.pack()
         checkBox.place(x=xPos, y=yPos, width=xSize, height=ySize)
-    
+        
+    """
+    toggles advanced and simple UI mode
+    """
+    def toggleAdvanced(self):
+        if self.advancedGUI.get() == 1:
+            self.gui.geometry("450x300")
+        else:
+            self.gui.geometry("450x100")
+                
     def test(self):
         print self.advancedGUI.get()
     def test2(self, helpervar):
