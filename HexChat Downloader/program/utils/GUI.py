@@ -17,9 +17,11 @@ from Tkinter import Entry
 from Tkinter import Button
 from Tkinter import Checkbutton
 from Tkinter import Label
+import tkMessageBox
 from program.parsers.parserCollection import serverParse, packParse
 from program.utils.ScriptCreator import ScriptCreator
 from program.utils.Logger import Logger
+from program.objects.Pack import Pack
 
 """
 The Main GUI Class
@@ -60,11 +62,14 @@ class DownloadGUI(object):
         self.advancedGUI = IntVar()
         self.emailLog = IntVar()
         
+        #Initialize variables if needed
+        self.emailLog.set(self.config.emailSwitch)
+        
         #Add UI Elements (Simple Mode)
-        self.addButton("Single Pack Download", 10, 10, 200, 40, self.test)
-        self.addTextBox(self.singlePackVar, 230, 10, 200, 40, self.test2)
+        self.addButton("Single Pack Download", 10, 10, 200, 40, self.downloadSinglePack)
+        self.addTextBox(self.singlePackVar, 230, 10, 200, 40, self.downloadSinglePackOnEnter)
         self.addCheckBox(self.advancedGUI, "Advanced Mode", 50, 50, 150, 40, self.toggleAdvanced)
-        self.addCheckBox(self.emailLog, "Send log Email?", 250, 50, 150, 40, self.test)
+        self.addCheckBox(self.emailLog, "Send log Email?", 250, 50, 150, 40, self.toggleEmail)
         
         #Add UI Elements (Advanced Mode)
         self.addButton("Edit Packs", 10, 100, 200, 40, self.test)
@@ -142,6 +147,25 @@ class DownloadGUI(object):
             self.gui.geometry("450x100")
             
     """
+    toggles if an email log should be sent or not
+    """
+    def toggleEmail(self):
+        lines = [line.rstrip('\n') for line in open(self.config.configFile)]
+        configFile = open(self.config.configFile, "w")
+        
+        for line in lines:
+            if line.startswith("email active = "):
+                if self.config.emailSwitch:
+                    configFile.write("email active = false\n")
+                    self.config.emailSwitch = False
+                else:
+                    configFile.write("email active = true\n")
+                    self.config.emailSwitch = True
+            else:
+                configFile.write(line + "\n")
+        configFile.close()
+            
+    """
     Refreshes information from the data files
     """
     def refreshInformation(self):
@@ -152,6 +176,33 @@ class DownloadGUI(object):
         self.scriptWriter = ScriptCreator(packList, botList, self.scriptFile, self.scriptWriter.hexChatLocation, self.hexChatCommand)
         self.logger = Logger(self.scriptWriter,self.logger.emailSender,self.logger.emailReceiver,self.logger.emailServer,self.logger.emailPort,self.logger.emailPass)
                 
+    """
+    downloads a single pack based on the string entered in the textBox (on button press)
+    """
+    def downloadSinglePack(self):
+        userInput = self.singlePackVar.get()
+        if userInput.startswith("/msg ") and " xdcc send #" in userInput:   
+            bot = userInput.split("/msg ")[1].split(" xdcc send #")[0]
+            packno = userInput.split(" xdcc send #")[1]
+            pack = Pack(bot, packno)
+            tempPackList = [pack]
+            tempBotList = []
+            serverParse(self.serverFile, tempBotList)
+            tempScriptWriter = ScriptCreator(tempPackList, tempBotList, self.scriptFile, self.scriptWriter.hexChatLocation, self.hexChatCommand)
+            tempLogger = Logger(tempScriptWriter,self.logger.emailSender,self.logger.emailReceiver,self.logger.emailServer,self.logger.emailPort,self.logger.emailPass)
+            tempScriptWriter.scriptExecuter()
+            if self.config.emailSwitch: tempLogger.emailLog()
+            tkMessageBox.showinfo("Download Complete", "Download of pack " + userInput + " completed")
+        else:
+            tkMessageBox.showerror("Error", "Incorrect Syntax")
+    
+    """
+    downloads a single pack based on the string entered in the textBox (on enter)
+    @param dummy - not used variable that's used to trick the system
+    """
+    def downloadSinglePackOnEnter(self, dummy):
+        self.downloadSinglePack()
+    
     def test(self):
         print self.advancedGUI.get()
     def test2(self, helpervar):
