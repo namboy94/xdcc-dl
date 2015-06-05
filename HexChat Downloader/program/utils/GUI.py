@@ -78,8 +78,8 @@ class DownloadGUI(object):
         self.addButton("Edit Servers", 230, 100, 200, 40, self.editServers)
         self.addButton("Start Batch Download", 125, 155, 200, 40, self.startBatchDownload)
         self.addButton("Switch to CLI", 320, 210, 100, 20, self.switchToCLI)
-        tempImage = self.convertToPhotoImage("/home/hermann/Downloads/url.png", 100, 100)
-        self.addPictureLabel(tempImage, 100, 100, 100, 100)
+        tempImage = self.convertToPhotoImage("resources/hex.png", 100, 100)
+        self.addPictureLabel(tempImage, 15, 150, 100, 100)
         
         #Start GUI
         self.gui.mainloop()
