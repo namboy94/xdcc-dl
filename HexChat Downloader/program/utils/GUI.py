@@ -16,6 +16,7 @@ from Tkinter import Entry
 from Tkinter import Button
 from Tkinter import Checkbutton
 from Tkinter import Label
+from PIL import Image, ImageTk
 import tkMessageBox
 import platform
 import os
@@ -77,6 +78,7 @@ class DownloadGUI(object):
         self.addButton("Edit Servers", 230, 100, 200, 40, self.editServers)
         self.addButton("Start Batch Download", 125, 155, 200, 40, self.startBatchDownload)
         self.addButton("Switch to CLI", 320, 210, 100, 20, self.switchToCLI)
+        self.addPicture("/home/hermann/Downloads/url.png", 100, 100, 100, 100)
         
         #Start GUI
         self.gui.mainloop()
@@ -138,6 +140,22 @@ class DownloadGUI(object):
         label.pack()
         label.place(x=xPos, y=yPos, width=xSize, height=ySize)
         
+    """
+    adds a picture to the GUI
+    @param file - the file containing the picture to be added
+    @param xPos - the picture's x-position on the GUI
+    @param yPos - the picture's y-position on the GUI
+    @param xSize - the width of the picture
+    @param ySize - the height of the picture
+    """
+    def addPicture(self, imageFile, xPos, yPos, xSize, ySize):
+        image = Image.open(imageFile)
+        clip = ImageTk.PhotoImage(image)
+        picture = Label(image=clip)
+        picture.image = image
+        picture.pack()
+        picture.place(x=xPos, y=yPos, width=xSize, height=ySize)
+    
     """
     toggles advanced and simple UI mode
     """

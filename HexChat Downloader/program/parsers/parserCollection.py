@@ -11,10 +11,6 @@ Created on May 9, 2015
 #imports
 from program.objects.Bot import Bot
 from program.objects.Pack import Pack
-from program.utils.ScriptCreator import ScriptCreator
-from program.utils.Logger import Logger
-import os
-import platform
 
 """
 serverParse
