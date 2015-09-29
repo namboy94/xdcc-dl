@@ -3,6 +3,7 @@
  * Collection of methods to help with processing files
  */
 
+#include <string.h>
 #include "fileHandlers.h"
 
 
@@ -44,6 +45,31 @@ vector<string> readFile(string file) {
 
     return fileContent;
 }
+
+/*
+ * Reads a file and returns it as a vector of strings, which may be handled similarly to an array
+ * Lines starting with # symbols are ommited
+ * @param file - the path of the file to be read
+ * @throws 404 if the file is not found
+ */
+vector<string> readFileNoHash(string file) {
+
+    vector<string> fileContent;
+
+    if (!isFile(file)) {
+        throw 404;
+    }
+    ifstream input(file);
+    string line;
+
+    while (getline(input, line)) {
+        if (!strncmp(line.c_str(), "#", 1)) { continue; }
+        fileContent.push_back(line);
+    }
+
+    return fileContent;
+}
+
 
 /**
  * Creates a new, empty file.

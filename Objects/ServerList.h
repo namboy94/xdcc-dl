@@ -21,7 +21,7 @@ class ServerList{
 public:
 
     //Constructor
-    ServerList();
+    ServerList(Config config);
 
     void parseServerFile();
     void parsePackFile();
@@ -30,12 +30,21 @@ public:
 private:
 
     vector<Server> servers;
+    string packFile;
+    string serverFile;
 
-    void addServer(Server server);
-    void addChannel(Channel channel);
-    void addBot(Bot bot);
-    void addPack(Pack pack);
-    Pack createPackFromString();
+    void addPack(Bot bot, Pack pack);
+    Pack createPackFromString(string packString);
+
+    int find(Server server, vector<Server> serverArray);
+    int find(Channel channel, vector<Channel> channelArray);
+    int find(Bot bot, vector<Bot> botArray);
+
+    /*
+    bool isInList(Server server);
+    bool isInList(Channel channel);
+    bool isInList(Bot bot);
+     */
 
 
 };

@@ -17,6 +17,7 @@ using namespace std;
 
 bool isFile(string file);
 vector<string> readFile(string file);
+vector<string> readFileNoHash(string file);
 void createFile(string file);
 void writeToFile(string file, vector<string> content);
 

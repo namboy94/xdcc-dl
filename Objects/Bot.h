@@ -25,13 +25,14 @@ public:
 
     string getName();
     vector<Pack> getPacks();
+    Channel getChannel();
 
 
 private:
 
     string name;
     vector<Pack> packs;
-    Channel channel;
+    Channel channel = nullptr;
 
 };
 

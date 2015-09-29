@@ -25,13 +25,14 @@ public:
 
     string getName();
     vector<Bot> getBots();
+    Server getServer();
 
 
 private:
 
     string name;
     vector<Bot> bots;
-    Server server;
+    Server server = nullptr;
 
 };
 

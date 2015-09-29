@@ -22,12 +22,13 @@ public:
     void addToBot(Bot bot);
 
     string getPackNumberString();
+    Bot getBot();
 
 
 private:
 
     int packNumber;
-    Bot bot;
+    Bot bot = nullptr;
 
 };
 
