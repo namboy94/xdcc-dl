@@ -1,3 +1,8 @@
 packfile=/home/hermann/.xdcc-download/files/packfile
 serverfile=/home/hermann/.xdcc-download/files/serverfile
 texteditor=gedit
+sendemail=false
+email-address=user@domain.com
+email-password=nicetry
+smtp-server=smtp.server.tld
+smtp-port=999

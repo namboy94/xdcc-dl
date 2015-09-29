@@ -3,9 +3,6 @@
  */
 
 #include "Config.h"
-#include <fstream>
-#include <string.h>
-#include <iostream>
 
 using namespace std;
 
@@ -18,15 +15,14 @@ using namespace std;
  */
 Config::Config(string configFile){
 
-    ifstream file(configFile);
-    string line;
-    vector<string> fileContent;
-
-    while (getline(file, line)) {
-        fileContent.push_back(line);
+    try {
+        this->fileContent = readFile(configFile);
+    } catch (int e) {
+        if (e == 404) {
+            writeToFile(configFile, defaults);
+            this->fileContent = readFile(configFile);
+        }
     }
-
-    this->fileContent = fileContent;
     parse();
 }
 
@@ -41,17 +37,28 @@ string Config::getPackFile() {
 }
 
 string Config::getTextEditor() {
-    return this->serverFile;
+    return this->textEditor;
 }
 
 bool Config::getEmailState() {
     return this->emailState;
 }
 
-vector<string> Config::getEmailSettings() {
-    return this->emailSettings;
+string Config::getEmailAddress() {
+    return this->emailAddress;
 }
 
+string Config::getEmailPassword() {
+    return this->emailPassword;
+}
+
+string Config::getSmtpServer() {
+    return this->smtpServer;
+}
+
+string Config::getSmtpPort() {
+    return this->smtpPort;
+}
 
 //private
 
@@ -63,16 +70,14 @@ void Config::parse() {
         line = this->fileContent[i];
         if (!strncmp(line.c_str(), "#", 1)) { continue; } //Checks if the line is commented using a #
         else if (!strncmp(line.c_str(), "packfile=", 9)) { this->packFile = line.replace(0, 9, ""); }
-        else if (!strncmp(line.c_str(), "serverfile=", 10)) { this->serverFile = line.replace(0, 10, ""); }
-        else if (!strncmp(line.c_str(), "texteditor=", 10)) { this->textEditor = line.replace(0, 10, ""); }
-        else if (!strncmp(line.c_str(), "sendemail=", 9)) {
-            if (strcmp(line.c_str(), "sendemail=true")) {
-                this->emailState = true;
-            } else {
-                this->emailState = false;
-            }
-        }
-        else continue;
+        else if (!strncmp(line.c_str(), "serverfile=", 11)) { this->serverFile = line.replace(0, 11, ""); }
+        else if (!strncmp(line.c_str(), "texteditor=", 11)) { this->textEditor = line.replace(0, 11, ""); }
+        else if (!strncmp(line.c_str(), "email-address=", 14)) { this->emailAddress = line.replace(0, 14, ""); }
+        else if (!strncmp(line.c_str(), "email-password=", 15)) { this->emailPassword = line.replace(0, 15, ""); }
+        else if (!strncmp(line.c_str(), "smtp-server=", 12)) { this->smtpServer = line.replace(0, 12, ""); }
+        else if (!strncmp(line.c_str(), "smtp-port=", 10)) { this->smtpPort = line.replace(0, 10, ""); }
+        else if (!strncmp(line.c_str(), "sendemail=true", 14)) { this->emailState = true; }
+        else continue; //Empty or un-parseable line;
     } //runs in O(n) :D
 
 }
