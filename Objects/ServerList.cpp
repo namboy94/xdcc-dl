@@ -65,23 +65,42 @@ void ServerList::parseServerFile() {
 void ServerList::parsePackFile() {
 
     vector<string> content = readFileNoHash(this->packFile);
-    string lastBot;
-    int lastPack;
+    string prevBot;
+    int prevPack;
 
     for (int i = 0; i < content.size(); i++) {
         //Format: /msg tlacatlc6|XDCC xdcc send #884
         //TODO split into string for bot and packnumber
         //TODO Regex Match
 
-        string bot = "";
-        string pack = "";
-        //TODO cast string to int
-        //int packNumber = (int) pack;
-        int packNumber = 0;
+        if (true) {
+            string bot = "";
+            string pack = "";
+            //TODO cast string to int
+            //int packNumber = (int) pack;
+            int packNumber = 0;
+            Pack packO(packNumber);
+            addPack(packO, bot);
 
+            prevBot = bot;
+            prevPack = packNumber;
+        } else if (true) {
+            //TODO regex match for ...x
+            string jumpVariable = content[i].replace(0, 3, "");
+            //TODO cast to int
+            int jumpVarInt = 0;
+
+            i++;
+
+            //Split packnumber of content[i];
+            int lastPack = 0;
+
+            for (int j = prevPack; j <= lastPack; j += jumpVarInt) {
+                Pack currentPack(j);
+                addPack(currentPack, prevBot);
+            }
+        }
     }
-
-
 }
 
 
@@ -94,6 +113,23 @@ void ServerList::parsePackFile() {
 
 
 //private
+
+ServerList::Locator::Locator(int server, int channel, int bot) {
+
+    this->server = server;
+    this->channel = channel;
+    this->bot = bot;
+
+}
+
+
+void ServerList::addPack(Pack pack, Bot bot) {
+
+    Locator locate = find(bot);
+    this->servers[locate.server].getChannels()[locate.channel].getBots()[locate.bot].getPacks().push_back(pack);
+
+}
+
 
 int ServerList::find(Server server, vector<Server> serverArray) {
 
@@ -126,4 +162,19 @@ int ServerList::find(Bot bot, vector<Bot> botArray) {
     }
     return -1;
 
+}
+
+Locator ServerList::find(Bot bot) {
+    for (int i = 0; i < this->servers.size(); i++) {
+        for (int j = 0; j < this->servers[i].getChannels().size(); j++) {
+            for (int k = 0; k < this->servers[i].getChannels()[j].getBots().size(); k++) {
+                if (!strcmp(this->servers[i].getChannels()[j].getBots()[k].getName().c_str(), bot.getName().c_str())) {
+                    Locator locate(i, j, k);
+                    return locate;
+                }
+            }
+        }
+    }
+    Locator locate(-1, -1, -1);
+    return locate;
 }

@@ -33,18 +33,22 @@ private:
     string packFile;
     string serverFile;
 
-    void addPack(Bot bot, Pack pack);
+    void addPack(Pack pack, Bot bot);
     Pack createPackFromString(string packString);
 
     int find(Server server, vector<Server> serverArray);
     int find(Channel channel, vector<Channel> channelArray);
     int find(Bot bot, vector<Bot> botArray);
 
-    /*
-    bool isInList(Server server);
-    bool isInList(Channel channel);
-    bool isInList(Bot bot);
-     */
+    class Locator {
+    public:
+        int server;
+        int channel;
+        int bot;
+        Locator(int server, int channel, int bot);
+    };
+
+    Locator find(Bot bot);
 
 
 };
