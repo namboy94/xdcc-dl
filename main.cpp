@@ -9,7 +9,7 @@ int main() {
     /**
      * Workflow
      *
-     * First, Load and parse Config
+     * First, Load and parse Config - Done
      * then load server file
      * then load current pack file
      *

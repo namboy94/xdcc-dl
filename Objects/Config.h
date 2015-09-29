@@ -1,15 +1,17 @@
-//
-// Created by hermann on 9/29/15.
-//
+/*
+ * @author Hermann Krumrey <hermann@krumreyh.com>
+ * Implements a data structure to save and parse configaration options
+ */
 
 #ifndef XDCC_DOWNLOAD_CONFIG_H
 #define XDCC_DOWNLOAD_CONFIG_H
+
+#include "../Helpers/fileHandlers.h"
 
 #include <string>
 #include <vector>
 #include <fstream>
 #include <string.h>
-#include "../Helpers/fileHandlers.h"
 
 using namespace std;
 
@@ -39,13 +41,13 @@ private:
 
     //variables
     vector<string> fileContent;
-    string serverFile = "";
-    string packFile = "";
-    string textEditor = "";
-    string emailAddress = "";
-    string emailPassword = "";
-    string smtpServer = "";
-    string smtpPort = "";
+    string serverFile;
+    string packFile;
+    string textEditor;
+    string emailAddress;
+    string emailPassword;
+    string smtpServer;
+    string smtpPort;
     bool emailState = false;
 
     vector<string> defaults = {"#Default Config File",

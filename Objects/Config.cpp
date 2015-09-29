@@ -1,10 +1,9 @@
 /**
  * @author Hermann Krumrey hermann@krumreyh.com
+ * Implements a data structure to save and parse configaration options
  */
 
 #include "Config.h"
-
-using namespace std;
 
 //Function implementations
 //public
