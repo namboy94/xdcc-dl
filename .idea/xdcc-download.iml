@@ -5,6 +5,8 @@
       <sourceFolder url="file://$MODULE_DIR$/CMakeLists.txt" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Objects/Config.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Objects/Config.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Parsers/ConfigParser.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Parsers/ConfigParser.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/main.cpp" isTestSource="false" />
     </content>
     <orderEntry type="inheritedJdk" />

@@ -1,5 +1,5 @@
 #include <iostream>
-#include <Objects/Config.h>
+#include "Objects/Config.h"
 
 using namespace std;
 
@@ -46,6 +46,10 @@ int main() {
      *
      * }
      */
+
+    Config config("/home/hermann/Jetbrains/CLion/xdcc-download/Data/config");
+
+    cout << config.getPackFile();
 
     return 0;
 }
