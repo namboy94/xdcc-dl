@@ -1,6 +1,7 @@
 #include <iostream>
 #include "Objects/Config.h"
 #include "Helpers/fileHandlers.h"
+#include "Objects/ServerList.h"
 
 using namespace std;
 
@@ -49,6 +50,7 @@ int main() {
      */
 
     Config config("/home/hermann/Jetbrains/CLion/xdcc-download/Data/config");
+    ServerList serverList(config);
 
     return 0;
 }

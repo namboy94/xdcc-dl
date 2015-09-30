@@ -1,4 +1,4 @@
-/*
+/**
  * @author Hermann Krumrey <hermann@krumreyh.com>
  */
 
@@ -18,11 +18,26 @@ ServerList::ServerList(Config config) {
     this->serverFile = config.getServerFile();
     this->packFile = config.getPackFile();
 
+    parseFiles();
+
+}
+
+/**
+ * Parses the server- and pack files in the correct order to minimize programming errors.
+ */
+void ServerList::parseFiles() {
+
     parseServerFile();
     parsePackFile();
 
 }
 
+//private
+//helper functions
+
+/**
+ * Parses the server file and loads all relevant data into the data structure
+ */
 void ServerList::parseServerFile() {
 
     vector<string> content = readFileNoHash(this->serverFile);
@@ -62,6 +77,10 @@ void ServerList::parseServerFile() {
     }
 }
 
+/**
+ * Parses the pack file and loads all relevant information into the data structure
+ * Supports easy batches via jumping variables given in the format ...x
+ */
 void ServerList::parsePackFile() {
 
     vector<string> content = readFileNoHash(this->packFile);
@@ -103,17 +122,12 @@ void ServerList::parsePackFile() {
     }
 }
 
-
-
-
-
-
-
-
-
-
-//private
-
+/**
+ * Constructor for the Locator class
+ * @param server - the array id of the server
+ * @param channel - the array id of the channel
+ * @param bot - the array id of the bot
+ */
 ServerList::Locator::Locator(int server, int channel, int bot) {
 
     this->server = server;
@@ -122,7 +136,11 @@ ServerList::Locator::Locator(int server, int channel, int bot) {
 
 }
 
-
+/**
+ * Adds a pack to a bot
+ * @param pack - the pack to be added
+ * @param bot - the bot to which the pack should be added
+ */
 void ServerList::addPack(Pack pack, Bot bot) {
 
     Locator locate = find(bot);
@@ -130,7 +148,12 @@ void ServerList::addPack(Pack pack, Bot bot) {
 
 }
 
-
+/**
+ * Searches an array of servers for one specific server and returns its position in the array
+ * @param server - the server to be searched for
+ * @param serverArray - the array of Servers to be searched in
+ * @return the location of the Server in the array. If it's not in the array, -1
+ */
 int ServerList::find(Server server, vector<Server> serverArray) {
 
     for (int i = 0; i < serverArray.size(); i++) {
@@ -142,6 +165,12 @@ int ServerList::find(Server server, vector<Server> serverArray) {
 
 }
 
+/**
+ * Searches an array of channels for one specific channel and returns its position in the array
+ * @param channel - the server to be searched for
+ * @param channelArray - the array of Channels to be searched in
+ * @return the location of the Channel in the array. If it's not in the array, -1
+ */
 int ServerList::find(Channel channel, vector<Channel> channelArray) {
 
     for (int i = 0; i < channelArray.size(); i++) {
@@ -153,6 +182,12 @@ int ServerList::find(Channel channel, vector<Channel> channelArray) {
 
 }
 
+/**
+ * Searches an array of botss for one specific bot and returns its position in the array
+ * @param bot - the bot to be searched for
+ * @param botArray - the array of Bots to be searched in
+ * @return the location of the Bot in the array. If it's not in the array, -1
+ */
 int ServerList::find(Bot bot, vector<Bot> botArray) {
 
     for (int i = 0; i < botArray.size(); i++) {
@@ -164,6 +199,11 @@ int ServerList::find(Bot bot, vector<Bot> botArray) {
 
 }
 
+/**
+ * Searches the data structure for a specific bot and returns its location in it as a Locator
+ * @param bot - the bot to be searched for
+ * @returns the location of the bot. If the bot does not exist, (-1, -1, -1)
+ */
 Locator ServerList::find(Bot bot) {
     for (int i = 0; i < this->servers.size(); i++) {
         for (int j = 0; j < this->servers[i].getChannels().size(); j++) {

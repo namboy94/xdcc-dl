@@ -12,6 +12,9 @@
 
 using namespace std;
 
+/**
+ * Models an XDCC pack
+ */
 class Pack{
 
 public:
@@ -19,14 +22,17 @@ public:
     //Constructor
     Pack(int packNumber);
 
+    //Functional Functions
     void addToBot(Bot bot);
 
+    //Getter/Setter
     string getPackNumberString();
     Bot getBot();
 
 
 private:
 
+    //private variables
     int packNumber;
     Bot bot = nullptr;
 

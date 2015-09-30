@@ -13,6 +13,9 @@
 
 using namespace std;
 
+/**
+ * Class that models an IRC Channel
+ */
 class Channel{
 
 public:
@@ -20,9 +23,11 @@ public:
     //Constructor
     Channel(string name);
 
+    //Functional Functions
     void addBot(Bot bot);
     void addToServer(Server server);
 
+    //Getter/Setter
     string getName();
     vector<Bot> getBots();
     Server getServer();
@@ -30,9 +35,10 @@ public:
 
 private:
 
+    //Local Variables
     string name;
     vector<Bot> bots;
-    Server server = nullptr;
+    Server server = nullptr; //TODO Figure out how to use null like in java, if possible
 
 };
 

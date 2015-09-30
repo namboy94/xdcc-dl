@@ -13,6 +13,9 @@
 
 using namespace std;
 
+/**
+ * Models an XDCC bot
+ */
 class Bot{
 
 public:
@@ -20,9 +23,11 @@ public:
     //Constructor
     Bot(string name);
 
+    //Functional Functions
     void addPack(Pack pack);
     void addToChannel(Channel channel);
 
+    //Getter/Setter
     string getName();
     vector<Pack> getPacks();
     Channel getChannel();
@@ -30,6 +35,7 @@ public:
 
 private:
 
+    //private variables
     string name;
     vector<Pack> packs;
     Channel channel = nullptr;

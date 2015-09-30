@@ -60,7 +60,7 @@ private:
                                "smtp-server=smtp.server.domain",
                                "smtp-port=999"};//TODO How to get username etc.
 
-    //functions
+    //helper functions
     void parse();
 
 };

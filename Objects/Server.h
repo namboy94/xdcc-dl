@@ -12,6 +12,9 @@
 
 using namespace std;
 
+/**
+ * Class that models an IRC server
+ */
 class Server{
 
 public:
@@ -19,14 +22,17 @@ public:
     //Constructor
     Server(string name);
 
+    //Functional Functions
     void addChannel(Channel channel);
 
+    //Getter/Setter
     string getName();
     vector<Channel> getChannels();
 
 
 private:
 
+    //local variables
     string name;
     vector<Channel> channels;
 
