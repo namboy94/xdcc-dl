@@ -3,18 +3,17 @@
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/CMakeLists.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Downloaders/HexChatPythonDownloader.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Downloaders/HexChatPythonDownloader.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Helpers/fileHandlers.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Helpers/fileHandlers.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Objects/Bot.cpp" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/Objects/Bot.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Objects/Channel.cpp" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/Objects/Channel.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Objects/Config.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Objects/Config.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Objects/Locator.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Objects/Pack.cpp" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/Objects/Pack.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Objects/Server.cpp" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/Objects/Server.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Objects/ServerList.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Objects/ServerList.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/main.cpp" isTestSource="false" />

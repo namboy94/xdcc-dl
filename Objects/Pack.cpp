@@ -2,7 +2,7 @@
  * @author Hermann Krumrey <hermann@krumreyh.com>
  */
 
-#include "Pack.h"
+#include "ServerList.h"
 
 //public
 //Constructor
@@ -23,14 +23,14 @@ Pack::Pack(int packNumber) {
  */
 void Pack::addToBot(Bot bot) {
 
-    this->bot = bot;
+    this->bot.push_back(bot);
 
 }
 
 //getter/setter
 
 Bot Pack::getBot() {
-    return this->bot;
+    return this->bot[0];
 }
 
 string Pack::getPackNumberString() {

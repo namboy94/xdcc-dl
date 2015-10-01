@@ -2,6 +2,7 @@
  * @author Hermann Krumrey <hermann@krumreyh.com>
  */
 
+#include <iostream>
 #include "ServerList.h"
 
 #include "../Helpers/fileHandlers.h"
@@ -23,6 +24,39 @@ ServerList::ServerList(Config config) {
 }
 
 /**
+ * Loads the server config with a single pack
+ * @param config - the configuration to be used
+ * @param packString - the pack to be loaded
+ */
+ServerList::ServerList(Config config, string packString) {
+
+    this->serverFile = config.getServerFile();
+
+    parseServerFile();
+
+    istringstream parser(packString);
+
+    string bot;
+    string packNumberString;
+    string throwAway;
+
+    parser >> throwAway;
+    parser >> bot;
+    parser >> throwAway;
+    parser >> throwAway;
+    parser >> packNumberString;
+    packNumberString.erase(0, 1);
+
+    int packNumber;
+    stringstream(packNumberString) >> packNumber;
+
+    Pack pack(packNumber);
+
+    addPack(pack, bot);
+
+}
+
+/**
  * Parses the server- and pack files in the correct order to minimize programming errors.
  */
 void ServerList::parseFiles() {
@@ -30,6 +64,12 @@ void ServerList::parseFiles() {
     parseServerFile();
     parsePackFile();
 
+}
+
+//Getter/Setter
+
+vector<Server> ServerList::getServers() {
+    return this->servers;
 }
 
 //private
@@ -43,34 +83,49 @@ void ServerList::parseServerFile() {
     vector<string> content = readFileNoHash(this->serverFile);
 
     for (int i = 0; i < content.size(); i++) {
-        //Format: Ginpachi-Sensei @ rizon/horriblesubs
-        //TODO split into strings for bot, channel, server
+        string line = content[i];
+        if (regex_match(line, regex("(\\S)+ @ (\\S)+/(\\S)+"))) {
 
-        //TODO Regex Match
+            istringstream parseStream(line);
 
-        string server ="";
-        string channel ="";
-        string bot ="";
-        Server serverO(server);
-        Channel channelO(channel);
-        Bot botO(bot);
-        channelO.addBot(botO);
-        serverO.addChannel(channelO);
+            string server;
+            string throwAway;
+            string channelServer;
+            string channel;
+            string bot;
 
-        int serverPos = find(serverO, this->servers);
+            parseStream >> bot;
+            parseStream >> throwAway;
+            parseStream >> channelServer;
 
-        if (serverPos == -1) {
-            this->servers.push_back(serverO);
-        } else {
-            vector<Channel> channels = this->servers[serverPos].getChannels();
-            int channelPos = find(channelO, channels);
-            if (channelPos == -1) {
-                this->servers[serverPos].getChannels().push_back(channelO);
+            int slashPos = channelServer.find("/");
+            string channelServerBackup = channelServer;
+
+            server = channelServer.replace(slashPos, channelServer.size(), "");
+            channel = channelServerBackup.replace(0, slashPos + 1, "");
+
+
+            Server serverO(server);
+            Channel channelO(channel);
+            Bot botO(bot);
+            channelO.addBot(botO);
+            serverO.addChannel(channelO);
+
+            int serverPos = find(serverO, this->servers);
+
+            if (serverPos == -1) {
+                this->servers.push_back(serverO);
             } else {
-                vector<Bot> bots = channels[channelPos].getBots();
-                int botPos = find(botO, bots);
-                if (botPos == -1) {
-                    this->servers[serverPos].getChannels()[channelPos].getBots().push_back;
+                vector<Channel> channels = this->servers[serverPos].getChannels();
+                int channelPos = find(channelO, channels);
+                if (channelPos == -1) {
+                    this->servers[serverPos].getChannels().push_back(channelO);
+                } else {
+                    vector<Bot> bots = channels[channelPos].getBots();
+                    int botPos = find(botO, bots);
+                    if (botPos == -1) {
+                        this->servers[serverPos].getChannels()[channelPos].getBots().push_back(botO);
+                    }
                 }
             }
         }
@@ -90,50 +145,60 @@ void ServerList::parsePackFile() {
     for (int i = 0; i < content.size(); i++) {
         //Format: /msg tlacatlc6|XDCC xdcc send #884
         //TODO split into string for bot and packnumber
-        //TODO Regex Match
+        string line = content[i];
 
-        if (true) {
-            string bot = "";
-            string pack = "";
-            //TODO cast string to int
-            //int packNumber = (int) pack;
-            int packNumber = 0;
+        if (regex_match(line, regex("/msg (\\S)+ xdcc send #(0-9)+"))) {
+
+            istringstream parseStream(line);
+
+            string bot;
+            string pack;
+            string throwAway;
+
+            parseStream >> throwAway;
+            parseStream >> bot;
+            parseStream >> throwAway;
+            parseStream >> throwAway;
+            parseStream >> pack;
+            pack.erase(0, 1);
+
+            int packNumber;
+            stringstream(pack) >> packNumber;
+
             Pack packO(packNumber);
             addPack(packO, bot);
 
             prevBot = bot;
             prevPack = packNumber;
-        } else if (true) {
-            //TODO regex match for ...x
-            string jumpVariable = content[i].replace(0, 3, "");
-            //TODO cast to int
-            int jumpVarInt = 0;
-
+        } else if (regex_match(line, regex("...(0-9)+"))) {
+            string jumpVariable = line.replace(0, 3, "");
+            int jumpVar;
+            stringstream(jumpVariable) >> jumpVar;
             i++;
 
-            //Split packnumber of content[i];
-            int lastPack = 0;
+            if (regex_match(content[i], regex("/msg (\\S)+ xdcc send #(0-9)+"))) {
 
-            for (int j = prevPack; j <= lastPack; j += jumpVarInt) {
-                Pack currentPack(j);
-                addPack(currentPack, prevBot);
+                istringstream parseStream(content[i]);
+
+                string throwAway;
+                string lastPackString;
+                int lastPack;
+
+                parseStream >> throwAway;
+                parseStream >> throwAway;
+                parseStream >> throwAway;
+                parseStream >> throwAway;
+                parseStream >> lastPackString;
+                lastPackString.erase(0, 1);
+                stringstream(lastPackString) >> lastPack;
+
+                for (int j = prevPack; j <= lastPack; j += jumpVar) {
+                    Pack currentPack(j);
+                    addPack(currentPack, prevBot);
+                }
             }
         }
     }
-}
-
-/**
- * Constructor for the Locator class
- * @param server - the array id of the server
- * @param channel - the array id of the channel
- * @param bot - the array id of the bot
- */
-ServerList::Locator::Locator(int server, int channel, int bot) {
-
-    this->server = server;
-    this->channel = channel;
-    this->bot = bot;
-
 }
 
 /**

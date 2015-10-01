@@ -1,7 +1,7 @@
 /*
  * @author Hermann Krumrey <hermann@krumreyh.com>
  */
-#include "Channel.h"
+#include "ServerList.h"
 
 //public
 //Constructor
@@ -22,7 +22,7 @@ Channel::Channel(string name) {
  */
 void Channel::addBot(Bot bot) {
 
-    bot.addToChannel(this->);
+    bot.addToChannel(*this);
     this->bots.push_back(bot);
 
 }
@@ -33,7 +33,7 @@ void Channel::addBot(Bot bot) {
  */
 void Channel::addToServer(Server server) {
 
-    this->server = server;
+    this->server.push_back(server);
 
 }
 
@@ -48,5 +48,5 @@ vector<Bot> Channel::getBots() {
 }
 
 Server Channel::getServer() {
-    return this->server;
+    return this->server[0];
 }

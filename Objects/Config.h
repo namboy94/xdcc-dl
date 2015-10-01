@@ -51,14 +51,14 @@ private:
     bool emailState = false;
 
     vector<string> defaults = {"#Default Config File",
-                               "packfile=",
-                               "serverfile=",
-                               "texteditor=",
+                               "packfile=/home/" + string(getenv("USER")) + "/.xdccdownload/packfile",
+                               "serverfile/home/" + string(getenv("USER")) + "/.xdccdownload/serverfile",
+                               "texteditor=gedit",
                                "sendemail=false",
                                "email-address=user@server.domain",
                                "email-password=p455w0RDg035H34R",
                                "smtp-server=smtp.server.domain",
-                               "smtp-port=999"};//TODO How to get username etc.
+                               "smtp-port=999"};
 
     //helper functions
     void parse();

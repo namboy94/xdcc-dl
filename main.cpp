@@ -7,6 +7,8 @@ using namespace std;
 
 int main() {
 
+    //Currently not portable, so linux-only
+
     /**
      * Workflow
      *
@@ -50,7 +52,11 @@ int main() {
      */
 
     Config config("/home/hermann/Jetbrains/CLion/xdcc-download/Data/config");
+
     ServerList serverList(config);
+
+    cout << serverList.getServers()[0].getName() + "\n";
+    cout << serverList.getServers()[0].getChannels()[1].getName() + "\n";
 
     return 0;
 }

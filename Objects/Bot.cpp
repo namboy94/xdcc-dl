@@ -1,7 +1,7 @@
 /*
  * @author Hermann Krumrey <hermann@krumreyh.com>
  */
-#include "Bot.h"
+#include "ServerList.h"
 
 
 //public
@@ -23,7 +23,7 @@ Bot::Bot(string name) {
  */
 void Bot::addToChannel(Channel channel) {
 
-    this->channel = channel;
+    this->channel.push_back(channel);
 
 }
 
@@ -33,7 +33,7 @@ void Bot::addToChannel(Channel channel) {
  */
 void Bot::addPack(Pack pack) {
 
-    pack.addToBot(this->);
+    pack.addToBot(*this);
     this->packs.push_back(pack);
 
 }
@@ -50,5 +50,5 @@ vector<Pack> Bot::getPacks() {
 }
 
 Channel Bot::getChannel() {
-    return this->channel;
+    return this->channel[0];
 }

@@ -2,7 +2,7 @@
  * @author Hermann Krumrey <hermann@krumreyh.com>
  */
 
-#include "Server.h"
+#include "ServerList.h"
 
 //public
 //Constructor
@@ -21,7 +21,7 @@ Server::Server(string name) {
  */
 void Server::addChannel(Channel channel) {
 
-    channel.addToServer(this->);
+    channel.addToServer(*this);
     this->channels.push_back(channel);
 
 }
