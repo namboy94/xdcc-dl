@@ -1,7 +1,7 @@
 #include <iostream>
 #include "Objects/Config.h"
-#include "Helpers/fileHandlers.h"
 #include "Objects/ServerList.h"
+#include "Downloaders/HexChatPythonDownloader.h"
 
 using namespace std;
 
@@ -54,6 +54,9 @@ int main() {
     Config config("/home/hermann/Jetbrains/CLion/xdcc-download/Data/config");
 
     ServerList serverList(config);
+
+    HexChatPythonDownloader downloader(config, serverList);
+    downloader.downloadAll();
 
     vector<Server> servers = serverList.getServers();
 

@@ -2,6 +2,7 @@
  * @author Hermann Krumrey <hermann@krumreyh.com>
  */
 
+#include <iostream>
 #include "HexChatPythonDownloader.h"
 
 /**
@@ -20,7 +21,9 @@ HexChatPythonDownloader::HexChatPythonDownloader(Config config, ServerList serve
 void HexChatPythonDownloader::downloadAll() {
 
     vector<string> script;
-    //script.push_back(this->scriptStart);
+    for (int i = 0; i < this->scriptStart.size(); i++) {
+        script.push_back(this->scriptStart[i]);
+    }
 
     vector<Server> servers = this->serverList[0].getServers();
     for (int i = 0; i < servers.size(); i++) {
@@ -39,7 +42,9 @@ void HexChatPythonDownloader::downloadAll() {
         }
     }
 
-    //script.push_back(this->scriptEnd);
+    for (int i = 0; i < this->scriptEnd.size(); i++) {
+        script.push_back(this->scriptEnd[i]);
+    }
 
     writeToFile("/home/hermann/.config/hexchat/addons/xdccscript.py", script);
 

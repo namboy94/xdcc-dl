@@ -82,6 +82,10 @@ void createFile(string file) {
     output.close();
 }
 
+void deleteFile(string file) {
+    remove(file.c_str());
+}
+
 /**
  * Writes a vector of Strings to a newline seperated textfile
  * @param file - the path of the file to be written to
@@ -89,6 +93,7 @@ void createFile(string file) {
  * @throws 503 if the file already exists
  */
 void writeToFile(string file, vector<string> content) {
+    deleteFile(file);
     createFile(file);
     ofstream output(file);
     for (int i = 0; i < content.size(); i++) {
