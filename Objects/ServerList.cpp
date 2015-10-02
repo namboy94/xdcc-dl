@@ -64,7 +64,7 @@ ServerList::ServerList(Config config, string packString) {
 void ServerList::parseFiles() {
 
     parseServerFile();
-    //parsePackFile();
+    parsePackFile();
 
 }
 
@@ -200,7 +200,7 @@ void ServerList::parsePackFile() {
     for (int i = 0; i < content.size(); i++) {
         string line = content[i];
 
-        if (regex_match(line, regex("/msg (\\S)+ xdcc send #(0-9)+"))) {
+        if (regex_match(line, regex("/msg (\\S)+ xdcc send #[0-9]+"))) {
 
             istringstream parseStream(line);
 
@@ -219,17 +219,17 @@ void ServerList::parsePackFile() {
             stringstream(pack) >> packNumber;
 
             Pack packO(packNumber);
-            //addPack(packO, bot);
+            addPack(packO, bot);
 
             prevBot = bot;
             prevPack = packNumber;
-        } else if (regex_match(line, regex("...(0-9)+"))) {
+        } else if (regex_match(line, regex("...[0-9]+"))) {
             string jumpVariable = line.replace(0, 3, "");
             int jumpVar;
             stringstream(jumpVariable) >> jumpVar;
             i++;
 
-            if (regex_match(content[i], regex("/msg (\\S)+ xdcc send #(0-9)+"))) {
+            if (regex_match(content[i], regex("/msg (\\S)+ xdcc send #[0-9]+"))) {
 
                 istringstream parseStream(content[i]);
 
@@ -245,9 +245,9 @@ void ServerList::parsePackFile() {
                 lastPackString.erase(0, 1);
                 stringstream(lastPackString) >> lastPack;
 
-                for (int j = prevPack; j <= lastPack; j += jumpVar) {
+                for (int j = prevPack + jumpVar; j <= lastPack; j += jumpVar) {
                     Pack currentPack(j);
-                    //addPack(currentPack, prevBot);
+                    addPack(currentPack, prevBot);
                 }
             }
         }
@@ -262,8 +262,7 @@ void ServerList::parsePackFile() {
 void ServerList::addPack(Pack pack, Bot bot) {
 
     Locator locate = find(bot);
-    this->servers[locate.server].getChannels()[locate.channel].getBots()[locate.bot].getPacks().push_back(pack);
-
+    this->servers[locate.server].addPack(pack, locate.channel, locate.bot);
 }
 
 /**

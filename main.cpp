@@ -67,7 +67,7 @@ int main() {
                 //cout << bots[k].getName() + "\n";
                 vector<Pack> packs = bots[k].getPacks();
                 for (int l = 0; l < packs.size(); l++) {
-                    cout << packs[l].getPackNumberString();
+                    cout << packs[l].getPackNumberString() + " ";
                 }
             }
         }
