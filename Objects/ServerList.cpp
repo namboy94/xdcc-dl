@@ -30,6 +30,8 @@ ServerList::ServerList(Config config) {
  */
 ServerList::ServerList(Config config, string packString) {
 
+    cout << "start";
+
     this->serverFile = config.getServerFile();
 
     parseServerFile();
@@ -62,7 +64,7 @@ ServerList::ServerList(Config config, string packString) {
 void ServerList::parseFiles() {
 
     parseServerFile();
-    parsePackFile();
+    //parsePackFile();
 
 }
 
@@ -72,146 +74,7 @@ vector<Server> ServerList::getServers() {
     return this->servers;
 }
 
-//private
-//helper functions
-
-/**
- * Parses the server file and loads all relevant data into the data structure
- */
-void ServerList::parseServerFile() {
-
-    vector<string> content = readFileNoHash(this->serverFile);
-
-    for (int i = 0; i < content.size(); i++) {
-        string line = content[i];
-        if (regex_match(line, regex("(\\S)+ @ (\\S)+/(\\S)+"))) {
-
-            istringstream parseStream(line);
-
-            string server;
-            string throwAway;
-            string channelServer;
-            string channel;
-            string bot;
-
-            parseStream >> bot;
-            parseStream >> throwAway;
-            parseStream >> channelServer;
-
-            int slashPos = channelServer.find("/");
-            string channelServerBackup = channelServer;
-
-            server = channelServer.replace(slashPos, channelServer.size(), "");
-            channel = channelServerBackup.replace(0, slashPos + 1, "");
-
-
-            Server serverO(server);
-            Channel channelO(channel);
-            Bot botO(bot);
-            channelO.addBot(botO);
-            serverO.addChannel(channelO);
-
-            int serverPos = find(serverO, this->servers);
-
-            if (serverPos == -1) {
-                this->servers.push_back(serverO);
-            } else {
-                vector<Channel> channels = this->servers[serverPos].getChannels();
-                int channelPos = find(channelO, channels);
-                if (channelPos == -1) {
-                    this->servers[serverPos].getChannels().push_back(channelO);
-                } else {
-                    vector<Bot> bots = channels[channelPos].getBots();
-                    int botPos = find(botO, bots);
-                    if (botPos == -1) {
-                        this->servers[serverPos].getChannels()[channelPos].getBots().push_back(botO);
-                    }
-                }
-            }
-        }
-    }
-}
-
-/**
- * Parses the pack file and loads all relevant information into the data structure
- * Supports easy batches via jumping variables given in the format ...x
- */
-void ServerList::parsePackFile() {
-
-    vector<string> content = readFileNoHash(this->packFile);
-    string prevBot;
-    int prevPack;
-
-    for (int i = 0; i < content.size(); i++) {
-        //Format: /msg tlacatlc6|XDCC xdcc send #884
-        //TODO split into string for bot and packnumber
-        string line = content[i];
-
-        if (regex_match(line, regex("/msg (\\S)+ xdcc send #(0-9)+"))) {
-
-            istringstream parseStream(line);
-
-            string bot;
-            string pack;
-            string throwAway;
-
-            parseStream >> throwAway;
-            parseStream >> bot;
-            parseStream >> throwAway;
-            parseStream >> throwAway;
-            parseStream >> pack;
-            pack.erase(0, 1);
-
-            int packNumber;
-            stringstream(pack) >> packNumber;
-
-            Pack packO(packNumber);
-            addPack(packO, bot);
-
-            prevBot = bot;
-            prevPack = packNumber;
-        } else if (regex_match(line, regex("...(0-9)+"))) {
-            string jumpVariable = line.replace(0, 3, "");
-            int jumpVar;
-            stringstream(jumpVariable) >> jumpVar;
-            i++;
-
-            if (regex_match(content[i], regex("/msg (\\S)+ xdcc send #(0-9)+"))) {
-
-                istringstream parseStream(content[i]);
-
-                string throwAway;
-                string lastPackString;
-                int lastPack;
-
-                parseStream >> throwAway;
-                parseStream >> throwAway;
-                parseStream >> throwAway;
-                parseStream >> throwAway;
-                parseStream >> lastPackString;
-                lastPackString.erase(0, 1);
-                stringstream(lastPackString) >> lastPack;
-
-                for (int j = prevPack; j <= lastPack; j += jumpVar) {
-                    Pack currentPack(j);
-                    addPack(currentPack, prevBot);
-                }
-            }
-        }
-    }
-}
-
-/**
- * Adds a pack to a bot
- * @param pack - the pack to be added
- * @param bot - the bot to which the pack should be added
- */
-void ServerList::addPack(Pack pack, Bot bot) {
-
-    Locator locate = find(bot);
-    this->servers[locate.server].getChannels()[locate.channel].getBots()[locate.bot].getPacks().push_back(pack);
-
-}
+//Finder Functions
 
 /**
  * Searches an array of servers for one specific server and returns its position in the array
@@ -261,6 +124,145 @@ int ServerList::find(Bot bot, vector<Bot> botArray) {
         }
     }
     return -1;
+
+}
+
+//private
+//helper functions
+
+/**
+ * Parses the server file and loads all relevant data into the data structure
+ */
+void ServerList::parseServerFile() {
+
+    vector<string> content = readFileNoHash(this->serverFile);
+
+    for (int i = 0; i < content.size(); i++) {
+        string line = content[i];
+        if (regex_match(line, regex("(\\S)+ @ (\\S)+/(\\S)+"))) {
+
+            istringstream parseStream(line);
+
+            string server;
+            string throwAway;
+            string channelServer;
+            string channel;
+            string bot;
+
+            parseStream >> bot;
+            parseStream >> throwAway;
+            parseStream >> channelServer;
+
+            int slashPos = channelServer.find("/");
+            string channelServerBackup = channelServer;
+
+            server = channelServer.replace(slashPos, channelServer.size(), "");
+            channel = channelServerBackup.replace(0, slashPos + 1, "");
+
+            Server serverO(server);
+            Channel channelO(channel);
+            Bot botO(bot);
+
+            int serverPos = find(serverO, this->servers);
+
+            if (serverPos == -1) {
+                channelO.addBot(botO);
+                serverO.addChannel(channelO);
+                this->servers.push_back(serverO);
+            } else {
+                vector<Channel> channels = this->servers[serverPos].getChannels();
+                int channelPos = find(channelO, channels);
+                if (channelPos == -1) {
+                    channelO.addBot(botO);
+                    this->servers[serverPos].addChannel(channelO);
+                } else {
+                    vector<Bot> bots = channels[channelPos].getBots();
+                    int botPos = find(botO, bots);
+                    if (botPos == -1) {
+                        this->servers[serverPos].addBot(botO, channelPos);
+                    }
+                }
+            }
+        }
+    }
+}
+
+/**
+ * Parses the pack file and loads all relevant information into the data structure
+ * Supports easy batches via jumping variables given in the format ...x
+ */
+void ServerList::parsePackFile() {
+
+    vector<string> content = readFileNoHash(this->packFile);
+    string prevBot;
+    int prevPack;
+
+    for (int i = 0; i < content.size(); i++) {
+        string line = content[i];
+
+        if (regex_match(line, regex("/msg (\\S)+ xdcc send #(0-9)+"))) {
+
+            istringstream parseStream(line);
+
+            string bot;
+            string pack;
+            string throwAway;
+
+            parseStream >> throwAway;
+            parseStream >> bot;
+            parseStream >> throwAway;
+            parseStream >> throwAway;
+            parseStream >> pack;
+            pack.erase(0, 1);
+
+            int packNumber;
+            stringstream(pack) >> packNumber;
+
+            Pack packO(packNumber);
+            //addPack(packO, bot);
+
+            prevBot = bot;
+            prevPack = packNumber;
+        } else if (regex_match(line, regex("...(0-9)+"))) {
+            string jumpVariable = line.replace(0, 3, "");
+            int jumpVar;
+            stringstream(jumpVariable) >> jumpVar;
+            i++;
+
+            if (regex_match(content[i], regex("/msg (\\S)+ xdcc send #(0-9)+"))) {
+
+                istringstream parseStream(content[i]);
+
+                string throwAway;
+                string lastPackString;
+                int lastPack;
+
+                parseStream >> throwAway;
+                parseStream >> throwAway;
+                parseStream >> throwAway;
+                parseStream >> throwAway;
+                parseStream >> lastPackString;
+                lastPackString.erase(0, 1);
+                stringstream(lastPackString) >> lastPack;
+
+                for (int j = prevPack; j <= lastPack; j += jumpVar) {
+                    Pack currentPack(j);
+                    //addPack(currentPack, prevBot);
+                }
+            }
+        }
+    }
+}
+
+/**
+ * Adds a pack to a bot
+ * @param pack - the pack to be added
+ * @param bot - the bot to which the pack should be added
+ */
+void ServerList::addPack(Pack pack, Bot bot) {
+
+    Locator locate = find(bot);
+    this->servers[locate.server].getChannels()[locate.channel].getBots()[locate.bot].getPacks().push_back(pack);
 
 }
 

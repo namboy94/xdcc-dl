@@ -18,22 +18,11 @@ Bot::Bot(string name) {
 }
 
 /**
- * Adds this bot to a given channel
- * @param channel - the channel to which this bot is to be added
- */
-void Bot::addToChannel(Channel channel) {
-
-    this->channel.push_back(channel);
-
-}
-
-/**
  * Adds a pack to this bot
  * @param pack - the pack to be added
  */
 void Bot::addPack(Pack pack) {
 
-    pack.addToBot(*this);
     this->packs.push_back(pack);
 
 }
@@ -47,8 +36,4 @@ string Bot::getName() {
 
 vector<Pack> Bot::getPacks() {
     return this->packs;
-}
-
-Channel Bot::getChannel() {
-    return this->channel[0];
 }

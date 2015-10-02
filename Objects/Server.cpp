@@ -21,8 +21,19 @@ Server::Server(string name) {
  */
 void Server::addChannel(Channel channel) {
 
-    channel.addToServer(*this);
     this->channels.push_back(channel);
+
+}
+
+void Server::addBot(Bot bot, int channelIndex) {
+
+    this->channels[channelIndex].addBot(bot);
+
+}
+
+void Server::addPack(Pack pack, int channelIndex, int botIndex){
+
+    this->channels[channelIndex].addPack(pack, botIndex);
 
 }
 

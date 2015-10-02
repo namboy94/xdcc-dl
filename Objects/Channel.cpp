@@ -22,18 +22,13 @@ Channel::Channel(string name) {
  */
 void Channel::addBot(Bot bot) {
 
-    bot.addToChannel(*this);
     this->bots.push_back(bot);
 
 }
 
-/**
- * Adds this channel to a server
- * @param server - the server to which this channel should be added to
- */
-void Channel::addToServer(Server server) {
+void Channel::addPack(Pack pack, int botIndex) {
 
-    this->server.push_back(server);
+    this->bots[botIndex].addPack(pack);
 
 }
 
@@ -45,8 +40,4 @@ string Channel::getName() {
 
 vector<Bot> Channel::getBots() {
     return this->bots;
-}
-
-Server Channel::getServer() {
-    return this->server[0];
 }

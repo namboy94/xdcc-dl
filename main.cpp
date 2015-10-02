@@ -55,8 +55,23 @@ int main() {
 
     ServerList serverList(config);
 
-    cout << serverList.getServers()[0].getName() + "\n";
-    cout << serverList.getServers()[0].getChannels()[1].getName() + "\n";
+    vector<Server> servers = serverList.getServers();
+
+    for (int i = 0; i < servers.size(); i++) {
+        //cout << "\n" + servers[i].getName() + "\n";
+        vector<Channel> channels = servers[i].getChannels();
+        for (int j = 0; j < channels.size(); j++) {
+            //cout << channels[j].getName() + "\n";
+            vector<Bot> bots = channels[j].getBots();
+            for (int k = 0; k < bots.size(); k++) {
+                //cout << bots[k].getName() + "\n";
+                vector<Pack> packs = bots[k].getPacks();
+                for (int l = 0; l < packs.size(); l++) {
+                    cout << packs[l].getPackNumberString();
+                }
+            }
+        }
+    }
 
     return 0;
 }

@@ -17,23 +17,8 @@ Pack::Pack(int packNumber) {
 
 }
 
-/**
- * adds this pack to a Bot.
- * @param bot - the bot to which this pack should be added.
- */
-void Pack::addToBot(Bot bot) {
-
-    this->bot.push_back(bot);
-
-}
-
 //getter/setter
 
-Bot Pack::getBot() {
-    return this->bot[0];
-}
-
 string Pack::getPackNumberString() {
-    return "";
-    //TODO return (string) this->packNumber;
+    return to_string(this->packNumber);
 }

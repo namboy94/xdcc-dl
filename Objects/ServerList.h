@@ -34,6 +34,11 @@ public:
     //Getter/Setter
     vector<Server> getServers();
 
+    //public helper functions
+    int find(Server server, vector<Server> serverArray);
+    int find(Channel channel, vector<Channel> channelArray);
+    int find(Bot bot, vector<Bot> botArray);
+
 private:
 
     //private variables
@@ -46,9 +51,6 @@ private:
     void parseServerFile();
     void parsePackFile();
 
-    int find(Server server, vector<Server> serverArray);
-    int find(Channel channel, vector<Channel> channelArray);
-    int find(Bot bot, vector<Bot> botArray);
     Locator find(Bot bot);
 };
 
@@ -75,6 +77,8 @@ public:
 
     //Functional Functions
     void addChannel(Channel channel);
+    void addBot(Bot bot, int channelIndex);
+    void addPack(Pack pack, int channelIndex, int botIndex);
 
     //Getter/Setter
     string getName();
@@ -103,12 +107,11 @@ public:
 
     //Functional Functions
     void addBot(Bot bot);
-    void addToServer(Server server);
+    void addPack(Pack pack, int botIndex);
 
     //Getter/Setter
     string getName();
     vector<Bot> getBots();
-    Server getServer();
 
 
 private:
@@ -116,8 +119,6 @@ private:
     //Local Variables
     string name;
     vector<Bot> bots;
-    //Server server = NULL;
-    vector<Server> server;
 };
 
 
@@ -134,12 +135,10 @@ public:
 
     //Functional Functions
     void addPack(Pack pack);
-    void addToChannel(Channel channel);
 
     //Getter/Setter
     string getName();
     vector<Pack> getPacks();
-    Channel getChannel();
 
 
 private:
@@ -147,8 +146,6 @@ private:
     //private variables
     string name;
     vector<Pack> packs;
-    //Channel channel = NULL;
-    vector<Channel> channel;
 };
 
 
@@ -163,20 +160,15 @@ public:
     //Constructor
     Pack(int packNumber);
 
-    //Functional Functions
-    void addToBot(Bot bot);
-
     //Getter/Setter
     string getPackNumberString();
-    Bot getBot();
 
 
 private:
 
     //private variables
     int packNumber;
-    //Bot bot = NULL;
-    vector<Bot> bot;
+
 };
 
 #endif //XDCC_DOWNLOAD_SERVERLIST_H
