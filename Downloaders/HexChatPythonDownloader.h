@@ -21,8 +21,23 @@ public:
     //Functional functions
     void downloadAll();
 
+    void refresh();
+
+    void addSinglePack(string addPackString);
+
+    void addSingleBot(string addBotString);
+
+    void downloadSinglePack(string packString);
+
+    void editPacks();
+
+    void editServers();
+
 
 private:
+
+    //helper functions
+    void download(ServerList serverList);
 
     //private variables
     vector<string> scriptContent;

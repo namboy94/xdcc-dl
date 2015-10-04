@@ -35,8 +35,6 @@ public:
     string getSmtpPort();
     bool getEmailState();
 
-
-
 private:
 
     //variables
@@ -51,8 +49,8 @@ private:
     bool emailState = false;
 
     vector<string> defaults = {"#Default Config File",
-                               "packfile=/home/" + string(getenv("USER")) + "/.xdccdownload/packfile",
-                               "serverfile/home/" + string(getenv("USER")) + "/.xdccdownload/serverfile",
+                               "packfile=/home/" + string(getenv("USER")) + "/.xdcc-download/files/packfile",
+                               "serverfile=/home/" + string(getenv("USER")) + "/.xdcc-download/files/serverfile",
                                "texteditor=gedit",
                                "sendemail=false",
                                "email-address=user@server.domain",

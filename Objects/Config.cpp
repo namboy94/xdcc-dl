@@ -3,6 +3,7 @@
  * Implements a data structure to save and parse configaration options
  */
 
+#include <iostream>
 #include "Config.h"
 
 //Function implementations
@@ -18,11 +19,21 @@ Config::Config(string configFile){
         this->fileContent = readFile(configFile);
     } catch (int e) {
         if (e == 404) {
-            writeToFile(configFile, defaults);
-            this->fileContent = readFile(configFile);
+            string command1 = "mkdir /home/" + string(getenv("USER")) + "/.xdcc-download";
+            string command2 = "mkdir /home/" + string(getenv("USER")) + "/.xdcc-download/files";
+            system(command1.c_str());
+            system(command2.c_str());
+            writeToFile(configFile, this->defaults);
+            this->fileContent = this->defaults;
         }
     }
     parse();
+    if (!isFile(this->packFile)) {
+        writeToFile(this->packFile, {"#Packfile"});
+    }
+    if (!isFile(this->serverFile)) {
+        writeToFile(this->serverFile, {"#Serverfile"});
+    }
 }
 
 //Getter/Setter
@@ -76,7 +87,7 @@ void Config::parse() {
         else if (!strncmp(line.c_str(), "smtp-server=", 12)) { this->smtpServer = line.replace(0, 12, ""); }
         else if (!strncmp(line.c_str(), "smtp-port=", 10)) { this->smtpPort = line.replace(0, 10, ""); }
         else if (!strncmp(line.c_str(), "sendemail=true", 14)) { this->emailState = true; }
-        else continue; //Empty or un-parseable line;
-    } //runs in O(n) :D
+        else continue;
+    }
 
 }

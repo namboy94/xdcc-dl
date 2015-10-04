@@ -31,6 +31,16 @@ public:
     //functional functions
     void parseFiles();
 
+    void refresh();
+
+    void packEdit();
+
+    void serverEdit();
+
+    void addSinglePack(string packString);
+
+    void addSingleBot(string botString);
+
     //Getter/Setter
     vector<Server> getServers();
 
@@ -45,6 +55,7 @@ private:
     vector<Server> servers;
     string packFile;
     string serverFile;
+    string textEditor;
 
     //helper functions
     void addPack(Pack pack, Bot bot);

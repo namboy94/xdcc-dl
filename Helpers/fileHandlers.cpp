@@ -4,6 +4,7 @@
  */
 
 #include <string.h>
+#include <iostream>
 #include "fileHandlers.h"
 
 
@@ -14,12 +15,14 @@
  * @param file - the path of the file to be checked
  */
 bool isFile(string file) {
-    ifstream input(file);
-    if (input) {
-        input.close();
+
+    ifstream ifile(file.c_str());
+    if (ifile) {
+        ifile.close();
         return true;
-    } else {
-        input.close();
+    }
+    else {
+        ifile.close();
         return false;
     }
 }
@@ -59,6 +62,7 @@ vector<string> readFileNoHash(string file) {
     if (!isFile(file)) {
         throw 404;
     }
+
     ifstream input(file);
     string line;
 
@@ -101,4 +105,15 @@ void writeToFile(string file, vector<string> content) {
         output.write(line.c_str(), content[i].size() + 1);
     }
     output.close();
+}
+
+void appendLine(string line, string file) {
+
+    if (!isFile(file)) {
+        throw 404;
+    }
+    ofstream output(file, ios::app);
+    output << line + "\n";
+    output.close();
+
 }

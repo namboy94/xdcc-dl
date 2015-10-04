@@ -18,6 +18,7 @@ ServerList::ServerList(Config config) {
 
     this->serverFile = config.getServerFile();
     this->packFile = config.getPackFile();
+    this->textEditor = config.getTextEditor();
 
     parseFiles();
 
@@ -127,6 +128,41 @@ int ServerList::find(Bot bot, vector<Bot> botArray) {
 
 }
 
+void ServerList::refresh() {
+
+    parseFiles();
+
+}
+
+void ServerList::serverEdit() {
+
+    string command = this->textEditor + " " + this->serverFile;
+    system(command.c_str());
+    refresh();
+
+}
+
+void ServerList::packEdit() {
+
+    string command = this->textEditor + " " + this->packFile;
+    system(command.c_str());
+    refresh();
+
+}
+
+void ServerList::addSingleBot(string botString) {
+
+    appendLine(botString, this->serverFile);
+    refresh();
+
+}
+
+void ServerList::addSinglePack(string packString) {
+
+    appendLine(packString, this->packFile);
+
+}
+
 //private
 //helper functions
 
@@ -139,6 +175,7 @@ void ServerList::parseServerFile() {
 
     for (int i = 0; i < content.size(); i++) {
         string line = content[i];
+
         if (regex_match(line, regex("(\\S)+ @ (\\S)+/(\\S)+"))) {
 
             istringstream parseStream(line);
