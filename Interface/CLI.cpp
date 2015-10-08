@@ -46,7 +46,7 @@ void CLI::mainLoop() {
             }
         }
         else {
-            cout << "input not understood";
+            cout << "input not understood\n";
         }
     }
 }

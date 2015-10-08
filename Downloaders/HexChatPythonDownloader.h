@@ -7,11 +7,12 @@
 
 #include "../Objects/ServerList.h"
 #include <vector>
+#include "GenericDownloader.h"
 
 /**
  * Class that handles downloading files through Hexchat via a generated python script
  */
-class HexChatPythonDownloader{
+class HexChatPythonDownloader : public GenericDownloader {
 
 public:
 
@@ -25,9 +26,7 @@ public:
     void downloadSinglePack(string packString);
     void editPacks();
     void editServers();
-
     void printAll();
-
     void printPacks();
 
 

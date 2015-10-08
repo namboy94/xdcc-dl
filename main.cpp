@@ -12,8 +12,6 @@
 #include "Downloaders/HexChatPythonDownloader.h"
 #include "Interface/CLI.h"
 
-using namespace std;
-
 /**
  * The Main Function that runs the program
  */
