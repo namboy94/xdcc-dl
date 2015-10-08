@@ -7,16 +7,22 @@
 
 #include "../Downloaders/HexChatPythonDownloader.h"
 
+/**
+ * Class that allows User Interaction via a command line interface
+ */
 class CLI {
 
 public:
 
+    //Constructor
     CLI(HexChatPythonDownloader downloader, Config config);
 
+    //Functional functions
     void mainLoop();
 
 private:
 
+    //private variables
     vector<HexChatPythonDownloader> downloader;
     vector<Config> config;
 

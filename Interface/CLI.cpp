@@ -36,6 +36,10 @@ void CLI::mainLoop() {
             this->downloader[0].addSinglePack(input);
         } else if (regex_match(input, regex("add (\\S)+ @ (\\S)+/(\\S)+"))) {
             this->downloader[0].addSingleBot(input);
+        } else if (!strcmp(input.c_str(), "print")) {
+            this->downloader[0].printPacks();
+        } else if (!strcmp(input.c_str(), "print all")) {
+            this->downloader[0].printAll();
         } else if (!strcmp(input.c_str(), "help")) {
             for (int i = 0; i < this->helpString.size(); i++) {
                 cout << this->helpString[i];

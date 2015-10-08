@@ -86,6 +86,10 @@ void createFile(string file) {
     output.close();
 }
 
+/**
+ * Deletes a file
+ * @param file - the file to be deleted
+ */
 void deleteFile(string file) {
     remove(file.c_str());
 }
@@ -107,6 +111,11 @@ void writeToFile(string file, vector<string> content) {
     output.close();
 }
 
+/**
+ * Appends a line to a text file
+ * @param line - the line to be appended
+ * @param file - the path to the file to which the line shall be appended to
+ */
 void appendLine(string line, string file) {
 
     if (!isFile(file)) {

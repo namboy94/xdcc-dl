@@ -24,6 +24,7 @@ vector<string> readFileNoHash(string file);                 //Reads a file and r
 void createFile(string file);                               //Creates a new, empty file.
 void writeToFile(string file, vector<string> content);      //Writes a vector of Strings to a newline seperated textfile
 void appendLine(string line, string file);                  //Appends a line to a text file
+void deleteFile(string file);                               //Deletes a file
 
 
 #endif //XDCC_DOWNLOAD_FILEHANDLERS_H

@@ -26,6 +26,11 @@ void Channel::addBot(Bot bot) {
 
 }
 
+/**
+ * Adds a pack to a bot belonging to the channel
+ * @param pack - the pack to be added
+ * @param botIndex - the index of the bot to which this pack should be added
+ */
 void Channel::addPack(Pack pack, int botIndex) {
 
     this->bots[botIndex].addPack(pack);

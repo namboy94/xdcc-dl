@@ -1,5 +1,6 @@
 /*
  * @author Hermann Krumrey <hermann@krumreyh.com>
+ * Collection of classes necessary for the implementation of the ServerList Data Structure
  */
 
 #ifndef XDCC_DOWNLOAD_SERVERLIST_H

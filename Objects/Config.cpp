@@ -15,6 +15,7 @@
  */
 Config::Config(string configFile){
 
+    //Checks if Config File exits. If not, a default config file is generated
     try {
         this->fileContent = readFile(configFile);
     } catch (int e) {
@@ -28,11 +29,13 @@ Config::Config(string configFile){
         }
     }
     parse();
+
+    //Checks if pack/serverfile exists and generates them if not.
     if (!isFile(this->packFile)) {
         writeToFile(this->packFile, {"#Packfile"});
     }
     if (!isFile(this->serverFile)) {
-        writeToFile(this->serverFile, {"#Serverfile"});
+        writeToFile(this->serverFile, this->defaultServers);
     }
 }
 
@@ -72,6 +75,9 @@ string Config::getSmtpPort() {
 
 //private
 
+/**
+ * Parses the config file and saves the information as local variables
+ */
 void Config::parse() {
 
     string line;

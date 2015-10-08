@@ -64,6 +64,7 @@ ServerList::ServerList(Config config, string packString) {
  */
 void ServerList::parseFiles() {
 
+    this->servers.empty();
     parseServerFile();
     parsePackFile();
 
@@ -128,12 +129,18 @@ int ServerList::find(Bot bot, vector<Bot> botArray) {
 
 }
 
+/**
+ * Re-parses the server- and packfiles to ensure that all information is current
+ */
 void ServerList::refresh() {
 
     parseFiles();
 
 }
 
+/**
+ * Opens a text editor to edit the server file
+ */
 void ServerList::serverEdit() {
 
     string command = this->textEditor + " " + this->serverFile;
@@ -142,6 +149,9 @@ void ServerList::serverEdit() {
 
 }
 
+/**
+ * Opens a text edito to edit the pack file
+ */
 void ServerList::packEdit() {
 
     string command = this->textEditor + " " + this->packFile;
@@ -150,6 +160,9 @@ void ServerList::packEdit() {
 
 }
 
+/**
+ * Adds a single bot to the server file and adds it to the data structure
+ */
 void ServerList::addSingleBot(string botString) {
 
     appendLine(botString, this->serverFile);
@@ -157,6 +170,9 @@ void ServerList::addSingleBot(string botString) {
 
 }
 
+/**
+ * Adds a single pack to the pack file and adds it to the data structure
+ */
 void ServerList::addSinglePack(string packString) {
 
     appendLine(packString, this->packFile);
