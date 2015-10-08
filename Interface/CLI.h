@@ -25,9 +25,10 @@ private:
     //private variables
     vector<HexChatPythonDownloader> downloader;
     vector<Config> config;
+    vector<string> helpString;
 
-    vector<string> helpString = {"List of Commands:\n\n",
-                                 "\n\n"};
+    //helper functions
+    void variableInit();
 
 };
 

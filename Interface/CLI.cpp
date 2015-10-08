@@ -7,6 +7,7 @@
 
 CLI::CLI(HexChatPythonDownloader downloader, Config config) {
 
+    variableInit();
     this->downloader.push_back(downloader);
     this->config.push_back(config);
 
@@ -49,4 +50,13 @@ void CLI::mainLoop() {
             cout << "input not understood\n";
         }
     }
+}
+
+//private
+
+void CLI::variableInit() {
+
+    this->helpString = {"",
+                        ""};
+
 }

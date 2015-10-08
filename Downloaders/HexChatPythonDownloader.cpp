@@ -12,6 +12,7 @@
  */
 HexChatPythonDownloader::HexChatPythonDownloader(Config config, ServerList serverList) {
 
+    variableInit();
     this->config.push_back(config);
     this->serverList.push_back(serverList);
 
@@ -169,4 +170,49 @@ void HexChatPythonDownloader::printMode(string mode) {
         }
         cout << "\n";
     }
+}
+
+//private
+
+void HexChatPythonDownloader::variableInit() {
+
+    this->scriptStart = {"__module_name__ = \"xdcc_executer\"",
+                         "__module_version__ = \"0.1\"",
+                         "__module_description__ = \"Python XDCC Executer\"\n",
+                         "import hexchat",
+                         "import sys\n",
+                         "def download(word, word_eol, userdata):",
+                         "\thexchat.command(packs[0])",
+                         "\treturn hexchat.EAT_HEXCHAT\n",
+                         "def downloadComplete(word, word_eol, userdata):",
+                         "\thexchat.command('quit')",
+                         "\tchannels.pop(0)",
+                         "\tpacks.pop(0)",
+                         "\tif len(channels) == 0:",
+                         "\t\tsys.exit(1)",
+                         "\telse:",
+                         "\t\thexchat.command(channels[0])",
+                         "\treturn hexchat.EAT_HEXCHAT\n",
+                         "def downloadFailed(word, word_eol, userdata):",
+                         "\tfailed.append(packs[0])",
+                         "\thexchat.command('quit')",
+                         "\tchannels.pop(0)",
+                         "\tpacks.pop(0)",
+                         "\tif len(channels) == 0:",
+                         "\t\tsys.exit(1)",
+                         "\telse:",
+                         "\t\thexchat.command(channels[0])",
+                         "\treturn hexchat.EAT_HEXCHAT\n",
+                         "failed = []",
+                         "channels = []",
+                         "packs = []\n"};
+
+    this->scriptEnd = {"hexchat.command(channels[0])",
+                       "hexchat.hook_print(\"You Join\", download)",
+                       "hexchat.hook_print(\"DCC RECV Complete\", downloadComplete)",
+                       "hexchat.hook_print(\"DCC STALL\", downloadFailed)",
+                       "hexchat.hook_print(\"DCC RECV Abort\", downloadFailed)",
+                       "hexchat.hook_print(\"DCC RECV Failed\", downloadFailed)",
+                       "hexchat.hook_print(\"DCC Timeout\", downloadFailed)"};
+
 }
