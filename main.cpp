@@ -17,6 +17,13 @@
  */
 int main() {
 
+#ifdef __linux__
+    cout << "Linux";
+#elif _WIN32
+    cout << "Windows";
+#endif
+
+
     Config config("/home/" + string(getenv("USER")) + "/.xdcc-download/files/config");
     ServerList serverList(config);
     HexChatPythonDownloader downloader(config, serverList);

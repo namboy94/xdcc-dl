@@ -16,19 +16,12 @@ public:
 
     //Functional functions
     virtual void downloadAll() = 0;
-
     virtual void addSinglePack(string addPackString) = 0;
-
     virtual void addSingleBot(string addBotString) = 0;
-
     virtual void downloadSinglePack(string packString) = 0;
-
     virtual void editPacks() = 0;
-
     virtual void editServers() = 0;
-
     virtual void printAll() = 0;
-
     virtual void printPacks() = 0;
 
 };

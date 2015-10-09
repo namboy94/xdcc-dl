@@ -51,6 +51,14 @@ string Config::getPackFile() {
     return this->packFile;
 }
 
+string Config::getHexChatCommand() {
+    return this->hexChatCommand;
+}
+
+string Config::getScriptFileLocation() {
+    return this->scriptFileLocation;
+}
+
 string Config::getTextEditor() {
     return this->textEditor;
 }
@@ -95,6 +103,10 @@ void Config::parse() {
         else if (!strncmp(line.c_str(), "smtp-server=", 12)) { this->smtpServer = line.replace(0, 12, ""); }
         else if (!strncmp(line.c_str(), "smtp-port=", 10)) { this->smtpPort = line.replace(0, 10, ""); }
         else if (!strncmp(line.c_str(), "sendemail=true", 14)) { this->emailState = true; }
+        else if (!strncmp(line.c_str(), "hexchat-command=", 16)) { this->hexChatCommand = line.replace(0, 16, ""); }
+        else if (!strncmp(line.c_str(), "script-file-location=", 21)) {
+            this->scriptFileLocation = line.replace(0, 21, "");
+        }
         else continue;
     }
 
@@ -107,9 +119,12 @@ void Config::variableInit() {
 
     this->emailState = false;
 
-    this->defaults = {"        #Default Config File",
+    this->defaults = {"#Default Config File",
                       "packfile=/home/" + string(getenv("USER")) + "/.xdcc-download/files/packfile",
                       "serverfile=/home/" + string(getenv("USER")) + "/.xdcc-download/files/serverfile",
+                      "hexchat-command=hexchat",
+                      "script-file-location=/home/" + string(getenv("USER")) +
+                      "/.config/hexchat/addons/xdcc-download.py",
                       "texteditor=gedit",
                       "sendemail=false",
                       "email-address=user@server.domain",

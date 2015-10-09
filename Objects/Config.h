@@ -28,6 +28,10 @@ public:
     //Getter/Setter Functions
     string getServerFile();
     string getPackFile();
+
+    string getHexChatCommand();
+
+    string getScriptFileLocation();
     string getTextEditor();
     string getEmailAddress();
     string getEmailPassword();
@@ -41,6 +45,8 @@ private:
     vector<string> fileContent;
     string serverFile;
     string packFile;
+    string hexChatCommand;
+    string scriptFileLocation;
     string textEditor;
     string emailAddress;
     string emailPassword;
@@ -53,7 +59,6 @@ private:
 
     //helper functions
     void parse();
-
     void variableInit();
 
 };
