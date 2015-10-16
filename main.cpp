@@ -6,6 +6,10 @@
  * input file providing the information for the packs to be downloaded
  */
 
+#ifdef _WIN32
+#include <windows>
+#endif
+
 #include <iostream>
 #include "Objects/Config.h"
 #include "Objects/ServerList.h"
@@ -17,14 +21,14 @@
  */
 int main() {
 
+    //TODO: GUI/CLI
+
 #ifdef __linux__
-    cout << "Linux";
+    Config config("/home/" + string(getenv("USER")) + "/.xdcc-download/files/config");
 #elif _WIN32
-    cout << "Windows";
+    //TODO: Windows Implementation
 #endif
 
-
-    Config config("/home/" + string(getenv("USER")) + "/.xdcc-download/files/config");
     ServerList serverList(config);
     HexChatPythonDownloader downloader(config, serverList);
     CLI cli(downloader, config);

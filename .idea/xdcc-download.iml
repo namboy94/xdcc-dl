@@ -5,6 +5,8 @@
       <sourceFolder url="file://$MODULE_DIR$/CMakeLists.txt" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Downloaders/HexChatPythonDownloader.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Downloaders/HexChatPythonDownloader.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Helpers/MSWindowsWrapper.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Helpers/MSWindowsWrapper.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Helpers/fileHandlers.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Helpers/fileHandlers.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Interface/CLI.cpp" isTestSource="false" />
