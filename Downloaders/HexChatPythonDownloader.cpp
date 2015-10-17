@@ -147,26 +147,38 @@ void HexChatPythonDownloader::download(ServerList serverList) {
  */
 void HexChatPythonDownloader::printMode(string mode) {
 
+    string prevServer;
+    string prevChannel;
+    string prevBot;
+
     vector<Server> servers = this->serverList[0].getServers();
     for (int i = 0; i < servers.size(); i++) {
         vector<Channel> channels = servers[i].getChannels();
-        if (!strcmp(mode.c_str(), "all")) { cout << servers[i].getName() + "\n"; }               //Mode: All - Server
+        if (!strcmp(mode.c_str(), "all")) { cout << servers[i].getName() << endl; }              //Mode: All - Server
         for (int j = 0; j < channels.size(); j++) {
             vector<Bot> bots = channels[j].getBots();
-            if (!strcmp(mode.c_str(), "all")) { cout << "\t" + channels[j].getName() + "\n"; }   //Mode: All - Channel
+            if (!strcmp(mode.c_str(), "all")) { cout << "\t" + channels[j].getName() << endl; }  //Mode: All - Channel
             for (int k = 0; k < bots.size(); k++) {
                 vector<Pack> packs = bots[k].getPacks();
-                if (!strcmp(mode.c_str(), "all")) { cout << "\t\t" + bots[k].getName() + "\n"; } //Mode: All - Bot
+                if (!strcmp(mode.c_str(), "all")) { cout << "\t\t" + bots[k].getName() << endl; }//Mode: All - Bot
                 for (int l = 0; l < packs.size(); l++) {
                     if (!strcmp(mode.c_str(), "packs")) {                                        //Mode: Packs
-                        cout << servers[i].getName() + "\n";
-                        cout << "\t" + channels[j].getName() + "\n";
-                        cout << "\t\t" + bots[k].getName() + "\n";
+                        if (strcmp(prevServer.c_str(), servers[i].getName().c_str())) {          //Check for Server
+                            prevServer = servers[i].getName();
+                            cout << prevServer << endl;
+                        }
+                        if (strcmp(prevChannel.c_str(), channels[j].getName().c_str())) {        //Check for Channel
+                            prevChannel = channels[j].getName();
+                            cout << "\t" + prevChannel << endl;
+                        }
+                        if (strcmp(prevBot.c_str(), bots[k].getName().c_str())) {                //Check for bot
+                            prevBot = bots[k].getName();
+                            cout << "\t\t" + prevBot << endl;
+                        }
                     }
                     cout << "\t\t\t#" + packs[l].getPackNumberString() + "\n";
                 }
             }
-            cout << "\n";
         }
         cout << "\n";
     }
@@ -174,6 +186,9 @@ void HexChatPythonDownloader::printMode(string mode) {
 
 //private
 
+/**
+ * Initializes standard variables used by this class
+ */
 void HexChatPythonDownloader::variableInit() {
 
     this->scriptStart = {"__module_name__ = \"xdcc_executer\"",

@@ -56,7 +56,19 @@ void CLI::mainLoop() {
 
 void CLI::variableInit() {
 
-    this->helpString = {"",
-                        ""};
+    this->helpString = {"List of commands:\n\n",
+                        "print                              Prints all packs loaded from the pack file together",
+                        "with their bot, channel and server\n",
+                        "print all                          Prints all servers, channels, bots and packs loaded from",
+                        "the pack and server files\n",
+                        "edit packs                         Opens the pack file in a text editor\n",
+                        "edit servers                       Opens the sevrer file in a text editor\n",
+                        "start                              Starts the download of all packs in the packfile\n\n",
+                        "/msg bot xdcc send #pack           Downloads a single pack if the bot is contained",
+                        "in the server file\n",
+                        "add bot @ server/channel           Adds a bot to the server file\n",
+                        "add /msg bot xdcc send #pack       Adds a pack to the pack file\n\n",
+                        "help                               Prints a list of the available commands\n",
+                        "quit                               Closes the program\n\n"};
 
 }

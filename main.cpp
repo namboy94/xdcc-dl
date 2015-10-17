@@ -21,7 +21,7 @@
  */
 int main() {
 
-    //TODO: GUI/CLI
+    //TODO: GUI/CLI choice
 
 #ifdef __linux__
     Config config("/home/" + string(getenv("USER")) + "/.xdcc-download/files/config");
