@@ -1,0 +1,56 @@
+XDCC Download Log - 20150405093033
+
+The following packs were entered:
+
+
+Series: 	gargantia
+IRC Channel: 	#news
+Pack Size: 	1200 MB
+
+Pack 1:		/msg DHD|Arutha xdcc send #865
+Pack 2:		/msg DHD|Arutha xdcc send #866
+Pack 3:		/msg DHD|Arutha xdcc send #867
+Pack 4:		/msg DHD|Arutha xdcc send #868
+Pack 5:		/msg DHD|Arutha xdcc send #869
+Pack 6:		/msg DHD|Arutha xdcc send #870
+Pack 7:		/msg DHD|Arutha xdcc send #871
+Pack 8:		/msg DHD|Arutha xdcc send #872
+Pack 9:		/msg DHD|Arutha xdcc send #873
+
+
+Series: 	Gintama eps 137-152
+IRC Channel: 	#horriblesubs
+Pack Size: 	200 MB
+
+Pack 10:	/msg Ginpachi-Sensei xdcc send #2187
+Pack 11:	/msg Ginpachi-Sensei xdcc send #2188
+Pack 12:	/msg Ginpachi-Sensei xdcc send #2189
+Pack 13:	/msg Ginpachi-Sensei xdcc send #2190
+Pack 14:	/msg Ginpachi-Sensei xdcc send #2191
+Pack 15:	/msg Ginpachi-Sensei xdcc send #2192
+Pack 16:	/msg Ginpachi-Sensei xdcc send #2193
+Pack 17:	/msg Ginpachi-Sensei xdcc send #2194
+Pack 18:	/msg Ginpachi-Sensei xdcc send #2195
+Pack 19:	/msg Ginpachi-Sensei xdcc send #2196
+Pack 20:	/msg Ginpachi-Sensei xdcc send #2197
+Pack 21:	/msg Ginpachi-Sensei xdcc send #2198
+Pack 22:	/msg Ginpachi-Sensei xdcc send #2199
+Pack 23:	/msg Ginpachi-Sensei xdcc send #2200
+Pack 24:	/msg Ginpachi-Sensei xdcc send #2201
+Pack 25:	/msg Ginpachi-Sensei xdcc send #2202
+
+
+
+Download Speed:				200 KB/s
+Median Pack Size:			560000.00 KB
+					560.00 MB
+					0.56 GB
+Total Download Size:			14000000 KB
+					14000 MB
+					14.00 GB
+Total Amount of packs:			25
+Total Amount of series:			2
+Approximate total download time:	70000000.00 ms
+					70000.00 s
+					1166.67 min
+					19.44 h

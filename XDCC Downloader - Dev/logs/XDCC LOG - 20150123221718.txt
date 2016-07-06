@@ -1,0 +1,42 @@
+XDCC Download Log - 20150123221718
+
+The following packs were entered:
+
+
+Series: 	Durarara
+IRC Channel: 	#exiled-destiny
+Pack Size: 	650 MB
+
+Pack 1:		/msg E-D|Mashiro xdcc send #2590
+Pack 2:		/msg E-D|Mashiro xdcc send #2592
+Pack 3:		/msg E-D|Mashiro xdcc send #2594
+Pack 4:		/msg E-D|Mashiro xdcc send #2596
+Pack 5:		/msg E-D|Mashiro xdcc send #2598
+Pack 6:		/msg E-D|Mashiro xdcc send #2600
+Pack 7:		/msg E-D|Mashiro xdcc send #2602
+Pack 8:		/msg E-D|Mashiro xdcc send #2604
+Pack 9:		/msg E-D|Mashiro xdcc send #2606
+Pack 10:	/msg E-D|Mashiro xdcc send #2608
+Pack 11:	/msg E-D|Mashiro xdcc send #2610
+Pack 12:	/msg E-D|Mashiro xdcc send #2612
+Pack 13:	/msg E-D|Mashiro xdcc send #2614
+Pack 14:	/msg E-D|Mashiro xdcc send #2616
+Pack 15:	/msg E-D|Mashiro xdcc send #2618
+Pack 16:	/msg E-D|Mashiro xdcc send #2620
+Pack 17:	/msg E-D|Mashiro xdcc send #2622
+
+
+
+Download Speed:				2000 KB/s
+Median Pack Size:			650000.00 KB
+					650.00 MB
+					0.65 GB
+Total Download Size:			11050000 KB
+					11050 MB
+					11.05 GB
+Total Amount of packs:			17
+Total Amount of series:			1
+Approximate total download time:	5525000.00 ms
+					5525.00 s
+					92.08 min
+					1.53 h

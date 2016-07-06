@@ -1,0 +1,106 @@
+XDCC Download Log - 20150330222208
+
+The following packs were entered:
+
+
+Series: 	Death Parade (-ep9) + Maria 12
+IRC Channel: 	#horriblesubs
+Pack Size: 	700 MB
+
+Pack 1:		/msg CR-HOLLAND|NEW xdcc send #2482
+Pack 2:		/msg CR-HOLLAND|NEW xdcc send #2638
+Pack 3:		/msg CR-HOLLAND|NEW xdcc send #2952
+Pack 4:		/msg CR-HOLLAND|NEW xdcc send #3117
+Pack 5:		/msg CR-HOLLAND|NEW xdcc send #3272
+
+
+Series: 	Various Horriblesubs Aldnoah DeathPara Gintamovie)
+IRC Channel: 	#horriblesubs
+Pack Size: 	600 MB
+
+Pack 6:		/msg Ginpachi-Sensei xdcc send #2334
+Pack 7:		/msg Ginpachi-Sensei xdcc send #9536
+Pack 8:		/msg Ginpachi-Sensei xdcc send #10387
+
+
+Series: 	Gintama eps 89-165
+IRC Channel: 	#horriblesubs
+Pack Size: 	200 MB
+
+Pack 9:		/msg Ginpachi-Sensei xdcc send #2273
+Pack 10:	/msg Ginpachi-Sensei xdcc send #2274
+Pack 11:	/msg Ginpachi-Sensei xdcc send #2275
+Pack 12:	/msg Ginpachi-Sensei xdcc send #2276
+Pack 13:	/msg Ginpachi-Sensei xdcc send #2277
+Pack 14:	/msg Ginpachi-Sensei xdcc send #2278
+Pack 15:	/msg Ginpachi-Sensei xdcc send #2279
+Pack 16:	/msg Ginpachi-Sensei xdcc send #2280
+Pack 17:	/msg Ginpachi-Sensei xdcc send #2281
+Pack 18:	/msg Ginpachi-Sensei xdcc send #2282
+Pack 19:	/msg Ginpachi-Sensei xdcc send #2283
+Pack 20:	/msg Ginpachi-Sensei xdcc send #2284
+Pack 21:	/msg Ginpachi-Sensei xdcc send #2285
+Pack 22:	/msg Ginpachi-Sensei xdcc send #2286
+Pack 23:	/msg Ginpachi-Sensei xdcc send #2287
+Pack 24:	/msg Ginpachi-Sensei xdcc send #2288
+Pack 25:	/msg Ginpachi-Sensei xdcc send #2289
+Pack 26:	/msg Ginpachi-Sensei xdcc send #2290
+Pack 27:	/msg Ginpachi-Sensei xdcc send #2291
+Pack 28:	/msg Ginpachi-Sensei xdcc send #2292
+Pack 29:	/msg Ginpachi-Sensei xdcc send #2293
+Pack 30:	/msg Ginpachi-Sensei xdcc send #2294
+Pack 31:	/msg Ginpachi-Sensei xdcc send #2295
+Pack 32:	/msg Ginpachi-Sensei xdcc send #2296
+Pack 33:	/msg Ginpachi-Sensei xdcc send #2297
+Pack 34:	/msg Ginpachi-Sensei xdcc send #2298
+Pack 35:	/msg Ginpachi-Sensei xdcc send #2299
+Pack 36:	/msg Ginpachi-Sensei xdcc send #2300
+Pack 37:	/msg Ginpachi-Sensei xdcc send #2301
+Pack 38:	/msg Ginpachi-Sensei xdcc send #2302
+Pack 39:	/msg Ginpachi-Sensei xdcc send #2303
+Pack 40:	/msg Ginpachi-Sensei xdcc send #2304
+Pack 41:	/msg Ginpachi-Sensei xdcc send #2305
+Pack 42:	/msg Ginpachi-Sensei xdcc send #2306
+Pack 43:	/msg Ginpachi-Sensei xdcc send #2307
+Pack 44:	/msg Ginpachi-Sensei xdcc send #2308
+Pack 45:	/msg Ginpachi-Sensei xdcc send #2309
+Pack 46:	/msg Ginpachi-Sensei xdcc send #2310
+Pack 47:	/msg Ginpachi-Sensei xdcc send #2311
+Pack 48:	/msg Ginpachi-Sensei xdcc send #2312
+Pack 49:	/msg Ginpachi-Sensei xdcc send #2313
+Pack 50:	/msg Ginpachi-Sensei xdcc send #2314
+Pack 51:	/msg Ginpachi-Sensei xdcc send #2315
+Pack 52:	/msg Ginpachi-Sensei xdcc send #2316
+Pack 53:	/msg Ginpachi-Sensei xdcc send #2317
+Pack 54:	/msg Ginpachi-Sensei xdcc send #2318
+Pack 55:	/msg Ginpachi-Sensei xdcc send #2319
+Pack 56:	/msg Ginpachi-Sensei xdcc send #2320
+Pack 57:	/msg Ginpachi-Sensei xdcc send #2321
+Pack 58:	/msg Ginpachi-Sensei xdcc send #2322
+Pack 59:	/msg Ginpachi-Sensei xdcc send #2323
+Pack 60:	/msg Ginpachi-Sensei xdcc send #2324
+Pack 61:	/msg Ginpachi-Sensei xdcc send #2325
+Pack 62:	/msg Ginpachi-Sensei xdcc send #2326
+Pack 63:	/msg Ginpachi-Sensei xdcc send #2327
+Pack 64:	/msg Ginpachi-Sensei xdcc send #2328
+Pack 65:	/msg Ginpachi-Sensei xdcc send #2329
+Pack 66:	/msg Ginpachi-Sensei xdcc send #2330
+Pack 67:	/msg Ginpachi-Sensei xdcc send #2331
+Pack 68:	/msg Ginpachi-Sensei xdcc send #2332
+Pack 69:	/msg Ginpachi-Sensei xdcc send #2333
+
+
+
+Download Speed:				200 KB/s
+Median Pack Size:			253620.00 KB
+					253.62 MB
+					0.25 GB
+Total Download Size:			17500000 KB
+					17500 MB
+					17.50 GB
+Total Amount of packs:			69
+Total Amount of series:			3
+Approximate total download time:	87500000.00 ms
+					87500.00 s
+					1458.33 min
+					24.31 h

@@ -1,0 +1,112 @@
+XDCC Download Log - 20150123220527
+
+The following packs were entered:
+
+
+Series: 	Hidamari Pt 1
+IRC Channel: 	#exiled-destiny
+Pack Size: 	340 MB
+
+Pack 1:		/msg E-D|Mashiro xdcc send #5066
+Pack 2:		/msg E-D|Mashiro xdcc send #5067
+Pack 3:		/msg E-D|Mashiro xdcc send #5068
+Pack 4:		/msg E-D|Mashiro xdcc send #5069
+Pack 5:		/msg E-D|Mashiro xdcc send #5070
+Pack 6:		/msg E-D|Mashiro xdcc send #5071
+Pack 7:		/msg E-D|Mashiro xdcc send #5072
+Pack 8:		/msg E-D|Mashiro xdcc send #5073
+Pack 9:		/msg E-D|Mashiro xdcc send #5074
+Pack 10:	/msg E-D|Mashiro xdcc send #5075
+Pack 11:	/msg E-D|Mashiro xdcc send #5076
+Pack 12:	/msg E-D|Mashiro xdcc send #5077
+Pack 13:	/msg E-D|Mashiro xdcc send #5078
+Pack 14:	/msg E-D|Mashiro xdcc send #5079
+Pack 15:	/msg E-D|Mashiro xdcc send #5080
+Pack 16:	/msg E-D|Mashiro xdcc send #5081
+Pack 17:	/msg E-D|Mashiro xdcc send #5082
+Pack 18:	/msg E-D|Mashiro xdcc send #5083
+Pack 19:	/msg E-D|Mashiro xdcc send #5084
+Pack 20:	/msg E-D|Mashiro xdcc send #5085
+Pack 21:	/msg E-D|Mashiro xdcc send #5086
+Pack 22:	/msg E-D|Mashiro xdcc send #5087
+Pack 23:	/msg E-D|Mashiro xdcc send #5088
+Pack 24:	/msg E-D|Mashiro xdcc send #5089
+Pack 25:	/msg E-D|Mashiro xdcc send #5090
+Pack 26:	/msg E-D|Mashiro xdcc send #5091
+Pack 27:	/msg E-D|Mashiro xdcc send #5092
+Pack 28:	/msg E-D|Mashiro xdcc send #5093
+Pack 29:	/msg E-D|Mashiro xdcc send #5094
+Pack 30:	/msg E-D|Mashiro xdcc send #5095
+Pack 31:	/msg E-D|Mashiro xdcc send #5096
+Pack 32:	/msg E-D|Mashiro xdcc send #5097
+Pack 33:	/msg E-D|Mashiro xdcc send #5098
+Pack 34:	/msg E-D|Mashiro xdcc send #5099
+Pack 35:	/msg E-D|Mashiro xdcc send #5100
+Pack 36:	/msg E-D|Mashiro xdcc send #5101
+Pack 37:	/msg E-D|Mashiro xdcc send #5102
+Pack 38:	/msg E-D|Mashiro xdcc send #5103
+Pack 39:	/msg E-D|Mashiro xdcc send #5104
+Pack 40:	/msg E-D|Mashiro xdcc send #5105
+Pack 41:	/msg E-D|Mashiro xdcc send #5106
+Pack 42:	/msg E-D|Mashiro xdcc send #5107
+Pack 43:	/msg E-D|Mashiro xdcc send #5108
+Pack 44:	/msg E-D|Mashiro xdcc send #5109
+Pack 45:	/msg E-D|Mashiro xdcc send #5110
+
+
+Series: 	Hidamari Pt 2
+IRC Channel: 	#horriblesubs
+Pack Size: 	340 MB
+
+Pack 46:	/msg Ginpachi-Sensei xdcc send #2901
+Pack 47:	/msg Ginpachi-Sensei xdcc send #2902
+Pack 48:	/msg Ginpachi-Sensei xdcc send #2903
+Pack 49:	/msg Ginpachi-Sensei xdcc send #2904
+Pack 50:	/msg Ginpachi-Sensei xdcc send #2905
+Pack 51:	/msg Ginpachi-Sensei xdcc send #2906
+Pack 52:	/msg Ginpachi-Sensei xdcc send #2907
+Pack 53:	/msg Ginpachi-Sensei xdcc send #2908
+Pack 54:	/msg Ginpachi-Sensei xdcc send #2909
+Pack 55:	/msg Ginpachi-Sensei xdcc send #2910
+Pack 56:	/msg Ginpachi-Sensei xdcc send #2911
+Pack 57:	/msg Ginpachi-Sensei xdcc send #2912
+Pack 58:	/msg Ginpachi-Sensei xdcc send #2913
+Pack 59:	/msg Ginpachi-Sensei xdcc send #2914
+
+
+Series: 	Baccano
+IRC Channel: 	#intel
+Pack Size: 	780 MB
+
+Pack 60:	/msg NIBL|Arutha xdcc send #1461
+Pack 61:	/msg NIBL|Arutha xdcc send #1462
+Pack 62:	/msg NIBL|Arutha xdcc send #1463
+Pack 63:	/msg NIBL|Arutha xdcc send #1464
+Pack 64:	/msg NIBL|Arutha xdcc send #1465
+Pack 65:	/msg NIBL|Arutha xdcc send #1466
+Pack 66:	/msg NIBL|Arutha xdcc send #1467
+Pack 67:	/msg NIBL|Arutha xdcc send #1468
+Pack 68:	/msg NIBL|Arutha xdcc send #1469
+Pack 69:	/msg NIBL|Arutha xdcc send #1470
+Pack 70:	/msg NIBL|Arutha xdcc send #1471
+Pack 71:	/msg NIBL|Arutha xdcc send #1472
+Pack 72:	/msg NIBL|Arutha xdcc send #1473
+Pack 73:	/msg NIBL|Arutha xdcc send #1474
+Pack 74:	/msg NIBL|Arutha xdcc send #1475
+Pack 75:	/msg NIBL|Arutha xdcc send #1476
+
+
+
+Download Speed:				2100 KB/s
+Median Pack Size:			 KB
+					 MB
+					 GB
+Total Download Size:			 KB
+					 MB
+					 GB
+Total Amount of packs:			75
+Total Amount of series:			3
+Approximate total download time:	 ms
+					 s
+					 min
+					 h

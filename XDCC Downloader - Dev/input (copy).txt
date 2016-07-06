@@ -1,0 +1,20 @@
+Download Speed(kB/s): 200
+
+
+/msg Ginpachi-Sensei xdcc send #4611
+....
+/msg Ginpachi-Sensei xdcc send #4622
+break
+Maou Spice Wolf alike thingy
+Size: 350
+
+
+/msg Ginpachi-Sensei xdcc send #2226
+....
+/msg Ginpachi-Sensei xdcc send #2272
+break
+Gintama
+Size: 200
+
+
+stop

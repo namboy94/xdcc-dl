@@ -1,0 +1,13 @@
+Download Speed(kB/s): 200
+
+
+/msg CS|Tori xdcc send #3765
+....
+/msg CS|Tori xdcc send #3806
+/msg CS|Tori xdcc send #4685
+break
+Teekyuu
+Size: 65
+
+
+stop

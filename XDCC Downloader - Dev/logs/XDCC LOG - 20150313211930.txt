@@ -1,0 +1,54 @@
+XDCC Download Log - 20150313211930
+
+The following packs were entered:
+
+
+Series: 	Horriblesubs
+IRC Channel: 	#horriblesubs
+Pack Size: 	740 MB
+
+Pack 1:		/msg CR-HOLLAND|NEW xdcc send #2780
+Pack 2:		/msg CR-HOLLAND|NEW xdcc send #2914
+Pack 3:		/msg CR-HOLLAND|NEW xdcc send #2768
+Pack 4:		/msg CR-HOLLAND|NEW xdcc send #2933
+Pack 5:		/msg CR-HOLLAND|NEW xdcc send #2819
+
+
+Series: 	Big Bang Theory
+IRC Channel: 	#
+Pack Size: 	450 MB
+
+Pack 6:		/msg [EWG]-[[ovh]]-11 xdcc send #12
+Pack 7:		/msg [EWG]-[[u]]-98 xdcc send #13
+Pack 8:		/msg [EWG]-[LEET-83 xdcc send #3
+Pack 9:		/msg [EWG]-[LEET- xdcc send #6
+Pack 10:	/msg [EWG]-[LEET-83 xdcc send #3
+Pack 11:	/msg [EWG]-[LEET-39 xdcc send #26
+Pack 12:	/msg [EWG]-[[u]]-0 xdcc send #22
+Pack 13:	/msg [EWG]-[LEET-100 xdcc send #6
+Pack 14:	/msg [EWG]-[[u]]-31 xdcc send #6
+Pack 15:	/msg [EWG]-[[i]]-18 xdcc send #129
+Pack 16:	/msg [EWG]-[[i]]-88 xdcc send #87
+Pack 17:	/msg [EWG]-[[u]]-88 xdcc send #10
+Pack 18:	/msg [EWG]-[[u]]-115 xdcc send #8
+Pack 19:	/msg [EWG]-[[ovh]]-10 xdcc send #37
+Pack 20:	/msg [EWG]-[CAM3LS3X-46 xdcc send #130
+Pack 21:	/msg [EWG]-[[x]]-15 xdcc send #16
+Pack 22:	/msg [EWG]-[ELiTE-44 xdcc send #3
+Pack 23:	/msg [EWG]-[HURRYCURRY-1 xdcc send #13
+
+
+
+Download Speed:				200 KB/s
+Median Pack Size:			513040.00 KB
+					513.04 MB
+					0.51 GB
+Total Download Size:			11800000 KB
+					11800 MB
+					11.80 GB
+Total Amount of packs:			23
+Total Amount of series:			2
+Approximate total download time:	59000000.00 ms
+					59000.00 s
+					983.33 min
+					16.39 h

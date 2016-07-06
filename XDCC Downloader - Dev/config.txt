@@ -1,0 +1,14 @@
+### This is the local config file for XDCC Downloader 1.0
+### Please try to not change the order of this file too much or the
+### program may stop working.
+### Lines with ### are comments
+### only change the parameter "default"
+
+### Local Directories Override
+### These may have to be changed according to the user's preferences
+
+dir inputfiledirectory default
+dir logfiledirectory default
+dir mIRCdirectory default
+dir cmddirectory default
+dir serverbotlistdirectory default

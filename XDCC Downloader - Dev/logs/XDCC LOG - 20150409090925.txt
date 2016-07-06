@@ -1,0 +1,68 @@
+XDCC Download Log - 20150409090925
+
+The following packs were entered:
+
+
+Series: 	Teekyuu
+IRC Channel: 	#news
+Pack Size: 	65 MB
+
+Pack 1:		/msg CS|Tori xdcc send #3765
+Pack 2:		/msg CS|Tori xdcc send #3766
+Pack 3:		/msg CS|Tori xdcc send #3767
+Pack 4:		/msg CS|Tori xdcc send #3768
+Pack 5:		/msg CS|Tori xdcc send #3769
+Pack 6:		/msg CS|Tori xdcc send #3770
+Pack 7:		/msg CS|Tori xdcc send #3771
+Pack 8:		/msg CS|Tori xdcc send #3772
+Pack 9:		/msg CS|Tori xdcc send #3773
+Pack 10:	/msg CS|Tori xdcc send #3774
+Pack 11:	/msg CS|Tori xdcc send #3775
+Pack 12:	/msg CS|Tori xdcc send #3776
+Pack 13:	/msg CS|Tori xdcc send #3777
+Pack 14:	/msg CS|Tori xdcc send #3778
+Pack 15:	/msg CS|Tori xdcc send #3779
+Pack 16:	/msg CS|Tori xdcc send #3780
+Pack 17:	/msg CS|Tori xdcc send #3781
+Pack 18:	/msg CS|Tori xdcc send #3782
+Pack 19:	/msg CS|Tori xdcc send #3783
+Pack 20:	/msg CS|Tori xdcc send #3784
+Pack 21:	/msg CS|Tori xdcc send #3785
+Pack 22:	/msg CS|Tori xdcc send #3786
+Pack 23:	/msg CS|Tori xdcc send #3787
+Pack 24:	/msg CS|Tori xdcc send #3788
+Pack 25:	/msg CS|Tori xdcc send #3789
+Pack 26:	/msg CS|Tori xdcc send #3790
+Pack 27:	/msg CS|Tori xdcc send #3791
+Pack 28:	/msg CS|Tori xdcc send #3792
+Pack 29:	/msg CS|Tori xdcc send #3793
+Pack 30:	/msg CS|Tori xdcc send #3794
+Pack 31:	/msg CS|Tori xdcc send #3795
+Pack 32:	/msg CS|Tori xdcc send #3796
+Pack 33:	/msg CS|Tori xdcc send #3797
+Pack 34:	/msg CS|Tori xdcc send #3798
+Pack 35:	/msg CS|Tori xdcc send #3799
+Pack 36:	/msg CS|Tori xdcc send #3800
+Pack 37:	/msg CS|Tori xdcc send #3801
+Pack 38:	/msg CS|Tori xdcc send #3802
+Pack 39:	/msg CS|Tori xdcc send #3803
+Pack 40:	/msg CS|Tori xdcc send #3804
+Pack 41:	/msg CS|Tori xdcc send #3805
+Pack 42:	/msg CS|Tori xdcc send #3806
+Pack 43:	/msg CS|Tori xdcc send #4685
+
+
+
+Download Speed:				200 KB/s
+Median Pack Size:			65000.00 KB
+					65.00 MB
+					0.07 GB
+Total Download Size:			2795000 KB
+					2795 MB
+					2.79 GB
+Total Amount of packs:			43
+Total Amount of series:			1
+Approximate total download time:	13975000.00 ms
+					13975.00 s
+					232.92 min
+					3.88 h
