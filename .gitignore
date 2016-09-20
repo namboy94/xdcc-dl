@@ -1,0 +1,5 @@
+build
+dist
+doc/build
+xdcc_dl.egg-info
+.idea

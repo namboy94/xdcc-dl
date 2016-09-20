@@ -1,0 +1,77 @@
+stages:
+  - mirror
+  - test
+  - deploy
+  - docstats
+
+clone_master:
+  stage: mirror
+  only:
+    - master
+    - develop
+  script:
+    - git checkout master
+    - git pull origin master
+    - git push -u git@github.com:namboy94/xdcc-downloader.git master --force
+    - git checkout develop
+    - git pull origin develop
+    - git push -u git@github.com:namboy94/xdcc-downloader.git develop --force
+
+run_unit_tests:
+  stage: test
+  only:
+    - master
+    - develop
+  script:
+    - python3 setup.py test
+
+source_dist:
+  stage: deploy
+  only:
+    - master
+  script:
+    - python3 setup.py register sdist upload
+
+binary_3_dist:
+  stage: deploy
+  only:
+    - master
+  script:
+    - python3 setup.py bdist_wheel upload
+
+binary_2_dist:
+  stage: deploy
+  only:
+    - master
+  script:
+    - 3to2 . --write
+    - python2 setup.py bdist_wheel upload
+
+generate_documentation:
+  stage: docstats
+  only:
+    - master
+    - develop
+  script:
+    - cd doc
+    - make buildsource
+    - make html
+    - make latexpdf
+    - rsync -av build/html/ www.krumreyh.com@ssh.strato.de:~/programming_pages/xdcc-downloader/documentation/html --delete-after
+    - rsync -av build/latex/xdcc_dl.pdf www.krumreyh.com@ssh.strato.de:~/programming_pages/xdcc-downloader/documentation/documentation.pdf --delete-after
+  artifacts:
+    paths:
+      - doc/build/html
+      - doc/build/latex/xdcc_dl.pdf
+
+generate_statistics:
+  stage: docstats
+  only:
+    - master
+    - develop
+  script:
+    - gitstats . git_stats
+    - rsync -av git_stats/ www.krumreyh.com@ssh.strato.de:~/programming_pages/xdcc-downloader/git_stats --delete-after
+  artifacts:
+    paths:
+      - git_stats
