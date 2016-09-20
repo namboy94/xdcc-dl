@@ -24,14 +24,8 @@ LICENSE
 
 # imports
 import os
-import sys
-import platform
 from setuptools import setup, find_packages
 import xdcc_dl.metadata as metadata
-
-if platform.system() == "Windows":
-    # noinspection PyUnresolvedReferences
-    import py2exe
 
 
 def readme():
