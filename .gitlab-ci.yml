@@ -1,14 +1,22 @@
 stages:
   - mirror
   - test
+  - build
   - deploy
+  - release
   - docstats
+
+variables:
+  GITLAB_ACCESS_TOKEN: "$GITLAB_ACCESS_TOKEN"
+  GITHUB_OAUTH_TOKEN: "$GITHUB_OAUTH_TOKEN"
 
 clone_master:
   stage: mirror
   only:
     - master
     - develop
+  tags:
+    - key_github
   script:
     - git checkout master
     - git pull origin master
@@ -17,18 +25,60 @@ clone_master:
     - git pull origin develop
     - git push -u git@github.com:namboy94/xdcc-downloader.git develop --force
 
-run_unit_tests:
+run_unit_tests_python_2:
   stage: test
-  only:
-    - master
-    - develop
+  tags:
+    - linux
+    - python
+  script:
+    - 3to2 . --write
+    - python2 setup.py test
+
+run_unit_tests_python_3:
+  stage: test
+  tags:
+    - linux
+    - python
   script:
     - python3 setup.py test
+
+pyinstaller_linux:
+  stage: build
+  only:
+    - master
+  tags:
+    - linux
+    - python
+  script:
+    - python3 setup.py install --user
+    - python3 builder.py build pyinstaller_linux
+    - pip3 uninstall xdcc_dl -y
+  artifacts:
+    paths:
+      - build/gitlab_build_scripts/*
+
+pyinstaller_windows:
+  stage: build
+  only:
+    - master
+  tags:
+    - windows
+    - python
+  script:
+    - python setup.py install
+    - python builder.py build pyinstaller_windows
+    - pip uninstall xdcc_dl -y
+  artifacts:
+    paths:
+      - build/gitlab_build_scripts/*
 
 source_dist:
   stage: deploy
   only:
     - master
+  tags:
+    - linux
+    - python
   script:
     - python3 setup.py register sdist upload
 
@@ -36,6 +86,9 @@ binary_3_dist:
   stage: deploy
   only:
     - master
+  tags:
+    - linux
+    - python
   script:
     - python3 setup.py bdist_wheel upload
 
@@ -43,35 +96,70 @@ binary_2_dist:
   stage: deploy
   only:
     - master
+  tags:
+    - python
+    - linux
   script:
     - 3to2 . --write
-    - python2 setup.py bdist_wheel upload
+    - python2 setup.py bdist_wheel
+    - twine upload dist/*
 
-generate_documentation:
+upload_release_to_github:
+  stage: release
+  only:
+    - master
+  tags:
+    - linux
+    - python
+  script:
+    - python3 builder.py github-release
+
+upload_release_to_gitlab:
+  stage: release
+  only:
+    - master
+  tags:
+    - linux
+    - python
+  script:
+    - python3 builder.py gitlab-release
+
+generate_sphinx_documentation:
   stage: docstats
   only:
     - master
     - develop
+  tags:
+    - linux
+    - python
   script:
     - cd doc
     - make buildsource
-    - make html
     - make latexpdf
-    - rsync -av build/html/ www.krumreyh.com@ssh.strato.de:~/programming_pages/xdcc-downloader/documentation/html --delete-after
-    - rsync -av build/latex/xdcc_dl.pdf www.krumreyh.com@ssh.strato.de:~/programming_pages/xdcc-downloader/documentation/documentation.pdf --delete-after
+    - make html
+    - rsync -av build/latex/xdcc_dl.pdf /var/www/docs.namibsun.net/public_html/pdf_docs/xdcc_downloader.pdf --delete-before
+    - rsync -av build/html/ /var/www/docs.namibsun.net/public_html/html_docs/xdcc_downloader --delete-before
+    - cd ..
+    - python3 builder.py documentation-html /var/www/docs.namibsun.net/public_html
   artifacts:
     paths:
-      - doc/build/html
       - doc/build/latex/xdcc_dl.pdf
+      - doc/build/html
 
-generate_statistics:
+gitstats:
   stage: docstats
   only:
     - master
     - develop
+  tags:
+    - linux
   script:
-    - gitstats . git_stats
-    - rsync -av git_stats/ www.krumreyh.com@ssh.strato.de:~/programming_pages/xdcc-downloader/git_stats --delete-after
+    - gitstats . gitstats
+    - rsync -av gitstats/ /var/www/gitstats.namibsun.net/public_html/gitstats/xdcc_downloader --delete-before
+    - git_stats generate
+    - rsync -av git_stats/ /var/www/gitstats.namibsun.net/public_html/git_stats/xdcc_downloader --delete-before
+    - python3 builder.py gitstats-html /var/www/gitstats.namibsun.net/public_html
   artifacts:
     paths:
+      - gitstats
       - git_stats
