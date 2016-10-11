@@ -22,104 +22,176 @@ This file is part of xdcc_dl.
 LICENSE
 """
 
-# imports
-from raven import Client
-
-
 """
 The metadata is stored here. It can be used by any other module in this project this way, most
 notably by the setup.py file
 """
 
-project_name = "xdcc_dl"
-"""
-The name of the project
-"""
 
-project_description = "An XDCC Downloader"
-"""
-A short description of the project
-"""
+class GitRepository:
+    """
+    Class that stores information about the git repository sites used by this project
+    """
 
-version_number = "0.1"
-"""
-The current version of the program.
-"""
+    repository_name = "xdcc-downloader"
+    """
+    The name of the repository
+    """
 
-development_status = "Development Status :: 1 - Planning"
-"""
-The current development status of the program
-"""
+    github_owner = "namboy94"
+    """
+    The owner's Github username
+    """
 
-project_url = "http://gitlab.namibsun.net/namboy94/xdcc-downloader"
-"""
-A URL linking to the home page of the project, in this case a
-self-hosted Gitlab page
-"""
+    gitlab_owner = "namboy94"
+    """
+    The project's owner's username on Gitlab
+    """
 
-download_url = "http://gitlab.namibsun.net/namboy94/xdcc-downloader/repository/archive.zip?ref=master"
-"""
-A URL linking to the current source zip file.
-"""
+    gitlab_site_url = "https://gitlab.namibsun.net/"
+    """
+    The address of the Gitlab instance
+    """
 
-author_name = "Hermann Krumrey"
-"""
-The name(s) of the project author(s)
-"""
+    github_url = "https://github.com/" + github_owner + "/" + repository_name
+    """
+    The Github site URL
+    """
 
-author_email = "hermann@krumreyh.com"
-"""
-The email address(es) of the project author(s)
-"""
+    gitlab_url = gitlab_site_url + gitlab_owner + "/" + repository_name
+    """
+    The Gitlab Project URL
+    """
 
-license_type = "GNU GPL3"
-"""
-The project's license type
-"""
 
-dependencies = ['irc', 'raven']
-"""
-Python Packaging Index requirements
-"""
+class General:
+    """
+    Class that stores general information about a project
+    """
 
-audience = "Intended Audience :: Developers"
-"""
-The intended audience of this software
-"""
+    project_description = "An XDCC Downloader"
+    """
+    A short description of the project
+    """
 
-environment = "Environment :: Console"
-"""
-The intended environment in which the program will be used
-"""
+    version_number = "0.1.0"
+    """
+    The current version of the program.
+    """
 
-programming_language = "Programming Language :: Python"
-"""
-The programming language used in this project
-"""
+    author_names = "Hermann Krumrey"
+    """
+    The name(s) of the project author(s)
+    """
 
-topic = "Topic :: Communications :: File Sharing"
-"""
-The broad subject/topic of the project
-"""
+    author_emails = "hermann@krumreyh.com"
+    """
+    The email address(es) of the project author(s)
+    """
 
-language = "Natural Language :: English"
-"""
-The (default) language of this project
-"""
+    license_type = "GNU GPL3"
+    """
+    The project's license type
+    """
 
-compatible_os = "Operating System :: OS Independent"
-"""
-The Operating Systems on which the program can run
-"""
+    project_name = GitRepository.repository_name
+    """
+    The name of the project
+    """
 
-license_identifier = "License :: OSI Approved :: GNU General Public License v3 (GPLv3)"
-"""
-The license used for this project
-"""
+    download_master_zip = GitRepository.gitlab_url + "/repository/archive.zip?ref=master"
+    """
+    A URL linking to the current source zip file of the master branch.
+    """
 
-# Sentry Configuration
-sentry = Client(dsn='http://8b90175acd344261868e2054f95b6183:2bd3e783431348d1a3d9968c362de51f@85.214.124.204:9000/3',
-                release=version_number)
-"""
-The Sentry client for logging bugs
-"""
+
+class PypiVariables:
+    """
+    Variables used for distributing with setuptools to the python package index
+    """
+
+    classifiers = [
+
+        "Environment :: Console",
+        "Natural Language :: English",
+        "Intended Audience :: Developers",
+        "Development Status :: 1 - Planning",
+        "Operating System :: OS Independent",
+        "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 2",
+        "Topic :: Communications :: File Sharing",
+        "License :: OSI Approved :: GNU General Public License v3 (GPLv3)"
+
+    ]
+    """
+    The list trove classifiers applicable to this project
+    """
+
+    install_requires = ["raven", "irc"]
+    """
+    Python Packaging Index dependencies
+    """
+
+    name = "xdcc_dl"
+    """
+    The name of the project on Pypi
+    """
+
+    version = General.version_number
+    """
+    The version of the project on pypi
+    """
+
+    description = General.project_description
+    """
+    The short description of the project on pypi
+    """
+
+    url = GitRepository.gitlab_url
+    """
+    A URL linking to the home page of the project, in this case a
+    self-hosted Gitlab page
+    """
+
+    download_url = General.download_master_zip
+    """
+    A link to the current source zip of the project
+    """
+
+    author = General.author_names
+    """
+    The author(s) of this project
+    """
+
+    author_email = General.author_emails
+    """
+    The email adress(es) of the author(s)
+    """
+
+    license = General.license_type
+    """
+    The License used in this project
+    """
+
+
+class SentryLogger:
+    """
+    Class that handles the sentry logger initialization
+    """
+
+    sentry_dsn = "http://7171853833d74c739fdb6186b1c84e62:51c68437eae54964b5c70ad14b476dbb@sentry.namibsun.net/4"
+    """
+    The DSN associated with this project
+    """
+
+    sentry = None
+    """
+    The sentry client
+    """
+
+    # Create the Sentry client to log bugs
+    try:
+        from raven import Client
+        sentry = Client(dsn=sentry_dsn, release=General.version_number)
+    except ImportError:
+        Client = None

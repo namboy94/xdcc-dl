@@ -24,8 +24,8 @@ LICENSE
 
 # imports
 import os
+from xdcc_dl.metadata import PypiVariables
 from setuptools import setup, find_packages
-import xdcc_dl.metadata as metadata
 
 
 def readme():
@@ -54,33 +54,27 @@ def find_scripts():
 
     :return: the list of scripts
     """
-    scripts = []
-    for file_name in os.listdir("bin"):
-        if not file_name == "__init__.py" and os.path.isfile(os.path.join("bin", file_name)):
-            scripts.append(os.path.join("bin", file_name))
-    return scripts
+    try:
+        scripts = []
+        for file_name in os.listdir("bin"):
+            if not file_name == "__init__.py" and os.path.isfile(os.path.join("bin", file_name)):
+                scripts.append(os.path.join("bin", file_name))
+        return scripts
+    except OSError:
+        return []
 
-setup(name=metadata.project_name,
-      version=metadata.version_number,
-      description=metadata.project_description,
+setup(name=PypiVariables.name,
+      version=PypiVariables.version,
+      description=PypiVariables.description,
       long_description=readme(),
-      classifiers=[metadata.development_status,
-                   metadata.audience,
-                   metadata.license_identifier,
-                   metadata.topic,
-                   metadata.language,
-                   metadata.compatible_os,
-                   metadata.environment,
-                   metadata.programming_language
-                   ],
-      url=metadata.project_url,
-      download_url=metadata.download_url,
-      author=metadata.author_name,
-      author_email=metadata.author_email,
-      license=metadata.license_type,
+      classifiers=PypiVariables.classifiers,
+      url=PypiVariables.url,
+      download_url=PypiVariables.download_url,
+      author=PypiVariables.author,
+      author_email=PypiVariables.author_email,
+      license=PypiVariables.license,
       packages=find_packages(),
-      install_requires=metadata.dependencies,
-      dependency_links=[],
+      install_requires=PypiVariables.install_requires,
       test_suite='nose.collector',
       tests_require=['nose'],
       scripts=find_scripts(),
