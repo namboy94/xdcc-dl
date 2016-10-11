@@ -1,7 +1,7 @@
 import sys
 import os
 sys.path.insert(0, os.path.abspath("../.."))
-from xdcc_dl.metadata import version_number
+from xdcc_dl.metadata import General
 
 extensions = [
     'sphinx.ext.autodoc',
@@ -20,8 +20,8 @@ project = 'xdcc_dl'
 copyright = '2016, Hermann Krumrey'
 author = 'Hermann Krumrey'
 
-version = version_number
-release = version_number
+version = General.version_number
+release = General.version_number
 
 language = None
 exclude_patterns = []
@@ -62,6 +62,7 @@ epub_exclude_files = ['search.html']
 intersphinx_mapping = {'https://docs.python.org/': None}
 
 from sphinx.ext.autodoc import between
+
 
 def skip(app, what, name, obj, skip, options):
     if name == "__init__":
