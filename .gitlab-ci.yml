@@ -1,6 +1,7 @@
 stages:
   - mirror
   - test
+  - build
   - deploy
   - release
   - docstats
@@ -41,19 +42,23 @@ run_unit_tests_python_3:
   script:
     - python3 setup.py test
 
-install_scripts_on_linux:
-  stage: install
+pyinstaller_linux:
+  stage: build
   only:
     - master
-    - develop
   tags:
     - linux
     - python
   script:
     - python3 setup.py install --user
+    - python3 builder.py build pyinstaller_linux
+    - pip3 uninstall xdcc_dl -y
+  artifacts:
+    paths:
+      - build/gitlab_build_scripts/*
 
-install_scripts_on_windows:
-  stage: install
+pyinstaller_windows:
+  stage: build
   only:
     - master
   tags:
@@ -61,9 +66,14 @@ install_scripts_on_windows:
     - python
   script:
     - python setup.py install
+    - python builder.py build pyinstaller_windows
+    - pip uninstall xdcc_dl -y
+  artifacts:
+    paths:
+      - build/gitlab_build_scripts/*
 
 source_dist:
-  stage: upload
+  stage: deploy
   only:
     - master
   tags:
@@ -71,6 +81,28 @@ source_dist:
     - python
   script:
     - python3 setup.py register sdist upload
+
+binary_3_dist:
+  stage: deploy
+  only:
+    - master
+  tags:
+    - linux
+    - python
+  script:
+    - python3 setup.py bdist_wheel upload
+
+binary_2_dist:
+  stage: deploy
+  only:
+    - master
+  tags:
+    - python
+    - linux
+  script:
+    - 3to2 . --write
+    - python2 setup.py bdist_wheel
+    - twine upload dist/*
 
 upload_release_to_github:
   stage: release
