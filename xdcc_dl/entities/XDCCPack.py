@@ -89,3 +89,11 @@ class XDCCPack(object):
         :return: the pack number
         """
         return self.packnumber
+
+    def get_request_message(self) -> str:
+        """
+        Generates an xdcc send message to be sent to the bot to initiate the XDCC connection
+
+        :return: The generated message string
+        """
+        return "xdcc send #" + str(self.packnumber)

@@ -24,6 +24,7 @@ LICENSE
 
 # imports
 from typing import Dict
+from xdcc_dl.logging.LoggingTypes import LoggingTypes
 
 
 class Logger(object):
@@ -56,6 +57,9 @@ class Logger(object):
         :param logging_type: the type of message to log
         :return:             None
         """
+        if logging_type is None:
+            logging_type = LoggingTypes.DEFAULT
+
         priority = logging_type['priority']
 
         if self.logfile is not None:
@@ -65,10 +69,6 @@ class Logger(object):
 
         if self.verbosity_level >= priority:
 
-            if logging_type is not None:
-                fg_color = logging_type["fg_color"]
-                bg_color = logging_type["bg_color"]
-                print(fg_color + bg_color + message + '\033[0m' + '\033[0m')
-
-            else:
-                print(message)
+            fg_color = logging_type["fg_color"]
+            bg_color = logging_type["bg_color"]
+            print(fg_color + bg_color + message + '\033[0m' + '\033[0m')

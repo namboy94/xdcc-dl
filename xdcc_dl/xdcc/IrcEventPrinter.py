@@ -94,7 +94,7 @@ class IrcEventPrinter(BaseIrclient):
         :param event:      the IRC Event
         :return:           None
         """
-        self.logger.log(event.arguments[0], LOG.PRIVATE_MESSAGE)
+        self.logger.log(event.source + ": " + event.arguments[0], LOG.PRIVATE_MESSAGE)
 
     def on_pubnotice(self, connection: irc.client.ServerConnection, event: irc.client.Event) -> None:
         """
@@ -104,7 +104,7 @@ class IrcEventPrinter(BaseIrclient):
         :param event:      the IRC Event
         :return:           None
         """
-        self.logger.log(event.arguments[0], LOG.PUBLIC_NOTICE)
+        self.logger.log(event.source + ": " + event.arguments[0], LOG.PUBLIC_NOTICE)
 
     def on_pubmessage(self, connection: irc.client.ServerConnection, event: irc.client.Event) -> None:
         """
@@ -114,7 +114,7 @@ class IrcEventPrinter(BaseIrclient):
         :param event:      the IRC Event
         :return:           None
         """
-        self.logger.log(event.arguments[0], LOG.PUBLIC_MESSAGE)
+        self.logger.log(event.source + ": " + event.arguments[0], LOG.PUBLIC_MESSAGE)
 
     def on_ping(self, connection: irc.client.ServerConnection, event: irc.client.Event) -> None:
         """

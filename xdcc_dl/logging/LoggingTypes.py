@@ -90,12 +90,15 @@ class LoggingTypes:
         YELLOW BG:                             Downloads
         CYAN BG:                               WHOIS
         GREEN BG:                              CHANNELS
+        BLUE BG:                               Messages
         DEFAULT BG + GREY/L_GREY/WHITE FG:     Welcome Messages, Message of the day, CTCP Version
         DEFAULT BG + DEFAULT/L_GREEN/L_RED FG: Connection
         DEFAULT BG + BLUE/L_BLUE FG:           Private Message/Notice
         DEFAULT BG + YELLOW/L_YELLOW FG:       Public Message/Notice
         DEFAULT BG + MANGENTA/L_MAGENTA FG:    Undefined events
     """
+
+    DEFAULT              = {"bg_color": BGColors.DEFAULT,      "fg_color": FGColors.DEFAULT,       "priority": 0}
 
     CONNECTION_ATTEMPT   = {"bg_color": BGColors.DEFAULT,      "fg_color": FGColors.DEFAULT,       "priority": 2}
     CONNECTION_SUCCESS   = {"bg_color": BGColors.DEFAULT,      "fg_color": FGColors.LIGHT_GREEN,   "priority": 2}
@@ -108,6 +111,11 @@ class LoggingTypes:
     WHOIS_SERVER         = {"bg_color": BGColors.CYAN,         "fg_color": FGColors.LIGHT_GRAY,    "priority": 4}
 
     CHANNEL_JOIN_ATTEMPT = {"bg_color": BGColors.GREEN,        "fg_color": FGColors.BLACK,         "priority": 2}
+    CHANNEL_JOIN_SUCCESS = {"bg_color": BGColors.GREEN,        "fg_color": FGColors.LIGHT_GREEN,   "priority": 2}
+    CHANNEL_USERS        = {"bg_color": BGColors.GREEN,        "fg_color": FGColors.LIGHT_BLUE,    "priority": 6}
+    CHANNEL_TOPIC        = {"bg_color": BGColors.GREEN,        "fg_color": FGColors.MAGENTA,       "priority": 6}
+
+    MESSAGE_SEND         = {"bg_color": BGColors.BLUE,          "fg_color": FGColors.BLACK,        "priority": 1}
 
     PRIVATE_NOTICE       = {"bg_color": BGColors.DEFAULT,      "fg_color": FGColors.BLUE,          "priority": 3}
     PRIVATE_MESSAGE      = {"bg_color": BGColors.DEFAULT,      "fg_color": FGColors.LIGHT_BLUE,    "priority": 3}
