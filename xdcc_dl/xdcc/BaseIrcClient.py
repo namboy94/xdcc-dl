@@ -72,6 +72,9 @@ class BaseIrclient(irc.client.SimpleIRCClient):
         self.server_port = irc_server.get_port()
         self.user_name = user.get_name()
 
+        # State variables
+        self.server_connected = False
+
     def connect(self) -> None:
         """
         Connects the IRC Client to the IRC Server
@@ -81,8 +84,13 @@ class BaseIrclient(irc.client.SimpleIRCClient):
         self.logger.log("Connecting to server:  " + self.server_address,   LOG.CONNECTION_ATTEMPT)
         self.logger.log("Using Port:            " + str(self.server_port), LOG.CONNECTION_ATTEMPT)
         self.logger.log("As User:               " + self.user_name,        LOG.CONNECTION_ATTEMPT)
-        super().connect(self.server, int(self.server_port), self.user_name)
-        self.logger.log("Establishing Connection to Server", LOG.CONNECTION_SUCCESS)
+
+        try:
+            super().connect(self.server_address, int(self.server_port), self.user_name)
+            self.logger.log("Established Connection to Server", LOG.CONNECTION_SUCCESS)
+            self.server_connected = True
+        except irc.client.ServerConnectionError:
+            self.logger.log("Failed to connect to Server", LOG.CONNECTION_FAILURE)
 
     def start(self) -> None:
         """

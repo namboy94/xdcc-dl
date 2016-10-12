@@ -53,9 +53,9 @@ class BGColors:
     """
 
     DEFAULT = '\033[49m'
-    BLACK = '\033[40m'
+    BLACK = '\033[40m'  # WHITE
     RED = '\033[41m'
-    GREEN = '\033[42m'
+    GREEN = '\033[42m'  # YELLOW
     YELLOW = '\033[43m'
     BLUE = '\033[44m'
     MAGENTA = '\033[45m'
