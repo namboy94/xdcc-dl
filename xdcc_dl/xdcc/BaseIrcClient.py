@@ -28,6 +28,7 @@ from jaraco.stream import buffer
 from xdcc_dl.entities.User import User
 from xdcc_dl.logging.Logger import Logger
 from xdcc_dl.entities.IrcServer import IrcServer
+from xdcc_dl.xdcc.ConnectionStates import ConnectionStates
 # noinspection PyPep8Naming
 from xdcc_dl.logging.LoggingTypes import LoggingTypes as LOG
 
@@ -45,7 +46,7 @@ class IgnoreErrorsBuffer(buffer.DecodingLineBuffer):
         pass
 
 
-class BaseIrclient(irc.client.SimpleIRCClient):
+class BaseIrclient(irc.client.SimpleIRCClient, ConnectionStates):
     """
     The Base IRC Client that defines the necessary features that an IRC Client must be able to do.
     Layer 0 of the XDCC Bot
@@ -60,6 +61,7 @@ class BaseIrclient(irc.client.SimpleIRCClient):
         :param logger:     The logger used to print informational messages to the console
         """
         super().__init__()
+        ConnectionStates.__init__(self)
 
         self.logger = logger
 
@@ -72,9 +74,6 @@ class BaseIrclient(irc.client.SimpleIRCClient):
         self.server_address = irc_server.get_address()
         self.server_port = irc_server.get_port()
         self.user_name = user.get_name()
-
-        # State variables
-        self.server_connected = False
 
     def connect(self) -> None:
         """
@@ -89,7 +88,7 @@ class BaseIrclient(irc.client.SimpleIRCClient):
         try:
             super().connect(self.server_address, int(self.server_port), self.user_name)
             self.logger.log("Established Connection to Server", LOG.CONNECTION_SUCCESS)
-            self.server_connected = True
+            self.connected_to_server = True
         except irc.client.ServerConnectionError:
             self.logger.log("Failed to connect to Server", LOG.CONNECTION_FAILURE)
 

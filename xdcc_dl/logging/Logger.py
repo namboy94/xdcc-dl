@@ -48,7 +48,7 @@ class Logger(object):
         self.logfile = logfile
         self.ignore_logfile_verbosity = ignore_verbosity_in_logfile
 
-    def log(self, message: str, logging_type: Dict[str, str or int]) -> None:
+    def log(self, message: str, logging_type: Dict[str, str or int]=None) -> None:
         """
         Logs a message to the console and optionally to a logfile
 
@@ -64,7 +64,11 @@ class Logger(object):
                     log.write(message)
 
         if self.verbosity_level >= priority:
-            fg_color = logging_type["fg_color"]
-            bg_color = logging_type["bg_color"]
 
-            print(fg_color + bg_color + message + '\033[0m' + '\033[0m')
+            if logging_type is None:
+                fg_color = logging_type["fg_color"]
+                bg_color = logging_type["bg_color"]
+                print(fg_color + bg_color + message + '\033[0m' + '\033[0m')
+
+            else:
+                print(message)

@@ -23,6 +23,13 @@ LICENSE
 """
 
 # imports
+import irc.client
+from typing import List
+from xdcc_dl.entities.User import User
+from xdcc_dl.logging.Logger import Logger
+from xdcc_dl.entities.XDCCPack import XDCCPack
+from xdcc_dl.entities.Progress import Progress
+from xdcc_dl.entities.IrcServer import IrcServer
 from xdcc_dl.xdcc.IrcEventPrinter import IrcEventPrinter
 
 
@@ -32,10 +39,57 @@ class DownloadPreparer(IrcEventPrinter):
     Layer 2 of the XDCC Bot
     """
 
-    def __init__(self, packs: List[XDCCPack], logger: Logger, progress: Progress) -> None:
+    def __init__(self, packs: List[XDCCPack], user: User, logger: Logger, progress: Progress) -> None:
         """
-        Initializes a Download Preparer. This
-        :param packs:
-        :param logger:
-        :param progress:
+        Initializes a Download Preparer.
+
+        :param packs:    the packs to download
+        :param user:     the username to use
+        :param logger:   the logger to use
+        :param progress: the Progress object to keep track of the download progress
         """
+        super().__init__(packs[0].get_server(), user, logger)
+        self.packs = packs
+        self.progress = progress
+        self.current_pack = packs[0]  # Could also be = None, but decided on packs[0] for IDE purposes
+
+    def start(self) -> None:
+        """
+        Starts the download progress
+
+        :return: None
+        """
+        for pack in self.packs:
+            self.server = pack.get_server()
+            self.current_pack = pack
+            super().start()  # -> on_welcome
+
+    def on_welcome(self, connection: irc.client.ServerConnection, event: irc.client.Event) -> None:
+        """
+        The Welcome Event indicates that the server connection was established.
+        A whois is sent to figure out which channels the bot resides in
+
+        :param connection: the IRC Connection
+        :param event:      the IRC Event
+        :return: None
+        """
+        # noinspection PyUnresolvedReferences
+        super().on_welcome(connection, event)
+        self.logger.log("Sending WHOIS command for " + self.current_pack.get_bot(), LOG.WHOIS_SEND)
+        connection.whois(self.current_pack.get_bot())
+
+    def on_whoischannels(self, connection: irc.client.ServerConnection, event: irc.client.Event) -> None:
+        """
+        A successful WHOIS query will result in this method being called. The bot will then attempt to join all
+        channels the bot also joined
+
+        :param connection: the IRC Connection
+        :param event:      the IRC Event
+        :return: None
+        """
+        self.logger.log("Received WHOIS information, bot resides in: " + event.arguments[1], LOG.WHOIS_SUCCESS)
+        channels = event.arguments[1].split("#")
+        channels.pop(0)
+
+        for channel in channels:
+            self.join()
