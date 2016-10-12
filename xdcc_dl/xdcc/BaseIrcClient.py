@@ -27,6 +27,7 @@ import irc.client
 from jaraco.stream import buffer
 from xdcc_dl.entities.User import User
 from xdcc_dl.logging.Logger import Logger
+# noinspection PyPep8Naming
 import xdcc_dl.logging.LoggingTypes as LOG
 from xdcc_dl.entities.IrcServer import IrcServer
 

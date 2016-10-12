@@ -23,30 +23,21 @@ LICENSE
 """
 
 
-class IrcServer(object):
+class User(object):
     """
-    Class that models an IRC server
+    Models an IRC user
     """
 
-    def __init__(self, server_address: str, server_port: int = 6667) -> None:
+    def __init__(self, username: str) -> None:
         """
-        Initializes the Server's information
+        Initializes the User
 
-        :param server_address: the address of the IRC Server
-        :param server_port:    the port of the server, which defaults to 6667
-                               and can usually safely stay that way
+        :param username: teh user's username
         """
-        self.address = server_address
-        self.port = server_port
+        self.username = username
 
-    def get_address(self) -> str:
+    def get_name(self) -> str:
         """
-        :return: the server address
+        :return: The user's username
         """
-        return self.address
-
-    def get_port(self) -> int:
-        """
-        :return: the server port
-        """
-        return self.port
+        return self.username
