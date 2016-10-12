@@ -35,3 +35,4 @@ class ConnectionStates(object):
         """
         self.connected_to_server = False
         self.channel_joined = False
+        self.channel_join_required = False

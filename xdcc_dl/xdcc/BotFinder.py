@@ -29,19 +29,21 @@ from xdcc_dl.entities.User import User
 from xdcc_dl.logging.Logger import Logger
 from xdcc_dl.entities.XDCCPack import XDCCPack
 from xdcc_dl.entities.Progress import Progress
-from xdcc_dl.entities.IrcServer import IrcServer
 from xdcc_dl.xdcc.IrcEventPrinter import IrcEventPrinter
+# noinspection PyPep8Naming
+from xdcc_dl.logging.LoggingTypes import LoggingTypes as LOG
 
 
-class DownloadPreparer(IrcEventPrinter):
+# noinspection PyUnusedLocal
+class BotFinder(IrcEventPrinter):
     """
-    Class that prepares an (or multiple) XDCC Downloads
+    Class that uses WHOIS queries to find and joins the channels a bot is a part of
     Layer 2 of the XDCC Bot
     """
 
     def __init__(self, packs: List[XDCCPack], user: User, logger: Logger, progress: Progress) -> None:
         """
-        Initializes a Download Preparer.
+        Initializes a BotFinder. First Layer to use XDCC Packs
 
         :param packs:    the packs to download
         :param user:     the username to use
@@ -87,9 +89,40 @@ class DownloadPreparer(IrcEventPrinter):
         :param event:      the IRC Event
         :return: None
         """
+        self.channel_join_required = True
+
         self.logger.log("Received WHOIS information, bot resides in: " + event.arguments[1], LOG.WHOIS_SUCCESS)
         channels = event.arguments[1].split("#")
         channels.pop(0)
 
         for channel in channels:
-            self.join()
+            self.logger.log("Joining Channel " + channel, LOG.CHANNEL_JOIN_ATTEMPT)
+            connection.join(channel)
+
+    def on_endofwhois(self, connection: irc.client.ServerConnection, event: irc.client.Event) -> None:
+        """
+        Checks the end of a WHOIS command if a channel join has occured or was even necessary
+        If it was not necessary, starts the download
+
+        :param connection: the IRC connection
+        :param event: the endofwhois event
+        :return: None
+        """
+        if not self.channel_join_required:
+
+            event.source = self.user_name
+            # noinspection PyUnresolvedReferences
+            self.on_join(connection, event)  # Simulates a Channel Join
+
+    def on_nosuchnick(self, connection: irc.client.ServerConnection, event: irc.client.Event) -> None:
+        """
+        This method is called if the WHOIS query fails, i.e. the bot does not exist on the IRC server
+        It will forcefully abort the connection, which will then result in the bot skipping the current Pack
+
+        :param connection: the IRC Connection
+        :param event:      the IRC Event
+        :return: None
+        """
+        if event.arguments[0] == self.current_pack.get_bot():  # Make sure the failed WHOIS is for our bot
+            self.logger.log("Bot " + self.current_pack.get_bot() + " does not exist on Server", LOG.WHOIS_NO_RESULT)
+            self.connection.disconnect("WHOIS Query Failed")
