@@ -54,6 +54,7 @@ def create_event_printer(event: str, formatting: str, show_tag: bool = False) ->
 class IrcEventPrinter(BaseIrclient):
     """
     Class that prints output to the console for every type of IRC event defined by the irc library
+    Layer 1 of the XDCC Bot
     """
 
     # This assigns a method to all event types that are supported by the IRC library.

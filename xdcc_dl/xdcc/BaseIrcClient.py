@@ -47,7 +47,8 @@ class IgnoreErrorsBuffer(buffer.DecodingLineBuffer):
 
 class BaseIrclient(irc.client.SimpleIRCClient):
     """
-    The Base IRC Client that defines the necessary features that an IRC Client must be able to do
+    The Base IRC Client that defines the necessary features that an IRC Client must be able to do.
+    Layer 0 of the XDCC Bot
     """
 
     def __init__(self, irc_server: IrcServer, user: User, logger: Logger):

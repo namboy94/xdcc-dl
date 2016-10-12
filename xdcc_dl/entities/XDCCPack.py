@@ -23,14 +23,69 @@ LICENSE
 """
 
 # imports
+import os
+from xdcc_dl.entities.IrcServer import IrcServer
 
 
 class XDCCPack(object):
     """
-
+    Class that models an XDCC Pack
     """
 
-    def __init__(self) -> None:
+    def __init__(self, server: IrcServer, bot: str, packnumber: int, destination: str) -> None:
         """
+        Initializes an XDCC object. It contains all the necessary information for joining the correct
+        IRC server and channel and sending the download request to the correct bot, then storing the
+        received file in the predetermined location. If the destination is a directory, the file will be stored
+        in the directory with the default file name, if not the file will be saved at the destination exactly.
+        The file extension will stay as in the original filename
+        """
+        self.server = server
+        self.bot = bot
+        self.packnumber = packnumber
 
+        if os.path.isdir(destination):
+            self.directory = destination
+            self.filename = ""
+        else:
+            self.directory = os.path.dirname(destination)
+            if not self.directory:
+                self.directory = os.getcwd()
+            self.filename = os.path.basename(destination)
+
+    def set_filename(self, filename: str) -> None:
         """
+        Sets the filename (or only the file extension) of the target file
+
+        :param filename: the filename as provided by the XDCC bot
+        :return: None
+        """
+        if self.filename and len(filename.split(".")) > 1:
+            self.filename += "." + filename.rsplit(".", 1)[1]
+
+        if not self.filename:
+            self.filename = filename
+
+    def get_server(self) -> IrcServer:
+        """
+        :return: The server
+        """
+        return self.server
+
+    def get_filepath(self) -> str:
+        """
+        :return: The full destination file path
+        """
+        return os.path.join(self.directory, self.filename)
+
+    def get_bot(self) -> str:
+        """
+        :return: The bot
+        """
+        return self.bot
+
+    def get_packnumber(self) -> int:
+        """
+        :return: the pack number
+        """
+        return self.packnumber
