@@ -81,8 +81,33 @@ class LoggingTypes:
         0: Must be shown under all circumstances except pure GUI output
         1: Will definitely be shown in a CLI environment
         2: Will generally be shown in a CLI environment
+        3: Will be shown in environments where detailed output is desired
+        4: Will generally not be shown, may lead to excessive amount of output
+        5: Shows all undefined events. WILL lead to excessive output
+
+    Colour Coding:
+
+        YELLOW BG:                             Downloads
+        DEFAULT BG + GREY/L_GREY/WHITE FG:     Welcome Messages, Message of the day, CTCP Version
+        DEFAULT BG + DEFAULT/L_GREEN/L_RED FG: Connection
+        DEFAULT BG + BLUE/L_BLUE FG:           Private Message/Notice
+        DEFAULT BG + YELLOW/L_YELLOW FG:       Public Message/Notice
+        DEFAULT BG + MANGENTA/L_MAGENTA FG:    Undefined events
     """
 
-    CONNECTION_ATTEMPT = {"bg_color": BGColors.DEFAULT, "fg_color": FGColors.WHITE, "priority": 2}
-    CONNECTION_SUCCESS = {"bg_color": BGColors.GREEN,   "fg_color": FGColors.WHITE, "priority": 2}
-    CONNECTION_FAILURE = {"bg_color": BGColors.RED,     "fg_color": FGColors.WHITE, "priority": 2}
+    CONNECTION_ATTEMPT = {"bg_color": BGColors.DEFAULT,      "fg_color": FGColors.DEFAULT,       "priority": 2}
+    CONNECTION_SUCCESS = {"bg_color": BGColors.DEFAULT,      "fg_color": FGColors.LIGHT_GREEN,   "priority": 2}
+    CONNECTION_FAILURE = {"bg_color": BGColors.DEFAULT,      "fg_color": FGColors.LIGHT_RED,     "priority": 2}
+
+    PRIVATE_NOTICE     = {"bg_color": BGColors.DEFAULT,      "fg_color": FGColors.BLUE,          "priority": 3}
+    PRIVATE_MESSAGE    = {"bg_color": BGColors.DEFAULT,      "fg_color": FGColors.LIGHT_BLUE,    "priority": 3}
+    PUBLIC_NOTICE      = {"bg_color": BGColors.DEFAULT,      "fg_color": FGColors.YELLOW,        "priority": 3}
+    PUBLIC_MESSAGE     = {"bg_color": BGColors.DEFAULT,      "fg_color": FGColors.LIGHT_YELLOW,  "priority": 3}
+
+    MESSAGE_OF_THE_DAY = {"bg_color": BGColors.DEFAULT,      "fg_color": FGColors.LIGHT_GRAY,    "priority": 4}
+    WELCOME            = {"bg_color": BGColors.DEFAULT,      "fg_color": FGColors.DARK_GRAY,     "priority": 4}
+    CTCP_VERSION       = {"bg_color": BGColors.DEFAULT,      "fg_color": FGColors.WHITE,         "priority": 4}
+    PING               = {"bg_color": BGColors.LIGHT_GREEN,  "fg_color": FGColors.BLACK,         "priority": 4}
+
+    EVENT              = {"bg_color": BGColors.DEFAULT,      "fg_color": FGColors.MAGENTA,       "priority": 5}
+    EVENT_TEXT         = {"bg_color": BGColors.DEFAULT,      "fg_color": FGColors.LIGHT_MAGENTA, "priority": 5}
