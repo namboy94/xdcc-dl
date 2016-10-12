@@ -34,6 +34,13 @@ from xdcc_dl.xdcc.IrcEventPrinter import IrcEventPrinter
 from xdcc_dl.logging.LoggingTypes import LoggingTypes as LOG
 
 
+class BotNotFoundException(Exception):
+    """
+    An Exception to throw for when the WHOIS query does not return any results
+    """
+    pass
+
+
 # noinspection PyUnusedLocal
 class BotFinder(IrcEventPrinter):
     """
@@ -64,7 +71,10 @@ class BotFinder(IrcEventPrinter):
         for pack in self.packs:
             self.server = pack.get_server()
             self.current_pack = pack
-            super().start()  # -> on_welcome
+            try:
+                super().start()  # -> on_welcome
+            except BotNotFoundException:
+                pass
 
     def on_welcome(self, connection: irc.client.ServerConnection, event: irc.client.Event) -> None:
         """
@@ -73,12 +83,13 @@ class BotFinder(IrcEventPrinter):
 
         :param connection: the IRC Connection
         :param event:      the IRC Event
-        :return: None
+        :return:           None
         """
         # noinspection PyUnresolvedReferences
         super().on_welcome(connection, event)
         self.logger.log("Sending WHOIS command for " + self.current_pack.get_bot(), LOG.WHOIS_SEND)
-        connection.whois(self.current_pack.get_bot())
+        connection.whois(self.current_pack.get_bot())  # -> Success: on_whoischannels or on_endofwhois
+                                                       # -> Failure: on_nosuchnick
 
     def on_whoischannels(self, connection: irc.client.ServerConnection, event: irc.client.Event) -> None:
         """
@@ -87,17 +98,20 @@ class BotFinder(IrcEventPrinter):
 
         :param connection: the IRC Connection
         :param event:      the IRC Event
-        :return: None
+        :return:           None
         """
-        self.channel_join_required = True
+        self.channel_join_required = True  # Some bots are not on any channel, and can be used
+                                           # without joining any channel. If a whoischannels message is
+                                           # received however, we need to join a channel
 
         self.logger.log("Received WHOIS information, bot resides in: " + event.arguments[1], LOG.WHOIS_SUCCESS)
         channels = event.arguments[1].split("#")
         channels.pop(0)
 
         for channel in channels:
+            channel = "#" + channel.split(" ")[0]
             self.logger.log("Joining Channel " + channel, LOG.CHANNEL_JOIN_ATTEMPT)
-            connection.join(channel)
+            connection.join(channel)  # -> on_join
 
     def on_endofwhois(self, connection: irc.client.ServerConnection, event: irc.client.Event) -> None:
         """
@@ -105,14 +119,14 @@ class BotFinder(IrcEventPrinter):
         If it was not necessary, starts the download
 
         :param connection: the IRC connection
-        :param event: the endofwhois event
-        :return: None
+        :param event:      the endofwhois event
+        :return:           None
         """
         if not self.channel_join_required:
 
             event.source = self.user_name
             # noinspection PyUnresolvedReferences
-            self.on_join(connection, event)  # Simulates a Channel Join
+            self.on_join(connection, event)  # Simulates a Channel Join if joining a channel is unnecessary
 
     def on_nosuchnick(self, connection: irc.client.ServerConnection, event: irc.client.Event) -> None:
         """
@@ -121,8 +135,54 @@ class BotFinder(IrcEventPrinter):
 
         :param connection: the IRC Connection
         :param event:      the IRC Event
-        :return: None
+        :return:           None
         """
         if event.arguments[0] == self.current_pack.get_bot():  # Make sure the failed WHOIS is for our bot
             self.logger.log("Bot " + self.current_pack.get_bot() + " does not exist on Server", LOG.WHOIS_NO_RESULT)
             self.connection.disconnect("WHOIS Query Failed")
+
+    def on_disconnect(self, connection: irc.client.ServerConnection, event: irc.client.Event) -> None:
+        """
+        Method called whenever the IRC connection is disconnected
+
+        :param connection: the IRC Connection
+        :param event:      the IRC Event
+        :return:           None
+        """
+        if event.arguments[0] == "WHOIS Query Failed":
+            raise BotNotFoundException()
+        super().on_disconnect(connection, event)
+
+    def on_whoisuser(self, connection: irc.client.ServerConnection, event: irc.client.Event) -> None:
+        """
+        Method called when a whoisuser command was received
+
+        :param connection: the IRC Connection
+        :param event:      the IRC Event
+        :return:           None
+        """
+        message = ""
+        for part in event.arguments:
+            message += part + " "
+        message = message.lstrip().rstrip()
+        self.logger.log(message, LOG.WHOIS_USER)
+
+    def on_whoisserver(self, connection: irc.client.ServerConnection, event: irc.client.Event) -> None:
+        """
+        Method called when a whoisserver command was received
+
+        :param connection: the IRC Connection
+        :param event:      the IRC Event
+        :return:           None
+        """
+        message = ""
+        for part in event.arguments:
+            message += part + " "
+        message = message.lstrip().rstrip()
+        self.logger.log(message, LOG.WHOIS_SERVER)
+
+if __name__ == "__main__":
+
+    from xdcc_dl.entities.IrcServer import IrcServer
+    xpacks = [XDCCPack(IrcServer("irc.rizon.net"), "ginpachi-sensei", 1, "/home/hermann/testing/test.txt")]
+    BotFinder(xpacks, User("Hermann"), Logger(10), Progress(len(xpacks))).start()

@@ -65,7 +65,7 @@ class Logger(object):
 
         if self.verbosity_level >= priority:
 
-            if logging_type is None:
+            if logging_type is not None:
                 fg_color = logging_type["fg_color"]
                 bg_color = logging_type["bg_color"]
                 print(fg_color + bg_color + message + '\033[0m' + '\033[0m')

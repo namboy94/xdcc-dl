@@ -104,6 +104,9 @@ class LoggingTypes:
     WHOIS_SEND           = {"bg_color": BGColors.CYAN,         "fg_color": FGColors.BLACK,         "priority": 2}
     WHOIS_SUCCESS        = {"bg_color": BGColors.CYAN,         "fg_color": FGColors.WHITE,         "priority": 2}
     WHOIS_NO_RESULT      = {"bg_color": BGColors.CYAN,         "fg_color": FGColors.LIGHT_RED,     "priority": 2}
+    WHOIS_USER           = {"bg_color": BGColors.CYAN,         "fg_color": FGColors.DARK_GRAY,     "priority": 4}
+    WHOIS_SERVER         = {"bg_color": BGColors.CYAN,         "fg_color": FGColors.LIGHT_GRAY,    "priority": 4}
+
     CHANNEL_JOIN_ATTEMPT = {"bg_color": BGColors.GREEN,        "fg_color": FGColors.BLACK,         "priority": 2}
 
     PRIVATE_NOTICE       = {"bg_color": BGColors.DEFAULT,      "fg_color": FGColors.BLUE,          "priority": 3}

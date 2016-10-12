@@ -124,7 +124,7 @@ class IrcEventPrinter(BaseIrclient):
         :param event:      the IRC Event
         :return:           None
         """
-        self.logger.log(event.arguments[0], LOG.PING)
+        self.logger.log("PING: " + event.arguments[0], LOG.PING)
 
     def on_ctcp(self, connection: irc.client.ServerConnection, event: irc.client.Event) -> None:
         """

@@ -46,6 +46,13 @@ class IgnoreErrorsBuffer(buffer.DecodingLineBuffer):
         pass
 
 
+class Disconnect(Exception):
+    """
+    Class that gets raised when a normal disconnect occurs
+    """
+    pass
+
+
 class BaseIrclient(irc.client.SimpleIRCClient, ConnectionStates):
     """
     The Base IRC Client that defines the necessary features that an IRC Client must be able to do.
@@ -98,8 +105,21 @@ class BaseIrclient(irc.client.SimpleIRCClient, ConnectionStates):
 
         :return: None
         """
-        self.connect()
-        super().start()
+        try:
+            self.connect()
+            super().start()
+        except Disconnect:
+            pass
+
+    def on_disconnect(self, connection: irc.client.ServerConnection, event: irc.client.Event) -> None:
+        """
+        Method called whenever the IRC connection is disconnected
+
+        :param connection: the IRC Connection
+        :param event:      the IRC Event
+        :return:           None
+        """
+        raise Disconnect()
 
 
 if __name__ == '__main__':
