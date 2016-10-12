@@ -27,9 +27,9 @@ import irc.client
 from jaraco.stream import buffer
 from xdcc_dl.entities.User import User
 from xdcc_dl.logging.Logger import Logger
-# noinspection PyPep8Naming
-import xdcc_dl.logging.LoggingTypes as LOG
 from xdcc_dl.entities.IrcServer import IrcServer
+# noinspection PyPep8Naming
+from xdcc_dl.logging.LoggingTypes import LoggingTypes as LOG
 
 
 class IgnoreErrorsBuffer(buffer.DecodingLineBuffer):
@@ -78,10 +78,11 @@ class BaseIrclient(irc.client.SimpleIRCClient):
 
         :return: None
         """
-        self.logger.log("Connecting to server:  " + self.server, LOG.CONNECTION)
-        self.logger.log("Using Port:            " + str(self.server_port), LOG.CONNECTION)
-        self.logger.log("As User:               " + self.user_name, LOG.CONNECTION)
+        self.logger.log("Connecting to server:  " + self.server_address,   LOG.CONNECTION_ATTEMPT)
+        self.logger.log("Using Port:            " + str(self.server_port), LOG.CONNECTION_ATTEMPT)
+        self.logger.log("As User:               " + self.user_name,        LOG.CONNECTION_ATTEMPT)
         super().connect(self.server, int(self.server_port), self.user_name)
+        self.logger.log("Establishing Connection to Server", LOG.CONNECTION_SUCCESS)
 
     def start(self) -> None:
         """
@@ -89,6 +90,14 @@ class BaseIrclient(irc.client.SimpleIRCClient):
 
         :return: None
         """
-        self.logger.log("Establishing Connection", LOG.CONNECTION)
         self.connect()
         super().start()
+
+
+if __name__ == '__main__':
+
+    import sys
+    sys.argv.pop(0)
+    address, username, verbosity = sys.argv
+
+    BaseIrclient(IrcServer(address), User(username), Logger(int(verbosity))).start()

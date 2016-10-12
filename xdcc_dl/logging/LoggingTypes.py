@@ -83,4 +83,6 @@ class LoggingTypes:
         2: Will generally be shown in a CLI environment
     """
 
-    CONNECTION = {"bg_color": BGColors.DEFAULT, "fg_color": FGColors.WHITE, "priority": 2}
+    CONNECTION_ATTEMPT = {"bg_color": BGColors.DEFAULT, "fg_color": FGColors.WHITE, "priority": 2}
+    CONNECTION_SUCCESS = {"bg_color": BGColors.GREEN,   "fg_color": FGColors.WHITE, "priority": 2}
+    CONNECTION_FAILURE = {"bg_color": BGColors.RED,     "fg_color": FGColors.WHITE, "priority": 2}
