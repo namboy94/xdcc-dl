@@ -127,10 +127,12 @@ class LoggingTypes:
     DCC_SEND_HANDSHAKE   = {"bg_color": BGColors.YELLOW,        "fg_color": FGColors.BLACK,        "priority": 2}
     DCC_RESUME_REQUEST   = {"bg_color": BGColors.YELLOW,        "fg_color": FGColors.DARK_GRAY,    "priority": 2}
     DCC_RESUME_SUCCESS   = {"bg_color": BGColors.YELLOW,        "fg_color": FGColors.WHITE,        "priority": 2}
+    DCC_RESUME_FAILED    = {"bg_color": BGColors.YELLOW,        "fg_color": FGColors.LIGHT_RED,    "priority": 2}
 
     DOWNLOAD_START       = {"bg_color": BGColors.YELLOW,        "fg_color": FGColors.LIGHT_GREEN,  "priority": 1}
     DOWNLOAD_RESUME      = {"bg_color": BGColors.YELLOW,        "fg_color": FGColors.LIGHT_BLUE,   "priority": 1}
     DOWNLOAD_PROGRESS    = {"bg_color": BGColors.LIGHT_YELLOW,  "fg_color": FGColors.BLACK,        "priority": 1}
+    DOWNLOAD_WAS_DONE    = {"bg_color": BGColors.YELLOW,        "fg_color": FGColors.RED,          "priority": 2}
 
     PRIVATE_NOTICE       = {"bg_color": BGColors.DEFAULT,      "fg_color": FGColors.BLUE,          "priority": 3}
     PRIVATE_MESSAGE      = {"bg_color": BGColors.DEFAULT,      "fg_color": FGColors.LIGHT_BLUE,    "priority": 3}

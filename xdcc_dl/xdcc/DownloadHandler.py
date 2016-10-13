@@ -55,7 +55,7 @@ class DownloadHandler(XDCCInitiator):
         :param print_pause: the time amount between download progress prints
         """
         super().__init__(packs, user, logger, progress)
-        self.print_pause = [print_pause]
+        self.print_pause = print_pause
         self.time_counter = time.time()
 
     def on_dccmsg(self, connection: irc.client.ServerConnection, event: irc.client.Event) -> None:
@@ -76,8 +76,8 @@ class DownloadHandler(XDCCInitiator):
 
             self.time_counter = time.time()
 
-            progress_message = "Progress: %.2f" % self.progress.get_single_progress_percentage()
-            progress_message += " (" + str(self.progress.get_single_progress())
+            progress_message = " Progress: %.2f" % self.progress.get_single_progress_percentage()
+            progress_message += "% (" + str(self.progress.get_single_progress())
             progress_message += "/" + str(self.progress.get_single_progress_total()) + ")"
 
             self.logger.log(progress_message, LOG.DOWNLOAD_PROGRESS, carriage_return=True)
@@ -85,9 +85,20 @@ class DownloadHandler(XDCCInitiator):
         # Send Acknowledge Message
         self.dcc_connection.send_bytes(struct.pack("!I", self.progress.get_single_progress()))
 
+    def on_dcc_disconnect(self, connection: irc.client.ServerConnection, event: irc.client.Event) -> None:
+        """
+        The DCC Connection was disconnected. Checks if download was completed. If not, try to resend Pack request
+
+        :param connection: the IRC Connection
+        :param event:      the IRC Event
+        :return:           None
+        """
+        self.file.close()
+        self.logger.log("Done")
+
 
 if __name__ == "__main__":
 
     from xdcc_dl.entities.IrcServer import IrcServer
-    xpacks = [XDCCPack(IrcServer("irc.rizon.net"), "hermann", 2, "/home/hermann/testing/")]
+    xpacks = [XDCCPack(IrcServer("irc.rizon.net"), "CR-HOLLAND|NEW", 2, "/home/hermann/testing/")]
     DownloadHandler(xpacks, User("Heramann"), Logger(5), Progress(len(xpacks))).start()

@@ -37,3 +37,16 @@ class ConnectionStates(object):
         self.channel_joined = False
         self.channel_join_required = False
         self.download_started = False
+        self.dcc_resume_requested = False
+
+    def reset_connection_state(self) -> None:
+        """
+        Resets all connection state variables
+
+        :return: None
+        """
+        self.connected_to_server = False
+        self.channel_joined = False
+        self.channel_join_required = False
+        self.download_started = False
+        self.dcc_resume_requested = False

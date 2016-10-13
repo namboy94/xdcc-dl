@@ -68,6 +68,8 @@ class XDCCInitiator(MessageSender):
         """
         super().on_ctcp(connection, event)
 
+        print(event)
+
         if event.arguments[0] != "DCC":
             return
 
@@ -75,7 +77,7 @@ class XDCCInitiator(MessageSender):
 
         if payload[0] == "SEND":
             self.dcc_send_handler(payload, connection)
-        elif payload[1] == "ACCEPT":
+        elif payload[0] == "ACCEPT":
             self.dcc_accept_handler(payload, connection)
 
     def dcc_send_handler(self, ctcp_arguments: List[str], connection: irc.client.ServerConnection) -> None:
@@ -93,20 +95,38 @@ class XDCCInitiator(MessageSender):
         self.peer_port = int(ctcp_arguments[3])
         size = int(ctcp_arguments[4])
 
+        print(self.peer_address)
+        print(self.peer_port)
+
         self.progress.set_single_progress_total(int(size))
         self.current_pack.set_filename(filename)
 
-        if os.path.exists(self.current_pack.get_filepath()):
-
-            self.logger.log("Requesting DCC RESUME", LOG.DCC_RESUME_REQUEST)
+        if os.path.exists(self.current_pack.get_filepath()) and not self.dcc_resume_requested:
 
             position = os.path.getsize(self.current_pack.get_filepath())
-            self.progress.set_single_progress(position)
 
-            resume_parameter = "\"" + filename + "\" " + str(self.peer_port) + " " + str(position)
-            connection.ctcp("DCC RESUME", self.current_pack.get_bot(), resume_parameter)
+            if position == size:
+
+                self.logger.log("File already completely downloaded.", LOG.DOWNLOAD_WAS_DONE)
+
+                # Start and immediately close connection
+                self.dcc_connection = self.dcc_connect(self.peer_address, self.peer_port, "raw")
+                self.dcc_connection.disconnect()
+
+            else:
+
+                self.logger.log("Requesting DCC RESUME", LOG.DCC_RESUME_REQUEST)
+                self.progress.set_single_progress(position)
+
+                resume_parameter = "\"" + filename + "\" " + str(self.peer_port) + " " + str(position)
+                connection.ctcp("DCC RESUME", self.current_pack.get_bot(), resume_parameter)
+                self.dcc_resume_requested = True
 
         else:
+
+            if self.dcc_resume_requested:
+                self.logger.log("DCC Resume Failed. Starting from scratch.", LOG.DCC_RESUME_FAILED)
+                os.remove(self.current_pack.get_filepath())
 
             self.logger.log("Starting Download of " + filename, LOG.DOWNLOAD_START)
 
@@ -122,7 +142,9 @@ class XDCCInitiator(MessageSender):
         :param connection:     The connection to use for DCC connections
         :return:               None
         """
-        self.logger.log("DCC RESUME succeeded", LOG.DCC_RESUME_SUCCESS)
+        print(ctcp_arguments)
+
+        self.logger.log("DCC RESUME request successful", LOG.DCC_RESUME_SUCCESS)
         self.logger.log("Resuming Download of " + self.current_pack.get_filepath(), LOG.DOWNLOAD_RESUME)
 
         self.file = open(self.current_pack.get_filepath(), "ab")
