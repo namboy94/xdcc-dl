@@ -120,14 +120,17 @@ class LoggingTypes:
     CHANNEL_KICK         = {"bg_color": BGColors.GREEN,        "fg_color": FGColors.LIGHT_RED,     "priority": 6}
     CHANNEL_MODE_CHANGE  = {"bg_color": BGColors.GREEN,        "fg_color": FGColors.LIGHT_YELLOW,  "priority": 6}
     CHANNEL_ACTION       = {"bg_color": BGColors.GREEN,        "fg_color": FGColors.YELLOW,        "priority": 6}
+    CHANNEL_NICK_CHANGED = {"bg_color": BGColors.GREEN,        "fg_color": FGColors.LIGHT_CYAN,    "priority": 6}
 
     MESSAGE_SEND         = {"bg_color": BGColors.BLUE,          "fg_color": FGColors.BLACK,        "priority": 1}
 
     DCC_SEND_HANDSHAKE   = {"bg_color": BGColors.YELLOW,        "fg_color": FGColors.BLACK,        "priority": 2}
     DCC_RESUME_REQUEST   = {"bg_color": BGColors.YELLOW,        "fg_color": FGColors.DARK_GRAY,    "priority": 2}
     DCC_RESUME_SUCCESS   = {"bg_color": BGColors.YELLOW,        "fg_color": FGColors.WHITE,        "priority": 2}
+
     DOWNLOAD_START       = {"bg_color": BGColors.YELLOW,        "fg_color": FGColors.LIGHT_GREEN,  "priority": 1}
     DOWNLOAD_RESUME      = {"bg_color": BGColors.YELLOW,        "fg_color": FGColors.LIGHT_BLUE,   "priority": 1}
+    DOWNLOAD_PROGRESS    = {"bg_color": BGColors.LIGHT_YELLOW,  "fg_color": FGColors.BLACK,        "priority": 1}
 
     PRIVATE_NOTICE       = {"bg_color": BGColors.DEFAULT,      "fg_color": FGColors.BLUE,          "priority": 3}
     PRIVATE_MESSAGE      = {"bg_color": BGColors.DEFAULT,      "fg_color": FGColors.LIGHT_BLUE,    "priority": 3}

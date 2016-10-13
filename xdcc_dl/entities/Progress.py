@@ -99,3 +99,15 @@ class Progress(object):
         :return:         None
         """
         self.single_progress = progress
+
+    def get_single_progress(self) -> int:
+        """
+        :return: The current single progress
+        """
+        return self.single_progress
+
+    def get_single_progress_total(self) -> int:
+        """
+        :return: The single progress
+        """
+        return self.single_total

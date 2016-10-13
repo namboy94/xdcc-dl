@@ -27,11 +27,12 @@ import os
 import shlex
 import irc.client
 from typing import List
-from xdcc_dl.entities.Progress import Progress
 from xdcc_dl.entities.User import User
-from xdcc_dl.entities.XDCCPack import XDCCPack
 from xdcc_dl.logging.Logger import Logger
+from xdcc_dl.entities.XDCCPack import XDCCPack
+from xdcc_dl.entities.Progress import Progress
 from xdcc_dl.xdcc.MessageSender import MessageSender
+# noinspection PyPep8Naming
 from xdcc_dl.logging.LoggingTypes import LoggingTypes as LOG
 
 
@@ -127,10 +128,3 @@ class XDCCInitiator(MessageSender):
         self.file = open(self.current_pack.get_filepath(), "ab")
         self.dcc_connection = self.dcc_connect(self.peer_address, self.peer_port, "raw")
         self.download_started = True
-
-
-if __name__ == "__main__":
-
-    from xdcc_dl.entities.IrcServer import IrcServer
-    xpacks = [XDCCPack(IrcServer("irc.rizon.net"), "hermann", 2, "/home/hermann/testing/")]
-    XDCCInitiator(xpacks, User("Heramann"), Logger(5), Progress(len(xpacks))).start()

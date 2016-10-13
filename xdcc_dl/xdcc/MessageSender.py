@@ -151,4 +151,12 @@ class MessageSender(BotFinder):
         """
         self.logger.log(event.arguments[0] + " mode changed", LOG.CHANNEL_ACTION)
 
-# TODO on_nick
+    def on_nick(self, connection: irc.client.ServerConnection, event: irc.client.Event) -> None:
+        """
+        Called whenever a user changes his nick
+
+        :param connection: the IRC Connection
+        :param event:      the IRC Event
+        :return:           None
+        """
+        self.logger.log(event.source + " nick changed", LOG.CHANNEL_NICK_CHANGED)

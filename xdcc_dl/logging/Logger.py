@@ -49,13 +49,14 @@ class Logger(object):
         self.logfile = logfile
         self.ignore_logfile_verbosity = ignore_verbosity_in_logfile
 
-    def log(self, message: str, logging_type: Dict[str, str or int]=None) -> None:
+    def log(self, message: str, logging_type: Dict[str, str or int]=None, carriage_return: bool = False) -> None:
         """
         Logs a message to the console and optionally to a logfile
 
-        :param message:      the message to log
-        :param logging_type: the type of message to log
-        :return:             None
+        :param message:         the message to log
+        :param logging_type:    the type of message to log
+        :param carriage_return: If set to true, appends a carriage return to the log message
+        :return:                None
         """
         if logging_type is None:
             logging_type = LoggingTypes.DEFAULT
@@ -71,4 +72,7 @@ class Logger(object):
 
             fg_color = logging_type["fg_color"]
             bg_color = logging_type["bg_color"]
-            print(fg_color + bg_color + message + '\033[0m' + '\033[0m')
+
+            end = "\n" if not carriage_return else "\r"
+
+            print(fg_color + bg_color + message + '\033[0m' + '\033[0m', end=end)
