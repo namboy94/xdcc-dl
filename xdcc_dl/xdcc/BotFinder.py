@@ -180,9 +180,3 @@ class BotFinder(IrcEventPrinter):
             message += part + " "
         message = message.lstrip().rstrip()
         self.logger.log(message, LOG.WHOIS_SERVER)
-
-if __name__ == "__main__":
-
-    from xdcc_dl.entities.IrcServer import IrcServer
-    xpacks = [XDCCPack(IrcServer("irc.rizon.net"), "ginpachi-sensei", 1, "/home/hermann/testing/test.txt")]
-    BotFinder(xpacks, User("Hermann"), Logger(10), Progress(len(xpacks))).start()

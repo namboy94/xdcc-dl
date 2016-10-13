@@ -62,15 +62,30 @@ class Progress(object):
         """
         :return: The percentage of completion of the single progress.
         """
-        return (self.single_progress / self.single_total) * 100
+        try:
+            return (self.single_progress / self.single_total) * 100
+        except ZeroDivisionError:
+            return 0.0
 
     def get_total_percentage(self) -> float:
         """
         :return: The percentage of total progress
         """
-        total_percentage = self.progress / self.total
-        single_percentage = (self.get_single_progress_percentage() / 100)
-        single_proportional_percentage = single_percentage * (1 / self.total)
+        try:
+            total_percentage = self.progress / self.total
+            single_percentage = (self.get_single_progress_percentage() / 100)
+            single_proportional_percentage = single_percentage * (1 / self.total)
 
-        total_percentage += single_proportional_percentage
-        return total_percentage * 100
+            total_percentage += single_proportional_percentage
+            return total_percentage * 100
+        except ZeroDivisionError:
+            return 0.0
+
+    def set_single_progress_total(self, total: int) -> None:
+        """
+        Sets the total amount of bytes of the single progress
+
+        :param total: the total progress
+        :return:      None
+        """
+        self.single_total = total

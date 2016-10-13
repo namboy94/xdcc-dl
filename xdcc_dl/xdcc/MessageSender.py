@@ -24,12 +24,7 @@ LICENSE
 
 # imports
 import irc.client
-
-from xdcc_dl.entities.User import User
-from xdcc_dl.logging.Logger import Logger
 from xdcc_dl.xdcc.BotFinder import BotFinder
-from xdcc_dl.entities.XDCCPack import XDCCPack
-from xdcc_dl.entities.Progress import Progress
 # noinspection PyPep8Naming
 from xdcc_dl.logging.LoggingTypes import LoggingTypes as LOG
 
@@ -156,9 +151,4 @@ class MessageSender(BotFinder):
         """
         self.logger.log(event.arguments[0] + " mode changed", LOG.CHANNEL_ACTION)
 
-
-if __name__ == "__main__":
-
-    from xdcc_dl.entities.IrcServer import IrcServer
-    xpacks = [XDCCPack(IrcServer("irc.rizon.net"), "ginpachi-sensei", 1, "/home/hermann/testing/test.txt")]
-    MessageSender(xpacks, User("Heramann"), Logger(5), Progress(len(xpacks))).start()
+# TODO on_nick

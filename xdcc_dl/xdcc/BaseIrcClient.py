@@ -120,12 +120,3 @@ class BaseIrclient(irc.client.SimpleIRCClient, ConnectionStates):
         :return:           None
         """
         raise Disconnect()
-
-
-if __name__ == '__main__':
-
-    import sys
-    sys.argv.pop(0)
-    address, username, verbosity = sys.argv
-
-    BaseIrclient(IrcServer(address), User(username), Logger(int(verbosity))).start()

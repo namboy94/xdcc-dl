@@ -136,16 +136,4 @@ class IrcEventPrinter(BaseIrclient):
         """
         if event.arguments[0] == "VERSION":
             self.logger.log(event.arguments[0], LOG.CTCP_VERSION)
-
-
-if __name__ == '__main__':
-
-    import sys
-    from xdcc_dl.entities.User import User
-    from xdcc_dl.logging.Logger import Logger
-    from xdcc_dl.entities.IrcServer import IrcServer
-
-    sys.argv.pop(0)
-    address, username, verbosity = sys.argv
-
-    IrcEventPrinter(IrcServer(address), User(username), Logger(int(verbosity))).start()
+            return
