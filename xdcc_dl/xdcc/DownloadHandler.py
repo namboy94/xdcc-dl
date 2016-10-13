@@ -43,8 +43,7 @@ class DownloadHandler(XDCCInitiator):
     Layer 5 of the XDCC Bot
     """
 
-    def __init__(self, packs: List[XDCCPack], user: User, logger: Logger, progress: Progress, print_pause: float = 1.0)\
-            -> None:
+    def __init__(self, packs: List[XDCCPack], user: User, logger: Logger, progress: Progress) -> None:
         """
         Initializes the XDCC Initiator object. Defines local DCC connection and the opened download file
 
@@ -52,10 +51,8 @@ class DownloadHandler(XDCCInitiator):
         :param user:        the username to use
         :param logger:      the logger to use
         :param progress:    the Progress object to keep track of the download progress
-        :param print_pause: the time amount between download progress prints
         """
         super().__init__(packs, user, logger, progress)
-        self.print_pause = print_pause
         self.start_time = time.time()
 
     def on_dccmsg(self, connection: irc.client.ServerConnection, event: irc.client.Event) -> None:

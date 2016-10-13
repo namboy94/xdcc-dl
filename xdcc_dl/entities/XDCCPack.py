@@ -24,6 +24,7 @@ LICENSE
 
 # imports
 import os
+from typing import List
 from xdcc_dl.entities.IrcServer import IrcServer
 
 
@@ -99,3 +100,27 @@ class XDCCPack(object):
         :return: The generated message string
         """
         return "xdcc send #" + str(self.packnumber)
+
+
+def xdcc_packs_from_xdcc_message(xdcc_message: str, destination: str, server: str = "irc.rizon.net") -> List[XDCCPack]:
+    """
+    Generates XDCC Packs from an xdcc message of the form "/msg <bot> xdcc send #<packnumber>[-<packnumber>]"
+
+    :param xdcc_message: the XDCC message to parse
+    :param destination:  the destination file or directory of the pack
+    :param server:       the server to use, defaults to irc.rizon.net for simplicity's sake
+    :return:             The generated XDCC Packs in a list
+    """
+    bot = xdcc_message.split("/msg ")[1].split(" ")[0]
+
+    try:
+        packnumber = int(xdcc_message.rsplit("#", 1)[1])
+        return [XDCCPack(IrcServer(server), bot, packnumber, destination)]
+    except ValueError:
+        packnumbers = xdcc_message.rsplit("#", 1)[1]
+        start, end = packnumbers.split("-")
+
+        packs = []
+        for pack in range(int(start), int(end) + 1):
+            packs.append(XDCCPack(IrcServer(server), bot, pack, destination))
+        return packs
