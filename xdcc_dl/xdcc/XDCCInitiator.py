@@ -68,8 +68,6 @@ class XDCCInitiator(MessageSender):
         """
         super().on_ctcp(connection, event)
 
-        print(event)
-
         if event.arguments[0] != "DCC":
             return
 
@@ -94,9 +92,6 @@ class XDCCInitiator(MessageSender):
         self.peer_address = irc.client.ip_numstr_to_quad(ctcp_arguments[2])
         self.peer_port = int(ctcp_arguments[3])
         size = int(ctcp_arguments[4])
-
-        print(self.peer_address)
-        print(self.peer_port)
 
         self.progress.set_single_progress_total(int(size))
         self.current_pack.set_filename(filename)
@@ -127,6 +122,7 @@ class XDCCInitiator(MessageSender):
             if self.dcc_resume_requested:
                 self.logger.log("DCC Resume Failed. Starting from scratch.", LOG.DCC_RESUME_FAILED)
                 os.remove(self.current_pack.get_filepath())
+                self.progress.set_single_progress(0)
 
             self.logger.log("Starting Download of " + filename, LOG.DOWNLOAD_START)
 
@@ -142,8 +138,6 @@ class XDCCInitiator(MessageSender):
         :param connection:     The connection to use for DCC connections
         :return:               None
         """
-        print(ctcp_arguments)
-
         self.logger.log("DCC RESUME request successful", LOG.DCC_RESUME_SUCCESS)
         self.logger.log("Resuming Download of " + self.current_pack.get_filepath(), LOG.DOWNLOAD_RESUME)
 

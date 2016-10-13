@@ -56,7 +56,7 @@ class DownloadHandler(XDCCInitiator):
         """
         super().__init__(packs, user, logger, progress)
         self.print_pause = print_pause
-        self.time_counter = time.time()
+        self.start_time = time.time()
 
     def on_dccmsg(self, connection: irc.client.ServerConnection, event: irc.client.Event) -> None:
         """
@@ -72,15 +72,11 @@ class DownloadHandler(XDCCInitiator):
         self.file.write(data)
         self.progress.add_single_progress(data_length)
 
-        if (time.time() - self.time_counter) > self.print_pause:
+        progress_message = " Progress: %.2f" % self.progress.get_single_progress_percentage()
+        progress_message += "% (" + str(self.progress.get_single_progress())
+        progress_message += "/" + str(self.progress.get_single_progress_total()) + ")"
 
-            self.time_counter = time.time()
-
-            progress_message = " Progress: %.2f" % self.progress.get_single_progress_percentage()
-            progress_message += "% (" + str(self.progress.get_single_progress())
-            progress_message += "/" + str(self.progress.get_single_progress_total()) + ")"
-
-            self.logger.log(progress_message, LOG.DOWNLOAD_PROGRESS, carriage_return=True)
+        self.logger.log(progress_message, LOG.DOWNLOAD_PROGRESS, carriage_return=True)
 
         # Send Acknowledge Message
         self.dcc_connection.send_bytes(struct.pack("!I", self.progress.get_single_progress()))
@@ -93,12 +89,16 @@ class DownloadHandler(XDCCInitiator):
         :param event:      the IRC Event
         :return:           None
         """
-        self.file.close()
-        self.logger.log("Done")
+        if self.file is not None:
+            self.file.close()
+            self.logger.log("\nDownload completed in %.2f seconds" % (time.time() - self.start_time))
+
+        self.connection.close()
+        self.connection.disconnect()
 
 
 if __name__ == "__main__":
 
     from xdcc_dl.entities.IrcServer import IrcServer
-    xpacks = [XDCCPack(IrcServer("irc.rizon.net"), "CR-HOLLAND|NEW", 2, "/home/hermann/testing/")]
+    xpacks = [XDCCPack(IrcServer("irc.rizon.net"), "CR-HOLLAND|NEW", 8920, "/home/hermann/testing/")]
     DownloadHandler(xpacks, User("Heramann"), Logger(5), Progress(len(xpacks))).start()

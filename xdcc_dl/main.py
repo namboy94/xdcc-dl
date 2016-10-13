@@ -22,10 +22,21 @@ This file is part of xdcc_dl.
 LICENSE
 """
 
+# imports
+import argparse
+
 
 def main() -> None:
     """
-
+    Starts the main method of the program
 
     :return: None
     """
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-m", "--message", help="An XDCC Message")
+    parser.add_argument("-s", "--server", help="Specifies the IRC Server. Defaults to irc.rizon.net")
+    args = parser.parse_args()
+
+
+if __name__ == "__main__":
+    main()

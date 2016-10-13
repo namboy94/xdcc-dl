@@ -60,8 +60,9 @@ class IrcEventPrinter(BaseIrclient):
     # This assigns a method to all event types that are supported by the IRC library.
     # They print the type of event and its parameters
     for event in irc.events.all:
-        method = create_event_printer(event, "LOG.EVENT_TEXT", True)
-        exec(method)
+        if event != "disconnect":
+            method = create_event_printer(event, "LOG.EVENT_TEXT", True)
+            exec(method)
 
     # Here are some more specialized ones
 
