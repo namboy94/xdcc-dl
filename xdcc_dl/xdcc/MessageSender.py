@@ -106,9 +106,59 @@ class MessageSender(BotFinder):
         """
         self.logger.log("Topic Info: " + event.arguments[1], LOG.CHANNEL_TOPIC)
 
+    def on_quit(self, connection: irc.client.ServerConnection, event: irc.client.Event) -> None:
+        """
+        Logs that a user left a channel
+
+        :param connection: the IRC Connection
+        :param event:      the IRC Event
+        :return:           None
+        """
+        self.logger.log(event.arguments[0] + " quit.", LOG.CHANNEL_QUIT)
+
+    def on_part(self, connection: irc.client.ServerConnection, event: irc.client.Event) -> None:
+        """
+        Logs that a user left a channel using part
+
+        :param connection: the IRC Connection
+        :param event:      the IRC Event
+        :return:           None
+        """
+        self.logger.log(event.source + " left.", LOG.CHANNEL_PART)
+
+    def on_kick(self, connection: irc.client.ServerConnection, event: irc.client.Event) -> None:
+        """
+        Logs that a user was kicked from the channel
+
+        :param connection: the IRC Connection
+        :param event:      the IRC Event
+        :return:           None
+        """
+        self.logger.log(event.arguments[0] + " was kicked.", LOG.CHANNEL_KICK)
+
+    def on_mode(self, connection: irc.client.ServerConnection, event: irc.client.Event) -> None:
+        """
+        Called whenever the mode of a user changes
+
+        :param connection: the IRC Connection
+        :param event:      the IRC Event
+        :return:           None
+        """
+        self.logger.log(event.arguments[0] + " mode changed", LOG.CHANNEL_MODE_CHANGE)
+
+    def on_action(self, connection: irc.client.ServerConnection, event: irc.client.Event) -> None:
+        """
+        Called whenever an action on the channel occurs
+
+        :param connection: the IRC Connection
+        :param event:      the IRC Event
+        :return:           None
+        """
+        self.logger.log(event.arguments[0] + " mode changed", LOG.CHANNEL_ACTION)
+
 
 if __name__ == "__main__":
 
     from xdcc_dl.entities.IrcServer import IrcServer
     xpacks = [XDCCPack(IrcServer("irc.rizon.net"), "ginpachi-sensei", 1, "/home/hermann/testing/test.txt")]
-    MessageSender(xpacks, User("Heramann"), Logger(10), Progress(len(xpacks))).start()
+    MessageSender(xpacks, User("Heramann"), Logger(5), Progress(len(xpacks))).start()

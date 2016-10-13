@@ -86,7 +86,7 @@ class IrcEventPrinter(BaseIrclient):
         """
         self.logger.log(event.arguments[0], LOG.PRIVATE_NOTICE)
 
-    def on_privmessage(self, connection: irc.client.ServerConnection, event: irc.client.Event) -> None:
+    def on_privmsg(self, connection: irc.client.ServerConnection, event: irc.client.Event) -> None:
         """
         Prints Private Messages
 
@@ -106,7 +106,7 @@ class IrcEventPrinter(BaseIrclient):
         """
         self.logger.log(event.source + ": " + event.arguments[0], LOG.PUBLIC_NOTICE)
 
-    def on_pubmessage(self, connection: irc.client.ServerConnection, event: irc.client.Event) -> None:
+    def on_pubmsg(self, connection: irc.client.ServerConnection, event: irc.client.Event) -> None:
         """
         Prints Public Messages
 
