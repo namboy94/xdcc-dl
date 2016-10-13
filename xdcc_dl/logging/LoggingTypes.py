@@ -88,7 +88,7 @@ class LoggingTypes:
 
     Colour Coding:
 
-        YELLOW BG:                             Downloads
+        YELLOW/L_YELLOW BG:                    DCC / Downloads
         CYAN BG:                               WHOIS
         GREEN BG:                              CHANNELS
         BLUE BG:                               Messages
@@ -122,6 +122,12 @@ class LoggingTypes:
     CHANNEL_ACTION       = {"bg_color": BGColors.GREEN,        "fg_color": FGColors.YELLOW,        "priority": 6}
 
     MESSAGE_SEND         = {"bg_color": BGColors.BLUE,          "fg_color": FGColors.BLACK,        "priority": 1}
+
+    DCC_SEND_HANDSHAKE   = {"bg_color": BGColors.YELLOW,        "fg_color": FGColors.BLACK,        "priority": 2}
+    DCC_RESUME_REQUEST   = {"bg_color": BGColors.YELLOW,        "fg_color": FGColors.DARK_GRAY,    "priority": 2}
+    DCC_RESUME_SUCCESS   = {"bg_color": BGColors.YELLOW,        "fg_color": FGColors.WHITE,        "priority": 2}
+    DOWNLOAD_START       = {"bg_color": BGColors.YELLOW,        "fg_color": FGColors.LIGHT_GREEN,  "priority": 1}
+    DOWNLOAD_RESUME      = {"bg_color": BGColors.YELLOW,        "fg_color": FGColors.LIGHT_BLUE,   "priority": 1}
 
     PRIVATE_NOTICE       = {"bg_color": BGColors.DEFAULT,      "fg_color": FGColors.BLUE,          "priority": 3}
     PRIVATE_MESSAGE      = {"bg_color": BGColors.DEFAULT,      "fg_color": FGColors.LIGHT_BLUE,    "priority": 3}

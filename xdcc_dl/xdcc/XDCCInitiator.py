@@ -24,6 +24,7 @@ LICENSE
 
 # imports
 import os
+import shlex
 import irc.client
 from typing import List
 from xdcc_dl.entities.Progress import Progress
@@ -31,8 +32,10 @@ from xdcc_dl.entities.User import User
 from xdcc_dl.entities.XDCCPack import XDCCPack
 from xdcc_dl.logging.Logger import Logger
 from xdcc_dl.xdcc.MessageSender import MessageSender
+from xdcc_dl.logging.LoggingTypes import LoggingTypes as LOG
 
 
+# noinspection PyUnusedLocal
 class XDCCInitiator(MessageSender):
     """
     Initiates the XDCC Connection.
@@ -51,6 +54,8 @@ class XDCCInitiator(MessageSender):
         super().__init__(packs, user, logger, progress)
         self.file = None
         self.dcc_connection = None
+        self.peer_address = None
+        self.peer_port = None
 
     def on_ctcp(self, connection: irc.client.ServerConnection, event: irc.client.Event):
         """
@@ -65,39 +70,67 @@ class XDCCInitiator(MessageSender):
         if event.arguments[0] != "DCC":
             return
 
-        self.logger.log("Initiated XDCC Handshake")
+        payload = shlex.split(event.arguments[1])
 
-        payload = event.arguments[1].split(" ")
+        if payload[0] == "SEND":
+            self.dcc_send_handler(payload, connection)
+        elif payload[1] == "ACCEPT":
+            self.dcc_accept_handler(payload, connection)
 
-        if len(payload) == 5:
-            command, filename, peer_address, peer_port, size = payload
-        elif len(payload) == 6:
-            # TOD check if this actually works that way
-            command, filename, peer_address, peer_port, size, dummy = payload
-        else:
-            self.logger.log("Invalid amount of arguments")
-            return
+    def dcc_send_handler(self, ctcp_arguments: List[str], connection: irc.client.ServerConnection) -> None:
+        """
+        Handles incoming CTCP DCC SENDs. Initiates a download or RESUME request.
 
-        peer_address = irc.client.ip_numstr_to_quad(peer_address)
-        peer_port = int(peer_port)
+        :param ctcp_arguments: The CTCP Arguments
+        :param connection:     The connection to use for DCC connections
+        :return:               None
+        """
+        self.logger.log("Handling DCC SEND Handshake", LOG.DCC_SEND_HANDSHAKE)
+
+        filename = ctcp_arguments[1]
+        self.peer_address = irc.client.ip_numstr_to_quad(ctcp_arguments[2])
+        self.peer_port = int(ctcp_arguments[3])
+        size = int(ctcp_arguments[4])
 
         self.progress.set_single_progress_total(int(size))
         self.current_pack.set_filename(filename)
 
-        # Check if the file already exists. If it does, delete it beforehand
         if os.path.exists(self.current_pack.get_filepath()):
-            # TODO Continue
-            pass
+
+            self.logger.log("Requesting DCC RESUME", LOG.DCC_RESUME_REQUEST)
+
+            position = os.path.getsize(self.current_pack.get_filepath())
+            self.progress.set_single_progress(position)
+
+            resume_parameter = "\"" + filename + "\" " + str(self.peer_port) + " " + str(position)
+            connection.ctcp("DCC RESUME", self.current_pack.get_bot(), resume_parameter)
 
         else:
+
+            self.logger.log("Starting Download of " + filename, LOG.DOWNLOAD_START)
+
             self.file = open(self.current_pack.get_filepath(), "wb")
-            self.dcc_connection = self.dcc_connect(peer_address, peer_port, "raw")
-            self.logger.log("Established DCC connection")
+            self.dcc_connection = self.dcc_connect(self.peer_address, self.peer_port, "raw")
             self.download_started = True
+
+    def dcc_accept_handler(self, ctcp_arguments: List[str], connection: irc.client.ServerConnection) -> None:
+        """
+        Handles DCC ACCEPT messages. Resumes a download.
+
+        :param ctcp_arguments: The CTCP arguments
+        :param connection:     The connection to use for DCC connections
+        :return:               None
+        """
+        self.logger.log("DCC RESUME succeeded", LOG.DCC_RESUME_SUCCESS)
+        self.logger.log("Resuming Download of " + self.current_pack.get_filepath(), LOG.DOWNLOAD_RESUME)
+
+        self.file = open(self.current_pack.get_filepath(), "ab")
+        self.dcc_connection = self.dcc_connect(self.peer_address, self.peer_port, "raw")
+        self.download_started = True
 
 
 if __name__ == "__main__":
 
     from xdcc_dl.entities.IrcServer import IrcServer
-    xpacks = [XDCCPack(IrcServer("irc.rizon.net"), "ginpachi-sensei", 1, "/home/hermann/testing/test.txt")]
+    xpacks = [XDCCPack(IrcServer("irc.rizon.net"), "hermann", 2, "/home/hermann/testing/")]
     XDCCInitiator(xpacks, User("Heramann"), Logger(5), Progress(len(xpacks))).start()

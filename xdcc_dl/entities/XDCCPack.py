@@ -61,7 +61,9 @@ class XDCCPack(object):
         :return: None
         """
         if self.filename and len(filename.split(".")) > 1:
-            self.filename += "." + filename.rsplit(".", 1)[1]
+            extension = filename.rsplit(".", 1)[1]
+            if not self.filename.endswith(extension):
+                self.filename += "." + extension
 
         if not self.filename:
             self.filename = filename

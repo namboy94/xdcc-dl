@@ -40,14 +40,15 @@ class Progress(object):
         self.progress = 0
         self.total = file_amount
 
-    def update_single_progress(self, progress: int) -> None:
+    def add_single_progress(self, new_bytes: int) -> int:
         """
-        Updates the single progress with the new file size
+        Adds a given amount of bytes to the single progress.
 
-        :param progress: the new file size/progress of the download
-        :return:         None
+        :param new_bytes: the bytes to add
+        :return:          the new single progress
         """
-        self.single_progress = progress
+        self.single_progress += new_bytes
+        return self.single_progress
 
     def next_file(self) -> None:
         """
@@ -89,3 +90,12 @@ class Progress(object):
         :return:      None
         """
         self.single_total = total
+
+    def set_single_progress(self, progress: int) -> None:
+        """
+        Sets the single progress with the new file size
+
+        :param progress: the new file size/progress of the download
+        :return:         None
+        """
+        self.single_progress = progress
