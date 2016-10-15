@@ -23,12 +23,10 @@ LICENSE
 """
 
 # imports
-from typing import List
+from typing import List, Dict
 
 from xdcc_dl.entities import XDCCPack
 from xdcc_dl.entities.Progress import Progress
-from xdcc_dl.entities.User import User
-from xdcc_dl.logging.Logger import Logger
 from xdcc_dl.xdcc.layers.xdcc.DownloadHandler import DownloadHandler
 
 
@@ -38,11 +36,32 @@ class XDCCDownloader(DownloadHandler):
     interface to download XDCC Packs
     """
 
-    def __init__(self, packs: List[XDCCPack], user: User, logger: Logger, progress: Progress):
+    def download(self, packs: List[XDCCPack], progress: Progress = None) -> Dict[XDCCPack, str]:
         """
-        Initializes the XDCC Downloader with
-        :param packs:
-        :param user:
-        :param logger:
-        :param progress:
+        Downloads all XDCC packs specified. Optionally shares state with other threads using a Progress object
+
+        :param packs:    The packs to download
+        :param progress: Optional Progress object
+        :return:         Dictionary of packs mapped to status codes:
+                         "OK":           Download was successful
+                         "BOTNOTFOUND":  Bot was not found
+                         "NETWORKERROR": Download failed due to network error
+                         "INCOMPLETE":   Download was incomplete
+                         "EXISTED":      File already existed and was completely downloaded
         """
+        self.progress = progress if progress is not None else Progress(len(packs))
+
+        pack_states = {}
+        for pack in packs:
+            self.current_pack = pack
+
+            status_code = "OK"
+
+            try:
+                self.start()
+            except:  # TODO Make error destinctions
+                pass
+
+            pack_states[pack] = status_code
+
+        return pack_states
