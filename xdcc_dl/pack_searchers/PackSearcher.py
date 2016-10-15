@@ -24,6 +24,7 @@ LICENSE
 
 # imports
 from typing import List
+from xdcc_dl.entities import XDCCPack
 from xdcc_dl.pack_searchers.procedures.nibl import find_nibl_packs
 from xdcc_dl.pack_searchers.procedures.ixirc import find_ixirc_packs
 from xdcc_dl.pack_searchers.procedures.horriblesubs import find_horriblesubs_packs
@@ -49,8 +50,25 @@ class PackSearcher(object):
         """
         return list(PackSearcher.procedure_map.keys())
 
-    def __init__(self, procedures: List[str]):
+    def __init__(self, procedures: List[str]) -> None:
         """
+        Initializes the Packsearcher with a list of procedures to consider
 
-        :param procedures:
+        :raises:           KeyError, if an invali procedure was specified
+        :param procedures: List of procedures to use during the search
         """
+        self.procedures = []
+        for procedure in procedures:
+            self.procedures.append(self.procedure_map[procedure])
+
+    def search(self, search_phrase: str) -> List[XDCCPack]:
+        """
+        Conducts the actual search for the XDCC packs
+
+        :param search_phrase: The search phrase to use while conducting the search
+        :return:              A list of search results as XDCCPack objects
+        """
+        results = []
+        for procedure in self.procedures:
+            results += procedure(search_phrase)
+        return results
