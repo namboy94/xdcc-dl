@@ -52,7 +52,7 @@ class NIBLGetter(GenericGetter):
             i += 1
 
         # Get the data from the website
-        url = "http://nibl.co.uk/bots.php?search=" + prepared_search_term  # Define the URL
+        url = "http://nibl.co.uk/bots.php?search=" + prepared_search_term  # Define the UR
         content = BeautifulSoup(requests.get(url).text, "html.parser")  # Parse the HTML
         file_names = content.select(".filename")  # Get all '.filename' elements
         pack_numbers = content.select(".packnumber")  # Get all '.packnumber' elements
