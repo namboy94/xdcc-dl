@@ -32,6 +32,13 @@ from xdcc_dl.logging.LoggingTypes import LoggingTypes as LOG
 from xdcc_dl.xdcc.layers.xdcc.MessageSender import MessageSender
 
 
+class AlreadyDownloaded(Exception):
+    """
+    Gets thrown if a file already exists with size >= download size
+    """
+    pass
+
+
 # noinspection PyUnusedLocal
 class XDCCInitiator(MessageSender):
     """
@@ -72,22 +79,19 @@ class XDCCInitiator(MessageSender):
         filename = ctcp_arguments[1]
         self.peer_address = irc.client.ip_numstr_to_quad(ctcp_arguments[2])
         self.peer_port = int(ctcp_arguments[3])
-        size = int(ctcp_arguments[4])
+        self.filesize = int(ctcp_arguments[4])
 
-        self.progress.set_single_progress_total(int(size))
+        self.progress.set_single_progress_total(int(self.filesize))
         self.current_pack.set_filename(filename)
 
         if os.path.exists(self.current_pack.get_filepath()) and not self.dcc_resume_requested:
 
             position = os.path.getsize(self.current_pack.get_filepath())
 
-            if position == size:
+            if position >= self.filesize:
 
                 self.logger.log("File already completely downloaded.", LOG.DOWNLOAD_WAS_DONE)
-
-                # Start and immediately close connection
-                self.dcc_connection = self.dcc_connect(self.peer_address, self.peer_port, "raw")
-                self.dcc_connection.disconnect()  # -> on_dcc_disconnect
+                raise AlreadyDownloaded()
 
             else:
 

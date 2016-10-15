@@ -54,6 +54,13 @@ class Disconnect(Exception):
     pass
 
 
+class NetworkError(Exception):
+    """
+    Class that gets raised when a network error occurs
+    """
+    pass
+
+
 class BaseIrclient(irc.client.SimpleIRCClient, ConnectionStates, Variables):
     """
     The Base IRC Client that defines the necessary features that an IRC Client must be able to do.
@@ -88,6 +95,7 @@ class BaseIrclient(irc.client.SimpleIRCClient, ConnectionStates, Variables):
         """
         Connects the IRC Client to the IRC Server
 
+        :raises: NetworkError if the connection to the server did not succeed
         :return: None
         """
         self.logger.log("Connecting to server:  " + self.server.get_address(), LOG.CONNECTION_ATTEMPT)
@@ -100,11 +108,13 @@ class BaseIrclient(irc.client.SimpleIRCClient, ConnectionStates, Variables):
             self.connected_to_server = True
         except irc.client.ServerConnectionError:
             self.logger.log("Failed to connect to Server", LOG.CONNECTION_FAILURE)
+            raise NetworkError()
 
     def start(self) -> None:
         """
         Starts the IRC Connection
 
+        :raises: NetworkError if the connection to the server did not succeed
         :return: None
         """
         try:
@@ -119,6 +129,7 @@ class BaseIrclient(irc.client.SimpleIRCClient, ConnectionStates, Variables):
 
         :param connection: the IRC Connection
         :param event:      the IRC Event
+        :raises:           Disconnect, when the connection was disconnected by non-fatal means
         :return:           None
         """
         raise Disconnect()

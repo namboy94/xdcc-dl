@@ -23,12 +23,20 @@ LICENSE
 """
 
 # imports
+import os
 import time
 import struct
 import irc.client
 # noinspection PyPep8Naming
 from xdcc_dl.logging.LoggingTypes import LoggingTypes as LOG
 from xdcc_dl.xdcc.layers.xdcc.XDCCInitiator import XDCCInitiator
+
+
+class IncompleteDownload(Exception):
+    """
+    Exception raised whenever a DCC connection was ended, but the file was not completed.
+    """
+    pass
 
 
 # noinspection PyUnusedLocal
@@ -71,9 +79,11 @@ class DownloadHandler(XDCCInitiator):
         :param event:      the IRC Event
         :return:           None
         """
-        if self.file is not None:
-            self.file.close()
-            self.logger.log("\nDownload completed in %.2f seconds" % (time.time() - self.start_time))
+        self.file.close()
+        self.logger.log("\nDownload completed in %.2f seconds" % (time.time() - self.start_time))
+
+        if os.path.getsize(self.current_pack.get_filepath()) < self.filesize:
+            raise IncompleteDownload()
 
         self.connection.close()
         self.connection.disconnect()  # -> on_diconnect

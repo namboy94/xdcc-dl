@@ -27,7 +27,10 @@ from typing import List, Dict
 
 from xdcc_dl.entities import XDCCPack
 from xdcc_dl.entities.Progress import Progress
-from xdcc_dl.xdcc.layers.xdcc.DownloadHandler import DownloadHandler
+from xdcc_dl.xdcc.layers.irc.BaseIrcClient import NetworkError
+from xdcc_dl.xdcc.layers.irc.BotFinder import BotNotFoundException
+from xdcc_dl.xdcc.layers.xdcc.XDCCInitiator import AlreadyDownloaded
+from xdcc_dl.xdcc.layers.xdcc.DownloadHandler import DownloadHandler, IncompleteDownload
 
 
 class XDCCDownloader(DownloadHandler):
@@ -59,9 +62,15 @@ class XDCCDownloader(DownloadHandler):
 
             try:
                 self.start()
-            except:  # TODO Make error destinctions
-                pass
+            except BotNotFoundException:
+                status_code = "BOTNOTFOUND"
+            except IncompleteDownload:
+                status_code = "INCOMPLETE"
+            except AlreadyDownloaded:
+                status_code = "EXISTED"
+            except NetworkError:
+                status_code = "NETWORKERROR"
 
-            pack_states[pack] = status_code
+            pack_states[self.current_pack] = status_code
 
         return pack_states

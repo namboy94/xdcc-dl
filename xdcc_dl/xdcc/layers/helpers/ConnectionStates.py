@@ -53,6 +53,7 @@ class ConnectionStates(object):
         self.dcc_connection = None
         self.peer_address = None
         self.peer_port = None
+        self.filesize = None
 
         # Stats
         self.start_time = time.time()

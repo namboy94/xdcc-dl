@@ -111,18 +111,6 @@ class BotFinder(IrcEventPrinter):
             self.logger.log("Bot " + self.current_pack.get_bot() + " does not exist on Server", LOG.WHOIS_NO_RESULT)
             self.connection.disconnect("WHOIS Query Failed")  # -> on_disconnect
 
-    def on_disconnect(self, connection: irc.client.ServerConnection, event: irc.client.Event) -> None:
-        """
-        Method called whenever the IRC connection is disconnected
-
-        :param connection: the IRC Connection
-        :param event:      the IRC Event
-        :return:           None
-        """
-        if event.arguments[0] == "WHOIS Query Failed":
-            raise BotNotFoundException()
-        super().on_disconnect(connection, event)
-
     def on_whoisuser(self, connection: irc.client.ServerConnection, event: irc.client.Event) -> None:
         """
         Method called when a whoisuser command was received
