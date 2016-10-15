@@ -33,4 +33,9 @@ class Variables(object):
         """
         Initializes the state variables
         """
-        pass
+        self.user = None
+        self.server = None
+        self.logger = None
+
+        self.progress = None
+        self.current_pack = None

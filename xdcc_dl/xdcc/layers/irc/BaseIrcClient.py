@@ -25,12 +25,11 @@ LICENSE
 # imports
 import irc.client
 from jaraco.stream import buffer
-
-from xdcc_dl.entities.IrcServer import IrcServer
 from xdcc_dl.entities.User import User
 from xdcc_dl.logging.Logger import Logger
+from xdcc_dl.entities.IrcServer import IrcServer
+from xdcc_dl.xdcc.layers.helpers.Variables import Variables
 from xdcc_dl.xdcc.layers.helpers.ConnectionStates import ConnectionStates
-
 # noinspection PyPep8Naming
 from xdcc_dl.logging.LoggingTypes import LoggingTypes as LOG
 
@@ -55,30 +54,35 @@ class Disconnect(Exception):
     pass
 
 
-class BaseIrclient(irc.client.SimpleIRCClient, ConnectionStates):
+class BaseIrclient(irc.client.SimpleIRCClient, ConnectionStates, Variables):
     """
     The Base IRC Client that defines the necessary features that an IRC Client must be able to do.
     Layer 0 of the XDCC Bot
     """
 
-    def __init__(self, irc_server: IrcServer, user: User, logger: Logger):
+    def __init__(self, server: IrcServer or str, user: User or str, logger: Logger or int = 0):
         """
         Initializes the Client's Server Connection Information and disables Buffer Errors
+        The parameters can all be initialized with either a string/int representing the object's
+        main value or the classes themselves
 
-        :param irc_server: The IRC Server to which th client will attempt to connect to
-        :param user:       The User to log in to the IRC Server with
-        :param logger:     The logger used to print informational messages to the console
+        :param server: The IRC Server to which th client will attempt to connect to
+                       If a string was provided, create IrcServer with default ort 6667
+        :param user:   The User to log in to the IRC Server with
+                       If a string was provided, create user object with that username
+        :param logger: The logger used to print informational messages to the console
+                       If an int was provided, creates a standard console logger with the specified verbosity level
         """
         super().__init__()
+        Variables.__init__(self)
         ConnectionStates.__init__(self)
-
-        self.logger = logger
 
         irc.client.ServerConnection.buffer_class = IgnoreErrorsBuffer
         irc.client.SimpleIRCClient.buffer_class = IgnoreErrorsBuffer
 
-        self.server = irc_server
-        self.user = user
+        self.user = user if user.__class__ == User else User(user)
+        self.server = server if server.__class__ == IrcServer else IrcServer(server)
+        self.logger = logger if logger.__class__ == Logger else Logger(logger)
 
     def connect(self) -> None:
         """

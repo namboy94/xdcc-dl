@@ -23,18 +23,10 @@ LICENSE
 """
 
 # imports
-from typing import List
-
 import irc.client
-
-from xdcc_dl.entities.Progress import Progress
-from xdcc_dl.entities.User import User
-from xdcc_dl.entities.XDCCPack import XDCCPack
-from xdcc_dl.logging.Logger import Logger
-from xdcc_dl.xdcc.layers.irc.IrcEventPrinter import IrcEventPrinter
-
 # noinspection PyPep8Naming
 from xdcc_dl.logging.LoggingTypes import LoggingTypes as LOG
+from xdcc_dl.xdcc.layers.irc.IrcEventPrinter import IrcEventPrinter
 
 
 class BotNotFoundException(Exception):
@@ -51,34 +43,6 @@ class BotFinder(IrcEventPrinter):
     Layer 2 of the XDCC Bot
     """
 
-    def __init__(self, packs: List[XDCCPack], user: User, logger: Logger, progress: Progress) -> None:
-        """
-        Initializes a BotFinder. First Layer to use XDCC Packs
-
-        :param packs:    the packs to download
-        :param user:     the username to use
-        :param logger:   the logger to use
-        :param progress: the Progress object to keep track of the download progress
-        """
-        super().__init__(packs[0].get_server(), user, logger)
-        self.packs = packs
-        self.progress = progress
-        self.current_pack = packs[0]  # Could also be = None, but decided on packs[0] for IDE purposes
-
-    def start(self) -> None:
-        """
-        Starts the download progress
-
-        :return: None
-        """
-        for pack in self.packs:
-            self.server = pack.get_server()
-            self.current_pack = pack
-            try:
-                super().start()  # -> on_welcome
-            except BotNotFoundException:
-                pass
-
     def on_welcome(self, connection: irc.client.ServerConnection, event: irc.client.Event) -> None:
         """
         The Welcome Event indicates that the server connection was established.
@@ -93,6 +57,8 @@ class BotFinder(IrcEventPrinter):
         self.logger.log("Sending WHOIS command for " + self.current_pack.get_bot(), LOG.WHOIS_SEND)
         connection.whois(self.current_pack.get_bot())  # -> Success: on_whoischannels or on_endofwhois
                                                        # -> Failure: on_nosuchnick
+                                                       # Additional Effects:  ~> on_whoisuser
+                                                       #                      ~> on_whoisserver
 
     def on_whoischannels(self, connection: irc.client.ServerConnection, event: irc.client.Event) -> None:
         """
@@ -127,9 +93,10 @@ class BotFinder(IrcEventPrinter):
         """
         if not self.channel_join_required:
 
-            event.source = self.user_name
+            event.source = self.user.get_name()
             # noinspection PyUnresolvedReferences
             self.on_join(connection, event)  # Simulates a Channel Join if joining a channel is unnecessary
+                                             # -> on_join
 
     def on_nosuchnick(self, connection: irc.client.ServerConnection, event: irc.client.Event) -> None:
         """
@@ -142,7 +109,7 @@ class BotFinder(IrcEventPrinter):
         """
         if event.arguments[0] == self.current_pack.get_bot():  # Make sure the failed WHOIS is for our bot
             self.logger.log("Bot " + self.current_pack.get_bot() + " does not exist on Server", LOG.WHOIS_NO_RESULT)
-            self.connection.disconnect("WHOIS Query Failed")
+            self.connection.disconnect("WHOIS Query Failed")  # -> on_disconnect
 
     def on_disconnect(self, connection: irc.client.ServerConnection, event: irc.client.Event) -> None:
         """
