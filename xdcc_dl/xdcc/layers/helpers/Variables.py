@@ -22,15 +22,19 @@ This file is part of xdcc_dl.
 LICENSE
 """
 
-# imports
 
-
-class XDCCPack(object):
+class Variables(object):
+    """
+    Class that separates variables from the other IRC/XDCC classes
+    Layer -1 of the XDCC Bot
     """
 
-    """
-
-    def __init__(self) -> None:
+    def __init__(self):
         """
-
+        Initializes the state variables
         """
+        self.user = None
+        self.server = None
+        self.logger = None
+
+        self.progress = None

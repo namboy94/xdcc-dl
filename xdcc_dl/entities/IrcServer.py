@@ -22,9 +22,31 @@ This file is part of xdcc_dl.
 LICENSE
 """
 
-# imports
-from xdcc_dl.main import main
 
+class IrcServer(object):
+    """
+    Class that models an IRC server
+    """
 
-if __name__ == '__main__':
-    main()
+    def __init__(self, server_address: str, server_port: int = 6667) -> None:
+        """
+        Initializes the Server's information
+
+        :param server_address: the address of the IRC Server
+        :param server_port:    the port of the server, which defaults to 6667
+                               and can usually safely stay that way
+        """
+        self.address = server_address
+        self.port = server_port
+
+    def get_address(self) -> str:
+        """
+        :return: the server address
+        """
+        return self.address
+
+    def get_port(self) -> int:
+        """
+        :return: the server port
+        """
+        return self.port

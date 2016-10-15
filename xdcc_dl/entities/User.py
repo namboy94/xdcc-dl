@@ -22,17 +22,22 @@ This file is part of xdcc_dl.
 LICENSE
 """
 
-# imports
-import unittest
 
+class User(object):
+    """
+    Models an IRC user
+    """
 
-class XDCCDownloaderUnitTests(unittest.TestCase):
+    def __init__(self, username: str) -> None:
+        """
+        Initializes the User
 
-    def setUp(self):
-        pass
+        :param username: teh user's username
+        """
+        self.username = username
 
-    def tearDown(self):
-        pass
-
-    def test(self):
-        pass
+    def get_name(self) -> str:
+        """
+        :return: The user's username
+        """
+        return self.username

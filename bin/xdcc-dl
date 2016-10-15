@@ -22,16 +22,8 @@ This file is part of xdcc_dl.
 LICENSE
 """
 
-# imports
+from xdcc_dl.main import main
 
 
-class XDCCDownloader(object):
-    """
-
-    """
-
-    def __init__(self) -> None:
-        """
-
-        """
-        pass
+if __name__ == "__main__":
+    main()

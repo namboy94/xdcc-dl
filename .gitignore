@@ -5,5 +5,5 @@ xdcc_dl.egg-info
 .idea
 doc/__pycache__/
 xdcc_dl/__pycache__/
-xdcc_dl/objects/__pycache__/
+xdcc_dl/entities/__pycache__/
 xdcc_dl/tests/__pycache__/
