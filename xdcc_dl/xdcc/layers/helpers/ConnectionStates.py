@@ -22,22 +22,40 @@ This file is part of xdcc_dl.
 LICENSE
 """
 
+# imports
+import time
+
 
 class ConnectionStates(object):
     """
     Class that separates state variables from the other IRC/XDCC classes
     Layer -1 of the XDCC Bot
+
+    All of these variables should be considered obsolete for each XDCC pack
     """
 
     def __init__(self):
         """
         Initializes the state variables
         """
+        # Connection
         self.connected_to_server = False
         self.channel_joined = False
         self.channel_join_required = False
+
+        # Download
         self.download_started = False
         self.dcc_resume_requested = False
+
+        # Download File Specific
+        self.current_pack = None
+        self.file = None
+        self.dcc_connection = None
+        self.peer_address = None
+        self.peer_port = None
+
+        # Stats
+        self.start_time = time.time()
 
     def reset_connection_state(self) -> None:
         """
@@ -45,8 +63,4 @@ class ConnectionStates(object):
 
         :return: None
         """
-        self.connected_to_server = False
-        self.channel_joined = False
-        self.channel_join_required = False
-        self.download_started = False
-        self.dcc_resume_requested = False
+        self.__init__()

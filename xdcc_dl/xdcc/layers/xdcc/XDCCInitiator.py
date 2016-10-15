@@ -25,18 +25,11 @@ LICENSE
 # imports
 import os
 import shlex
-from typing import List
-
 import irc.client
-
-from xdcc_dl.entities.Progress import Progress
-from xdcc_dl.entities.User import User
-from xdcc_dl.entities.XDCCPack import XDCCPack
-from xdcc_dl.logging.Logger import Logger
-from xdcc_dl.xdcc.layers.xdcc.MessageSender import MessageSender
-
+from typing import List
 # noinspection PyPep8Naming
 from xdcc_dl.logging.LoggingTypes import LoggingTypes as LOG
+from xdcc_dl.xdcc.layers.xdcc.MessageSender import MessageSender
 
 
 # noinspection PyUnusedLocal
@@ -45,21 +38,6 @@ class XDCCInitiator(MessageSender):
     Initiates the XDCC Connection.
     Layer 4 of the XDCC Bot
     """
-
-    def __init__(self, packs: List[XDCCPack], user: User, logger: Logger, progress: Progress) -> None:
-        """
-        Initializes the XDCC Initiator object. Defines local DCC connection and the opened download file
-
-        :param packs:    the packs to download
-        :param user:     the username to use
-        :param logger:   the logger to use
-        :param progress: the Progress object to keep track of the download progress
-        """
-        super().__init__(packs, user, logger, progress)
-        self.file = None
-        self.dcc_connection = None
-        self.peer_address = None
-        self.peer_port = None
 
     def on_ctcp(self, connection: irc.client.ServerConnection, event: irc.client.Event):
         """
@@ -109,16 +87,18 @@ class XDCCInitiator(MessageSender):
 
                 # Start and immediately close connection
                 self.dcc_connection = self.dcc_connect(self.peer_address, self.peer_port, "raw")
-                self.dcc_connection.disconnect()
+                self.dcc_connection.disconnect()  # -> on_dcc_disconnect
 
             else:
 
                 self.logger.log("Requesting DCC RESUME", LOG.DCC_RESUME_REQUEST)
                 self.progress.set_single_progress(position)
 
+                self.dcc_resume_requested = True  # Let bot know that resume was attempted
                 resume_parameter = "\"" + filename + "\" " + str(self.peer_port) + " " + str(position)
+
+                # -> on_ctcp -> dcc_accept_handler (Or dcc_send_handler if resume fails)
                 connection.ctcp("DCC RESUME", self.current_pack.get_bot(), resume_parameter)
-                self.dcc_resume_requested = True
 
         else:
 
@@ -130,7 +110,7 @@ class XDCCInitiator(MessageSender):
             self.logger.log("Starting Download of " + filename, LOG.DOWNLOAD_START)
 
             self.file = open(self.current_pack.get_filepath(), "wb")
-            self.dcc_connection = self.dcc_connect(self.peer_address, self.peer_port, "raw")
+            self.dcc_connection = self.dcc_connect(self.peer_address, self.peer_port, "raw")  # -> on_dccmsg
             self.download_started = True
 
     def dcc_accept_handler(self, ctcp_arguments: List[str], connection: irc.client.ServerConnection) -> None:
@@ -145,5 +125,5 @@ class XDCCInitiator(MessageSender):
         self.logger.log("Resuming Download of " + self.current_pack.get_filepath(), LOG.DOWNLOAD_RESUME)
 
         self.file = open(self.current_pack.get_filepath(), "ab")
-        self.dcc_connection = self.dcc_connect(self.peer_address, self.peer_port, "raw")
+        self.dcc_connection = self.dcc_connect(self.peer_address, self.peer_port, "raw")  # -> on_dccmsg
         self.download_started = True

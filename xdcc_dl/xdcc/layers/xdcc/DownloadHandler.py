@@ -23,20 +23,12 @@ LICENSE
 """
 
 # imports
-import struct
 import time
-from typing import List
-
+import struct
 import irc.client
-
-from xdcc_dl.entities.Progress import Progress
-from xdcc_dl.entities.User import User
-from xdcc_dl.entities.XDCCPack import XDCCPack
-from xdcc_dl.logging.Logger import Logger
-from xdcc_dl.xdcc.layers.xdcc.XDCCInitiator import XDCCInitiator
-
 # noinspection PyPep8Naming
 from xdcc_dl.logging.LoggingTypes import LoggingTypes as LOG
+from xdcc_dl.xdcc.layers.xdcc.XDCCInitiator import XDCCInitiator
 
 
 # noinspection PyUnusedLocal
@@ -45,18 +37,6 @@ class DownloadHandler(XDCCInitiator):
     Class that handles the download process
     Layer 5 of the XDCC Bot
     """
-
-    def __init__(self, packs: List[XDCCPack], user: User, logger: Logger, progress: Progress) -> None:
-        """
-        Initializes the XDCC Initiator object. Defines local DCC connection and the opened download file
-
-        :param packs:       the packs to download
-        :param user:        the username to use
-        :param logger:      the logger to use
-        :param progress:    the Progress object to keep track of the download progress
-        """
-        super().__init__(packs, user, logger, progress)
-        self.start_time = time.time()
 
     def on_dccmsg(self, connection: irc.client.ServerConnection, event: irc.client.Event) -> None:
         """
@@ -80,6 +60,8 @@ class DownloadHandler(XDCCInitiator):
 
         # Send Acknowledge Message
         self.dcc_connection.send_bytes(struct.pack("!I", self.progress.get_single_progress()))
+        # -> on_dccmsg if download not yet complete
+        # -> on_dcc_disconnect if completed
 
     def on_dcc_disconnect(self, connection: irc.client.ServerConnection, event: irc.client.Event) -> None:
         """
@@ -94,11 +76,4 @@ class DownloadHandler(XDCCInitiator):
             self.logger.log("\nDownload completed in %.2f seconds" % (time.time() - self.start_time))
 
         self.connection.close()
-        self.connection.disconnect()
-
-
-if __name__ == "__main__":
-
-    from xdcc_dl.entities.IrcServer import IrcServer
-    xpacks = [XDCCPack(IrcServer("irc.rizon.net"), "CR-HOLLAND|NEW", 8920, "/home/hermann/testing/")]
-    DownloadHandler(xpacks, User("Heramann"), Logger(5), Progress(len(xpacks))).start()
+        self.connection.disconnect()  # -> on_diconnect

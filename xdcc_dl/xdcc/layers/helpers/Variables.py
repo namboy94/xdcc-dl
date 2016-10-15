@@ -38,4 +38,3 @@ class Variables(object):
         self.logger = None
 
         self.progress = None
-        self.current_pack = None

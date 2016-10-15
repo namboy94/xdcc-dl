@@ -24,7 +24,6 @@ LICENSE
 
 # imports
 import irc.client
-
 from xdcc_dl.xdcc.layers.irc.BotFinder import BotFinder
 # noinspection PyPep8Naming
 from xdcc_dl.logging.LoggingTypes import LoggingTypes as LOG
@@ -40,23 +39,24 @@ class MessageSender(BotFinder):
     def on_join(self, connection: irc.client.ServerConnection, event: irc.client.Event) -> None:
         """
         Method called when a channel was joined. The first channel that was joined triggers sending a message
-        to the bot to initiate the
+        to the bot to initiate the XDCC handshake
 
         :param connection: the IRC Connection
         :param event:      the IRC Event
         :return:           None
         """
-        if event.source.startswith(self.user_name):
+        if event.source.startswith(self.user.get_name()):
             self.logger.log("Joined Channel " + event.target, LOG.CHANNEL_JOIN_SUCCESS)
 
-            if not self.channel_joined:
-                self.channel_joined = True
+            if not self.channel_joined:  # Only send the XDCC message when the first channel was joined
+                self.channel_joined = True  # Let other on_joins know that message was already sent
 
                 log_message = "Sending XDCC Request to " + self.current_pack.get_bot()
                 log_message += " for pack " + str(self.current_pack.get_packnumber())
-
                 self.logger.log(log_message, LOG.MESSAGE_SEND)
+
                 connection.privmsg(self.current_pack.get_bot(), self.current_pack.get_request_message())
+                # -> on_ctcp
 
     def on_namreply(self, connection: irc.client.ServerConnection, event: irc.client.Event) -> None:
         """
