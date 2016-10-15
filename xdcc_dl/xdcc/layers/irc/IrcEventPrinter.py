@@ -23,9 +23,10 @@ LICENSE
 """
 
 # imports
-import irc.events
 import irc.client
-from xdcc_dl.xdcc.BaseIrcClient import BaseIrclient
+import irc.events
+
+from xdcc_dl.xdcc.layers.irc.BaseIrcClient import BaseIrclient
 # noinspection PyUnresolvedReferences,PyPep8Naming
 from xdcc_dl.logging.LoggingTypes import LoggingTypes as LOG
 

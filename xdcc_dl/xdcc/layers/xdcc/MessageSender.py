@@ -24,7 +24,8 @@ LICENSE
 
 # imports
 import irc.client
-from xdcc_dl.xdcc.BotFinder import BotFinder
+
+from xdcc_dl.xdcc.layers.irc.BotFinder import BotFinder
 # noinspection PyPep8Naming
 from xdcc_dl.logging.LoggingTypes import LoggingTypes as LOG
 

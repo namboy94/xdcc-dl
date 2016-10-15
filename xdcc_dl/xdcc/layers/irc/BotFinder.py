@@ -23,13 +23,16 @@ LICENSE
 """
 
 # imports
-import irc.client
 from typing import List
-from xdcc_dl.entities.User import User
-from xdcc_dl.logging.Logger import Logger
-from xdcc_dl.entities.XDCCPack import XDCCPack
+
+import irc.client
+
 from xdcc_dl.entities.Progress import Progress
-from xdcc_dl.xdcc.IrcEventPrinter import IrcEventPrinter
+from xdcc_dl.entities.User import User
+from xdcc_dl.entities.XDCCPack import XDCCPack
+from xdcc_dl.logging.Logger import Logger
+from xdcc_dl.xdcc.layers.irc.IrcEventPrinter import IrcEventPrinter
+
 # noinspection PyPep8Naming
 from xdcc_dl.logging.LoggingTypes import LoggingTypes as LOG
 

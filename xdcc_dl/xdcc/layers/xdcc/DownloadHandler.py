@@ -23,15 +23,18 @@ LICENSE
 """
 
 # imports
-import time
 import struct
-import irc.client
+import time
 from typing import List
-from xdcc_dl.entities.User import User
-from xdcc_dl.logging.Logger import Logger
-from xdcc_dl.entities.XDCCPack import XDCCPack
+
+import irc.client
+
 from xdcc_dl.entities.Progress import Progress
-from xdcc_dl.xdcc.XDCCInitiator import XDCCInitiator
+from xdcc_dl.entities.User import User
+from xdcc_dl.entities.XDCCPack import XDCCPack
+from xdcc_dl.logging.Logger import Logger
+from xdcc_dl.xdcc.layers.xdcc.XDCCInitiator import XDCCInitiator
+
 # noinspection PyPep8Naming
 from xdcc_dl.logging.LoggingTypes import LoggingTypes as LOG
 

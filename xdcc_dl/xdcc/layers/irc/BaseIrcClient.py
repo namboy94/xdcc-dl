@@ -25,10 +25,12 @@ LICENSE
 # imports
 import irc.client
 from jaraco.stream import buffer
+
+from xdcc_dl.entities.IrcServer import IrcServer
 from xdcc_dl.entities.User import User
 from xdcc_dl.logging.Logger import Logger
-from xdcc_dl.entities.IrcServer import IrcServer
-from xdcc_dl.xdcc.ConnectionStates import ConnectionStates
+from xdcc_dl.xdcc.layers.helpers.ConnectionStates import ConnectionStates
+
 # noinspection PyPep8Naming
 from xdcc_dl.logging.LoggingTypes import LoggingTypes as LOG
 
@@ -78,22 +80,18 @@ class BaseIrclient(irc.client.SimpleIRCClient, ConnectionStates):
         self.server = irc_server
         self.user = user
 
-        self.server_address = irc_server.get_address()
-        self.server_port = irc_server.get_port()
-        self.user_name = user.get_name()
-
     def connect(self) -> None:
         """
         Connects the IRC Client to the IRC Server
 
         :return: None
         """
-        self.logger.log("Connecting to server:  " + self.server_address,   LOG.CONNECTION_ATTEMPT)
-        self.logger.log("Using Port:            " + str(self.server_port), LOG.CONNECTION_ATTEMPT)
-        self.logger.log("As User:               " + self.user_name,        LOG.CONNECTION_ATTEMPT)
+        self.logger.log("Connecting to server:  " + self.server.get_address(), LOG.CONNECTION_ATTEMPT)
+        self.logger.log("Using Port:            " + str(self.server.get_port()), LOG.CONNECTION_ATTEMPT)
+        self.logger.log("As User:               " + self.user.get_name(), LOG.CONNECTION_ATTEMPT)
 
         try:
-            super().connect(self.server_address, int(self.server_port), self.user_name)
+            super().connect(self.server.get_address(), int(self.server.get_port()), self.user.get_name())
             self.logger.log("Established Connection to Server", LOG.CONNECTION_SUCCESS)
             self.connected_to_server = True
         except irc.client.ServerConnectionError:
