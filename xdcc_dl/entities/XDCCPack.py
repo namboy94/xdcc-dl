@@ -33,18 +33,40 @@ class XDCCPack(object):
     Class that models an XDCC Pack
     """
 
-    def __init__(self, server: IrcServer, bot: str, packnumber: int, destination: str) -> None:
+    def __init__(self, server: IrcServer, bot: str, packnumber: int, size: int, destination: str = None) -> None:
         """
         Initializes an XDCC object. It contains all the necessary information for joining the correct
         IRC server and channel and sending the download request to the correct bot, then storing the
         received file in the predetermined location. If the destination is a directory, the file will be stored
         in the directory with the default file name, if not the file will be saved at the destination exactly.
-        The file extension will stay as in the original filename
+        The file extension will stay as in the original filename.
+
+        :param server:      The server to which the XDCC pack is hosted
+        :param bot:         The bot hosting the file
+        :param packnumber:  The pack's pack number
+        :param size:        The (approximate) size of the pack
+        :param destination: The destination of the downloaded file. Can alos be set later on with the set_destination
+                            method, however if not set before set_filename, the current working directory
+                            will be defined as the destination
         """
         self.server = server
         self.bot = bot
         self.packnumber = packnumber
+        self.size = size
 
+        self.filename = None
+        self.directory = None
+
+        if destination is not None:
+            self.set_destination(destination)
+
+    def set_destination(self, destination: str) -> None:
+        """
+        Sets the destination of the XDCC Pack, if it was not set using the constructor
+
+        :param destination: the destination of the XDCC Pack
+        :return:
+        """
         if os.path.isdir(destination):
             self.directory = destination
             self.filename = ""
@@ -61,6 +83,10 @@ class XDCCPack(object):
         :param filename: the filename as provided by the XDCC bot
         :return: None
         """
+        if self.directory is None:
+            self.directory = os.getcwd()
+            self.filename = ""
+
         if self.filename and len(filename.split(".")) > 1:
             extension = filename.rsplit(".", 1)[1]
             if not self.filename.endswith(extension):
