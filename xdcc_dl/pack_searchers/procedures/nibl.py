@@ -27,6 +27,7 @@ import requests
 from typing import List
 from bs4 import BeautifulSoup
 from xdcc_dl.entities.XDCCPack import XDCCPack
+from xdcc_dl.entities.IrcServer import IrcServer
 
 
 def find_nibl_packs(search_phrase: str) -> List[XDCCPack]:
@@ -68,7 +69,7 @@ def find_nibl_packs(search_phrase: str) -> List[XDCCPack]:
         packnumber = int(pack_numbers[i].text)
         size = file_sizes[i].text
 
-        result = XDCCPack(server, bot, )
+        result = XDCCPack(IrcServer(server), bot, packnumber, size)
         results.append(result)
         i += 1
 
