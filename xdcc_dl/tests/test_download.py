@@ -36,6 +36,7 @@ class UnitTests(unittest.TestCase):
     def tearDown(self):
         pass
 
+
     def test_gin_txt_download(self):
         sys.argv[1] = "/msg ginpachi-sensei xdcc send #1"
         main()
