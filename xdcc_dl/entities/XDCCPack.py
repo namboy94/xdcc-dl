@@ -33,39 +33,31 @@ class XDCCPack(object):
     Class that models an XDCC Pack
     """
 
-    def __init__(self, server: IrcServer, bot: str, packnumber: int, size: int, filename: str) -> None:
+    def __init__(self, server: IrcServer, bot: str, packnumber: int, destination: str) -> None:
         """
         Initializes an XDCC object. It contains all the necessary information for joining the correct
-        IRC server and channel and sending the download request to the correct bot.
+        IRC server and channel and sending the download request to the correct bot, then storing the
+        received file in the predetermined location. If the destination is a directory, the file will be stored
+        in the directory with the default file name, if not the file will be saved at the destination exactly.
+        The file extension will stay as in the original filename
 
-        :param server:      The server to which the XDCC pack is hosted
-        :param bot:         The bot hosting the file
-        :param packnumber:  The pack's pack number
-        :param size:        The (approximate) size of the pack
-        :param filename:    The pack's filename
+        :param server:       The Sever to be used by the XDCC Bot
+        :param bot:          The bot serving the file
+        :param packnumber:   The packnumber of the desired file
+        :param destination:  The destination path of the file
         """
         self.server = server
         self.bot = bot
         self.packnumber = packnumber
-        self.size = size
 
-        self.filename = filename
-        self.directory = ""
-
-    def set_destination_directory(self, destination: str) -> None:
-        """
-        Sets the destination directory of the XDCC Pack.
-
-        :param destination: the destination of the XDCC Pack
-        :raises:            PermissionError if the destination is a file and exists
-        :return:            None
-        """
-        if os.path.isfile(destination):
-            raise PermissionError("File already exists, can't be used as destination directory")
-
-        if not os.path.isdir(destination):
-            os.makedirs(destination)
-        self.directory = destination
+        if os.path.isdir(destination):
+            self.directory = destination
+            self.filename = ""
+        else:
+            self.directory = os.path.dirname(destination)
+            if not self.directory:
+                self.directory = os.getcwd()
+            self.filename = os.path.basename(destination)
 
     def set_filename(self, filename: str) -> None:
         """
@@ -74,13 +66,22 @@ class XDCCPack(object):
         :param filename: the filename as provided by the XDCC bot
         :return: None
         """
-        if not self.filename:
-            self.filename = filename
-
-        elif len(filename.split(".")) > 1:
+        if self.filename and len(filename.split(".")) > 1:
             extension = filename.rsplit(".", 1)[1]
             if not self.filename.endswith(extension):
                 self.filename += "." + extension
+
+        if not self.filename:
+            self.filename = filename
+
+    def set_directory(self, directory: str) -> None:
+        """
+        Sets the target directory of the XDCC PAck
+
+        :param directory: the target directory
+        :return:          None
+        """
+        self.directory = directory
 
     def get_server(self) -> IrcServer:
         """
