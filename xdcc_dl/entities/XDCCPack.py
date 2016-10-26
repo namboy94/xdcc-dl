@@ -50,6 +50,7 @@ class XDCCPack(object):
         self.packnumber = packnumber
         self.directory = os.getcwd()
         self.filename = ""
+        self.size = 0
 
     def set_filename(self, filename: str) -> None:
         """
@@ -74,6 +75,15 @@ class XDCCPack(object):
         :return:          None
         """
         self.directory = directory
+
+    def set_size(self, size: int) -> None:
+        """
+        Sets the file size of the XDCC pack
+
+        :param size: the size of the pack
+        :return:     None
+        """
+        self.size = size
 
     def get_server(self) -> IrcServer:
         """

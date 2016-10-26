@@ -24,11 +24,11 @@ LICENSE
 
 # imports
 from typing import List
-from xdcc_dl.entities import XDCCPack
+from xdcc_dl.entities.XDCCPack import XDCCPack
 from xdcc_dl.pack_searchers.procedures.nibl import find_nibl_packs
-from xdcc_dl.pack_searchers.procedures.ixirc import find_ixirc_packs
-from xdcc_dl.pack_searchers.procedures.horriblesubs import find_horriblesubs_packs
-from xdcc_dl.pack_searchers.procedures.intel_haruhichan import find_intel_haruhichan_packs
+#from xdcc_dl.pack_searchers.procedures.ixirc import find_ixirc_packs
+#from xdcc_dl.pack_searchers.procedures.horriblesubs import find_horriblesubs_packs
+#from xdcc_dl.pack_searchers.procedures.intel_haruhichan import find_intel_haruhichan_packs
 
 
 class PackSearcher(object):
@@ -37,9 +37,9 @@ class PackSearcher(object):
     """
 
     procedure_map = {"Nibl": find_nibl_packs,
-                     "iXIrc": find_ixirc_packs,
-                     "Horriblesubs": find_horriblesubs_packs,
-                     "Intel-Haruhichan": find_intel_haruhichan_packs}
+                     #"iXIrc": find_ixirc_packs,
+                     #"Horriblesubs": find_horriblesubs_packs,
+                     }#"Intel-Haruhichan": find_intel_haruhichan_packs}
 
     @staticmethod
     def get_available_pack_searchers() -> List[str]:
@@ -50,9 +50,10 @@ class PackSearcher(object):
         """
         return list(PackSearcher.procedure_map.keys())
 
-    def __init__(self, procedures: List[str]) -> None:
+    def __init__(self, procedures: List[str] = list(procedure_map.keys())) -> None:
         """
         Initializes the Packsearcher with a list of procedures to consider
+        All procedures are used by default
 
         :raises:           KeyError, if an invali procedure was specified
         :param procedures: List of procedures to use during the search

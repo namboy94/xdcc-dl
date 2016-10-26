@@ -69,7 +69,9 @@ def find_nibl_packs(search_phrase: str) -> List[XDCCPack]:
         packnumber = int(pack_numbers[i].text)
         size = file_sizes[i].text
 
-        result = XDCCPack(IrcServer(server), bot, packnumber, size)
+        result = XDCCPack(IrcServer(server), bot, packnumber)
+        result.set_size(size)
+        result.set_filename(filename)
         results.append(result)
         i += 1
 
