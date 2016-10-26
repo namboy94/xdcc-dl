@@ -22,10 +22,11 @@ This file is part of xdcc_dl.
 LICENSE
 """
 
+import xdcc_dl.metadata as metadata
 from gitlab_build_scripts.project_builders.python import build
 from gitlab_build_scripts.buildmodules.python.PyInstallerLinux import PyInstallerLinux
 from gitlab_build_scripts.buildmodules.python.PyInstallerWindows import PyInstallerWindows
 
 
 if __name__ == "__main__":
-    build([PyInstallerLinux])  # , PyInstallerWindows
+    build(metadata, [PyInstallerLinux])  # , PyInstallerWindows
