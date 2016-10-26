@@ -43,7 +43,7 @@ def main() -> None:
     parser.add_argument("-u", "--username", help="Specifies the username")
     args = parser.parse_args()
 
-    if args.m:
+    if args.message:
 
         destination = os.getcwd() if not args.destination else args.destination
         server = "irc.rizon.net" if not args.server else args.server
@@ -54,8 +54,7 @@ def main() -> None:
         downloader.download(packs)
 
     else:
-        pass
-        # TODO Implement GUI
+        print("Gui Not yet implemented")
 
 
 if __name__ == "__main__":

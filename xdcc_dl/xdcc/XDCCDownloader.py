@@ -25,7 +25,7 @@ LICENSE
 # imports
 from typing import List, Dict
 
-from xdcc_dl.entities import XDCCPack
+from xdcc_dl.entities.XDCCPack import XDCCPack
 from xdcc_dl.entities.Progress import Progress
 from xdcc_dl.xdcc.layers.irc.BaseIrcClient import NetworkError
 from xdcc_dl.xdcc.layers.irc.BotFinder import BotNotFoundException
