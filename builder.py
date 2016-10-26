@@ -29,4 +29,4 @@ from gitlab_build_scripts.buildmodules.python.PyInstallerWindows import PyInstal
 
 
 if __name__ == "__main__":
-    build(metadata, [PyInstallerLinux])  # , PyInstallerWindows
+    build(metadata, [PyInstallerLinux, PyInstallerWindows])
