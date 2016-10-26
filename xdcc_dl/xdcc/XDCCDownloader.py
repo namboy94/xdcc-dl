@@ -61,6 +61,7 @@ class XDCCDownloader(DownloadHandler):
             status_code = "OK"
 
             try:
+                print("starting")
                 self.start()
             except BotNotFoundException:
                 status_code = "BOTNOTFOUND"
