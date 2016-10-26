@@ -23,6 +23,7 @@ LICENSE
 """
 
 # imports
+import os
 import sys
 import unittest
 from xdcc_dl.main import main
@@ -36,7 +37,10 @@ class UnitTests(unittest.TestCase):
     def tearDown(self):
         pass
 
-
     def test_gin_txt_download(self):
-        sys.argv[1] = "/msg ginpachi-sensei xdcc send #1"
+        sys.argv[1] = "-m"
+        sys.argv.append("/msg ginpachi-sensei xdcc send #1")
         main()
+
+        self.assertTrue(os.path.isfile("Gin.txt"))
+        os.remove("Gin.txt")
