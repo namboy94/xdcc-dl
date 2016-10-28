@@ -4,3 +4,10 @@ xdcc_dl.egg-info
 .idea
 *.pyc
 *.pyo
+doc/__pycache__/
+xdcc_dl/__pycache__/
+xdcc_dl/entities/__pycache__/
+xdcc_dl/tests/__pycache__/
+xdcc_dl/main.spec
+xdcc_dl/xdcc/__pycache__/
+__pycache__
