@@ -4,6 +4,7 @@ import os
 import sys
 sys.path.insert(0, os.path.abspath("../.."))
 from xdcc_dl.metadata import General
+from sphinx.ext.autodoc import between
 
 extensions = [
     'sphinx.ext.autodoc',
@@ -59,13 +60,15 @@ epub_exclude_files = ['search.html']
 
 intersphinx_mapping = {'https://docs.python.org/': None}
 
-from sphinx.ext.autodoc import between
 
-
-def skip(app, what, name, obj, skip, options):
+def skip(app, what, name, obj, skipper, options):
+    str(app)
+    str(what)
+    str(obj)
+    str(options)
     if name == "__init__":
         return False
-    return skip
+    return skipper
 
 
 def setup(app):
