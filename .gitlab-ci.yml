@@ -137,7 +137,7 @@ generate_sphinx_documentation:
     - make buildsource
     - make latexpdf
     - make html
-    - rsync -av build/latex/xdcc_dl.pdf /var/www/docs.namibsun.net/public_html/pdf_docs/xdcc_downloader.pdf --delete-before
+    - rsync -av build/latex/xdcc-downloader.pdf /var/www/docs.namibsun.net/public_html/pdf_docs/xdcc_downloader.pdf --delete-before
     - rsync -av build/html/ /var/www/docs.namibsun.net/public_html/html_docs/xdcc_downloader --delete-before
     - cd ..
     - python3 builder.py documentation-html /var/www/docs.namibsun.net/public_html

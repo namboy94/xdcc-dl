@@ -70,14 +70,14 @@ By supplying this message as the ```-m``` parameter, the pack can be downloaded.
  
 ## Further Information
 
-[Documentation(HTML)](https://docs.namibsun.net/html_docs/xdcc-downloader/index.html)
+[Documentation(HTML)](https://docs.namibsun.net/html_docs/xdcc_downloader/index.html)
 
-[Documentation(PDF)](https://docs.namibsun.net/pdf_docs/xdcc-downloader.pdf)
+[Documentation(PDF)](https://docs.namibsun.net/pdf_docs/xdcc_downloader.pdf)
 
 [Python Package Index Site](https://pypi.python.org/pypi/xdcc_dl)
 
-[Git Statistics (gitstats)](https://gitstats.namibsun.net/gitstats/xdcc-downloader/index.html)
+[Git Statistics (gitstats)](https://gitstats.namibsun.net/gitstats/xdcc_downloader/index.html)
 
-[Git Statistics (git_stats)](https://gitstats.namibsun.net/git_stats/xdcc-downloader/index.html)
+[Git Statistics (git_stats)](https://gitstats.namibsun.net/git_stats/xdcc_downloader/index.html)
 
 [Changelog](https://gitlab.namibsun.net/namboy94/xdcc-downloader/raw/master/CHANGELOG)

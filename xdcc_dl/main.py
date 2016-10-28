@@ -27,6 +27,7 @@ import os
 import string
 import random
 import argparse
+from xdcc_dl.metadata import SentryLogger
 from xdcc_dl.xdcc.XDCCDownloader import XDCCDownloader
 from xdcc_dl.entities.XDCCPack import xdcc_packs_from_xdcc_message
 
@@ -37,32 +38,49 @@ def main() -> None:
 
     :return: None
     """
-    parser = argparse.ArgumentParser()
-    parser.add_argument("-m", "--message",
-                        help="An XDCC Message")
-    parser.add_argument("-s", "--server",
-                        help="Specifies the IRC Server. Defaults to irc.rizon.net")
-    parser.add_argument("-d", "--destination",
-                        help="Specifies the target download destination. Defaults to CWD")
-    parser.add_argument("-u", "--username",
-                        help="Specifies the username")
-    parser.add_argument("-v", "--verbosity", type=int,
-                        help="Specifies the verbosity of the output on a scale of 1-7. Default: 1")
-    args = parser.parse_args()
+    try:
 
-    if args.message:
+        parser = argparse.ArgumentParser()
+        parser.add_argument("-m", "--message",
+                            help="An XDCC Message")
+        parser.add_argument("-s", "--server",
+                            help="Specifies the IRC Server. Defaults to irc.rizon.net")
+        parser.add_argument("-d", "--destination",
+                            help="Specifies the target download destination. Defaults to " + os.getcwd())
+        parser.add_argument("-u", "--username",
+                            help="Specifies the username")
+        parser.add_argument("-v", "--verbosity", type=int,
+                            help="Specifies the verbosity of the output on a scale of 1-7. Default: 1")
+        parser.add_argument("-g", "--gui",
+                            help="Starts the XDCC Downloader GUI")
+        args = parser.parse_args()
 
-        destination = os.getcwd() if not args.destination else args.destination
-        server = "irc.rizon.net" if not args.server else args.server
-        user = generate_random_username() if not args.username else args.username
-        verbosity = 1 if not args.verbosity else int(args.verbosity)
+        if args.message:
 
-        packs = xdcc_packs_from_xdcc_message(args.message, destination, server)
-        downloader = XDCCDownloader(server, user, verbosity)
-        downloader.download(packs)
+            destination = os.getcwd() if not args.destination else args.destination
+            server = "irc.rizon.net" if not args.server else args.server
+            user = generate_random_username() if not args.username else args.username
+            verbosity = 1 if not args.verbosity else int(args.verbosity)
 
-    else:
-        print("Gui Not yet implemented")
+            packs = xdcc_packs_from_xdcc_message(args.message, destination, server)
+            downloader = XDCCDownloader(server, user, verbosity)
+            results = downloader.download(packs)
+
+            max_length = max(map(lambda x: len(x.get_filepath()), results.keys()))
+            for result in results:
+                print(result.get_filepath().ljust(max_length) + " - " + results[result])
+
+        elif args.gui:
+            print("Gui Not yet implemented")
+
+        else:
+            print("No arguments passed. See --help for more details")
+
+    except KeyboardInterrupt:
+        print("Thanks for using xdcc-downloader!")
+    except Exception as e:
+        SentryLogger.sentry.captureException()
+        raise e
 
 
 def generate_random_username(length: int = 10) -> str:

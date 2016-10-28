@@ -44,6 +44,7 @@ class ConnectionStates(object):
         self.channel_join_required = False
 
         # Download
+        self.already_requested = False
         self.download_started = False
         self.dcc_resume_requested = False
 
@@ -64,4 +65,23 @@ class ConnectionStates(object):
 
         :return: None
         """
-        self.__init__()
+        # Connection
+        self.connected_to_server = False
+        self.channel_joined = False
+        self.channel_join_required = False
+
+        # Download
+        self.already_requested = False
+        self.download_started = False
+        self.dcc_resume_requested = False
+
+        # Download File Specific
+        self.current_pack = None
+        self.file = None
+        self.dcc_connection = None
+        self.peer_address = None
+        self.peer_port = None
+        self.filesize = None
+
+        # Stats
+        self.start_time = time.time()

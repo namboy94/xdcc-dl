@@ -74,7 +74,7 @@ class General:
     A short description of the project
     """
 
-    version_number = "0.1.0"
+    version_number = "0.2.0"
     """
     The current version of the program.
     """
@@ -127,7 +127,7 @@ class PypiVariables:
     The list trove classifiers applicable to this project
     """
 
-    install_requires = ["raven", "irc"]
+    install_requires = ["raven", "irc", "bs4", "requests"]
     """
     Python Packaging Index dependencies
     """
