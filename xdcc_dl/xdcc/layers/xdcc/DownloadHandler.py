@@ -67,7 +67,7 @@ class DownloadHandler(XDCCInitiator):
         self.logger.log(progress_message, LOG.DOWNLOAD_PROGRESS, carriage_return=True)
 
         # Send Acknowledge Message
-        self.dcc_connection.send_bytes(struct.pack("!I", self.progress.get_single_progress()))
+        self.dcc_connection.send_bytes(struct.pack(str("!I"), self.progress.get_single_progress()))
         # -> on_dccmsg if download not yet complete
         # -> on_dcc_disconnect if completed
 
