@@ -44,6 +44,7 @@ class ConnectionStates(object):
         self.channel_join_required = False
 
         # Download
+        self.already_requested = False
         self.download_started = False
         self.dcc_resume_requested = False
 

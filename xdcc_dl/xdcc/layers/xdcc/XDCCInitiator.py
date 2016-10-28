@@ -72,6 +72,7 @@ class XDCCInitiator(MessageSender):
 
         :param ctcp_arguments: The CTCP Arguments
         :param connection:     The connection to use for DCC connections
+        :raises:               AlreadyDownloaded, if the file was already downloaded
         :return:               None
         """
         self.logger.log("Handling DCC SEND Handshake", LOG.DCC_SEND_HANDSHAKE)
@@ -131,3 +132,37 @@ class XDCCInitiator(MessageSender):
         self.file = open(self.current_pack.get_filepath(), "ab")
         self.dcc_connection = self.dcc_connect(self.peer_address, self.peer_port, "raw")  # -> on_dccmsg
         self.download_started = True
+
+    def on_privnotice(self, connection: irc.client.ServerConnection, event: irc.client.Event) -> None:
+        """
+        Checks if a private notice is sent by the sending bot that a pack was already requested.
+        If that is the case, another attempt will be made on the next ping
+
+        :param connection: the IRC connection
+        :param event:      the IRC event
+        :return:           None
+        """
+        super().on_privnotice(connection, event)
+        try:
+            if "You already requested that pack" in event.arguments[0]:
+                self.already_requested = True
+        except IndexError:
+            pass
+
+    def on_ping(self, connection: irc.client.ServerConnection, event: irc.client.Event) -> None:
+        """
+        Retries a download on a ping signal
+        :param connection:
+        :param event:
+        :return:
+        """
+        super().on_ping(connection, event)
+        print("PING")
+        print(self.already_requested)
+        if self.already_requested:
+            log_message = "Resending XDCC Request to " + self.current_pack.get_bot()
+            log_message += " for pack " + str(self.current_pack.get_packnumber())
+            self.logger.log(log_message, LOG.MESSAGE_RETRY)
+
+            self.already_requested = False
+            connection.privmsg(self.current_pack.get_bot(), self.current_pack.get_request_message())  # -> on_ctcp
