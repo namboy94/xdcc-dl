@@ -51,6 +51,8 @@ def main() -> None:
                             help="Specifies the username")
         parser.add_argument("-v", "--verbosity", type=int,
                             help="Specifies the verbosity of the output on a scale of 1-7. Default: 1")
+        parser.add_argument("-g", "--gui",
+                            help="Starts the XDCC Downloader GUI")
         args = parser.parse_args()
 
         if args.message:
@@ -64,13 +66,15 @@ def main() -> None:
             downloader = XDCCDownloader(server, user, verbosity)
             results = downloader.download(packs)
 
-            print("Summary")
             max_length = max(map(lambda x: len(x.get_filepath()), results.keys()))
             for result in results:
                 print(result.get_filepath().ljust(max_length) + " - " + results[result])
 
-        else:
+        elif args.gui:
             print("Gui Not yet implemented")
+
+        else:
+            print("No arguments passed. See --help for more details")
 
     except KeyboardInterrupt:
         print("Thanks for using xdcc-downloader!")
