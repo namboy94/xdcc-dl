@@ -61,6 +61,13 @@ class NetworkError(Exception):
     pass
 
 
+class Banned(Exception):
+    """
+    Exception that gets raised when a network error occurs
+    """
+    pass
+
+
 class BaseIrclient(irc.client.SimpleIRCClient, ConnectionStates, Variables):
     """
     The Base IRC Client that defines the necessary features that an IRC Client must be able to do.
@@ -109,6 +116,9 @@ class BaseIrclient(irc.client.SimpleIRCClient, ConnectionStates, Variables):
         except irc.client.ServerConnectionError:
             self.logger.log("Failed to connect to Server", LOG.CONNECTION_FAILURE)
             raise NetworkError()
+        except Banned:
+            self.logger.log("Failed to connect due to a ban", LOG.BANNED)
+            raise NetworkError()
 
     def start(self) -> None:
         """
@@ -123,6 +133,7 @@ class BaseIrclient(irc.client.SimpleIRCClient, ConnectionStates, Variables):
         except Disconnect:
             pass
 
+    # noinspection PyMethodMayBeStatic
     def on_disconnect(self, connection: irc.client.ServerConnection, event: irc.client.Event) -> None:
         """
         Method called whenever the IRC connection is disconnected
@@ -133,3 +144,15 @@ class BaseIrclient(irc.client.SimpleIRCClient, ConnectionStates, Variables):
         :return:           None
         """
         raise Disconnect()
+
+    # noinspection PyMethodMayBeStatic
+    def on_error(self, connection: irc.client.ServerConnection, event: irc.client.Event) -> None:
+        """
+        Method called whenever the IRC connection throws an error event, which means that the user is banned
+
+        :param connection: the IRC Connection
+        :param event:      the IRC Event
+        :raises:           Disconnect, when the connection was disconnected by non-fatal means
+        :return:           None
+        """
+        raise Banned()

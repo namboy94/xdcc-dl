@@ -104,6 +104,7 @@ class LoggingTypes:
     CONNECTION_ATTEMPT   = {"bg_color": BGColors.DEFAULT,      "fg_color": FGColors.DEFAULT,       "priority": 2}
     CONNECTION_SUCCESS   = {"bg_color": BGColors.DEFAULT,      "fg_color": FGColors.LIGHT_GREEN,   "priority": 2}
     CONNECTION_FAILURE   = {"bg_color": BGColors.DEFAULT,      "fg_color": FGColors.LIGHT_RED,     "priority": 2}
+    BANNED               = {"bg_color": BGColors.LIGHT_RED,    "fg_color": FGColors.LIGHT_MAGENTA, "priority": 1}
 
     WHOIS_SEND           = {"bg_color": BGColors.CYAN,         "fg_color": FGColors.BLACK,         "priority": 2}
     WHOIS_SUCCESS        = {"bg_color": BGColors.CYAN,         "fg_color": FGColors.WHITE,         "priority": 2}
