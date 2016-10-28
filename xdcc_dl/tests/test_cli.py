@@ -57,7 +57,7 @@ class UnitTests(unittest.TestCase):
         time.sleep(1)
 
         self.assertTrue(os.path.isfile("Gin.txt"))
-        self.assertAlmostEqual(os.path.getsize("Gin.txt"), total_size)
+        self.almost_equal(os.path.getsize("Gin.txt"), total_size)
 
         with open("Gin.txt", 'rb') as f:
             content = f.read()
@@ -67,7 +67,7 @@ class UnitTests(unittest.TestCase):
         main()
 
         self.assertTrue(os.path.isfile("Gin.txt"))
-        self.assertAlmostEqual(os.path.getsize("Gin.txt"), total_size)
+        self.almost_equal(os.path.getsize("Gin.txt"), total_size)
 
     def test_mashiro_txt_download(self):
 
@@ -83,7 +83,7 @@ class UnitTests(unittest.TestCase):
         time.sleep(1)
 
         self.assertTrue(os.path.isfile("mashiro.txt"))
-        self.assertAlmostEqual(os.path.getsize("mashiro.txt"), total_size)
+        self.almost_equal(os.path.getsize("mashiro.txt"), total_size)
 
         with open("mashiro.txt", 'rb') as f:
             content = f.read()
@@ -92,4 +92,7 @@ class UnitTests(unittest.TestCase):
 
         main()
         self.assertTrue(os.path.isfile("mashiro.txt"))
-        self.assertAlmostEqual(os.path.getsize("mashiro.txt"), total_size)
+        self.almost_equal(os.path.getsize("mashiro.txt"), total_size)
+
+    def almost_equal(self, param_one, param_two):
+        self.assertTrue(param_two - 15 <= param_one <= param_two + 15)
