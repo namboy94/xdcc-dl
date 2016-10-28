@@ -135,19 +135,19 @@ def get_page_results(page_content: BeautifulSoup) -> List[XDCCPack]:
         # This gets skipped if it has been established that the pack is invalid
         if not aborted:
             if column_count == 0:
-                file_name = line_part.text                 # File Name
+                file_name = line_part.text                         # File Name
             elif column_count == 1:
-                server = "irc." + line_part.text + ".net"  # Server Address (Note: Not sure if .net applicable to all)
+                server = "irc." + line_part.text.lower() + ".net"  # Server Address
             elif column_count == 2:
                 pass  # Channel Information, not needed due to /whois IRC queries
             elif column_count == 3:
-                bot = line_part.text                       # Bot Name
+                bot = line_part.text                               # Bot Name
             elif column_count == 4:
-                pack_number = int(line_part.text)          # Pack Number
+                pack_number = int(line_part.text)                  # Pack Number
             elif column_count == 5:
                 pass  # This is the 'gets' section, we don't need that
             elif column_count == 6:
-                size = line_part.text                      # File Size
+                size = line_part.text                              # File Size
 
         # Resets state after a pack was successfully parsed, and adds xdcc pack to results
         if not aborted and ago_count == 2:
@@ -156,7 +156,7 @@ def get_page_results(page_content: BeautifulSoup) -> List[XDCCPack]:
             next_element = True
 
             # Generate XDCCPack and append it to the list
-            result = XDCCPack(IrcServer("irc." + server + ".net"), bot, pack_number)
+            result = XDCCPack(IrcServer(server), bot, pack_number)
             result.set_filename(file_name)
             result.set_size(size)
             results.append(result)

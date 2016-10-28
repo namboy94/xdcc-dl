@@ -97,6 +97,12 @@ class XDCCPack(object):
         """
         return os.path.join(self.directory, self.filename)
 
+    def get_filename(self) -> str:
+        """
+        :return: The currently set filename
+        """
+        return self.filename
+
     def get_bot(self) -> str:
         """
         :return: The bot

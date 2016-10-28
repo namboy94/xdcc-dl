@@ -35,9 +35,9 @@ class PackSearcher(object):
     Class that offers various methods to search different XDCC Packlists for XDCC Packs
     """
 
-    procedure_map = {"Nibl": find_nibl_packs,
-                     "iXIrc": find_ixirc_packs,
-                     "Intel-Haruhichan": find_intel_haruhichan_packs}
+    procedure_map = {"nibl": find_nibl_packs,
+                     "ixirc": find_ixirc_packs,
+                     "intel_haruhichan": find_intel_haruhichan_packs}
 
     @staticmethod
     def get_available_pack_searchers() -> List[str]:
