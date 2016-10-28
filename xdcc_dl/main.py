@@ -62,11 +62,18 @@ def main() -> None:
 
             packs = xdcc_packs_from_xdcc_message(args.message, destination, server)
             downloader = XDCCDownloader(server, user, verbosity)
-            downloader.download(packs)
+            results = downloader.download(packs)
+
+            print("Summary")
+            max_length = max(map(lambda x: len(x.get_filepath()), results.keys()))
+            for result in results:
+                print(result.get_filepath().ljust(max_length) + " - " + results[result])
 
         else:
             print("Gui Not yet implemented")
 
+    except KeyboardInterrupt:
+        print("Thanks for using xdcc-downloader!")
     except Exception as e:
         SentryLogger.sentry.captureException()
         raise e
