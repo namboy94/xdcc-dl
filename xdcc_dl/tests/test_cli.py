@@ -36,10 +36,12 @@ class UnitTests(unittest.TestCase):
         sys.argv = [sys.argv[0]]
         sys.argv.append("-v")
         sys.argv.append("2")
-        pass
 
     def tearDown(self):
-        pass
+        if os.path.isfile("Gin.txt"):
+            os.remove("Gin.txt")
+        if os.path.isfile("mashiro.txt"):
+            os.remove("mashiro.txt")
 
     def test_gin_txt(self):
 
@@ -66,7 +68,6 @@ class UnitTests(unittest.TestCase):
 
         self.assertTrue(os.path.isfile("Gin.txt"))
         self.assertAlmostEqual(os.path.getsize("Gin.txt"), total_size)
-        os.remove("Gin.txt")
 
     def test_mashiro_txt_download(self):
 
@@ -92,4 +93,3 @@ class UnitTests(unittest.TestCase):
         main()
         self.assertTrue(os.path.isfile("mashiro.txt"))
         self.assertAlmostEqual(os.path.getsize("mashiro.txt"), total_size)
-        os.remove("mashiro.txt")

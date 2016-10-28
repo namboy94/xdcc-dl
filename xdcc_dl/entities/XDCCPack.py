@@ -52,19 +52,20 @@ class XDCCPack(object):
         self.filename = ""
         self.size = 0
 
-    def set_filename(self, filename: str) -> None:
+    def set_filename(self, filename: str, override: bool = False) -> None:
         """
         Sets the filename (or only the file extension) of the target file
 
         :param filename: the filename as provided by the XDCC bot
-        :return: None
+        :param override: Overrides the current filename
+        :return:         None
         """
-        if self.filename and len(filename.split(".")) > 1:
+        if self.filename and len(filename.split(".")) > 1 and not override:
             extension = filename.rsplit(".", 1)[1]
             if not self.filename.endswith(extension):
                 self.filename += "." + extension
 
-        if not self.filename:
+        if not self.filename or override:
             self.filename = filename
 
     def set_directory(self, directory: str) -> None:

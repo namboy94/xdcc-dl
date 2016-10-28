@@ -25,19 +25,28 @@ LICENSE
 # imports
 from typing import List, Dict
 
+from xdcc_dl.logging import Logger
+from xdcc_dl.entities.User import User
 from xdcc_dl.entities.XDCCPack import XDCCPack
 from xdcc_dl.entities.Progress import Progress
-from xdcc_dl.xdcc.layers.irc.BaseIrcClient import NetworkError
-from xdcc_dl.xdcc.layers.irc.BotFinder import BotNotFoundException
-from xdcc_dl.xdcc.layers.xdcc.XDCCInitiator import AlreadyDownloaded
-from xdcc_dl.xdcc.layers.xdcc.DownloadHandler import DownloadHandler, IncompleteDownload
+from xdcc_dl.entities.IrcServer import IrcServer
+from xdcc_dl.xdcc.XDCCDownloader import XDCCDownloader
 
 
-class XDCCDownloader(DownloadHandler):
+class MultipleServerDownloader(object):
     """
-    The XDCC Downloader that combines the capabilities of all XDCC Layers to offer a stable
-    interface to download XDCC Packs
+    Class that can handle downloading from various server sources
     """
+
+    def __init__(self, user: User or str, logger: Logger or int = 0):
+        """
+        Creates a new multiple server downloader, without specifying the server.
+
+        :param user:    The user with which to log in
+        :param logger:  The logger to use
+        """
+        self.user = user
+        self.logger = logger
 
     def download(self, packs: List[XDCCPack], progress: Progress = None) -> Dict[XDCCPack, str]:
         """
@@ -52,28 +61,21 @@ class XDCCDownloader(DownloadHandler):
                          "INCOMPLETE":   Download was incomplete
                          "EXISTED":      File already existed and was completely downloaded
         """
-        self.progress = progress if progress is not None else Progress(len(packs))
+        results = {}
 
-        pack_states = {}
+        packservers = {}
+
         for pack in packs:
-            self.current_pack = pack
-
-            status_code = "OK"
-
             try:
-                print("starting")
-                self.start()
-            except BotNotFoundException:
-                status_code = "BOTNOTFOUND"
-            except IncompleteDownload:
-                status_code = "INCOMPLETE"
-            except AlreadyDownloaded:
-                status_code = "EXISTED"
-            except NetworkError:
-                status_code = "NETWORKERROR"
+                packservers[pack.get_server().get_address()].append(pack)
+            except KeyError:
+                packservers[pack.get_server().get_address()] = [pack]
 
-            pack_states[self.current_pack] = status_code
-            self.reset_connection_state()
-            self.progress.next_file()
+        for server in packservers:
+            downloader = XDCCDownloader(IrcServer(server), self.user, self.logger)
+            server_results = downloader.download(packservers[server], progress)
 
-        return pack_states
+            for result in server_results:
+                results[result] = server_results[result]
+
+        return results
