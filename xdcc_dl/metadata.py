@@ -127,7 +127,7 @@ class PypiVariables:
     The list trove classifiers applicable to this project
     """
 
-    install_requires = ["raven", "irc"]
+    install_requires = ["raven", "irc", "bs4", "requests"]
     """
     Python Packaging Index dependencies
     """
