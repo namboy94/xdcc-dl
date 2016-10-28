@@ -4,7 +4,7 @@ Copyright 2016 Hermann Krumrey
 
 This file is part of xdcc_dl.
 
-    xdcc_dl is a program that allows downloading files via hte XDCC
+    xdcc_dl is a program that allows downloading files via the XDCC
     protocol via file serving bots on IRC networks.
 
     xdcc_dl is free software: you can redistribute it and/or modify
@@ -36,8 +36,8 @@ class UnitTests(unittest.TestCase):
         pass
 
     def tearDown(self):
-        if os.path.isfile("Ginpachi.txt"):
-            os.remove("Ginpachi.txt")
+        if os.path.isfile("Gintoki.txt"):
+            os.remove("Gintoki.txt")
         if os.path.isfile("Sadaharu.txt"):
             os.remove("Sadaharu.txt")
 
