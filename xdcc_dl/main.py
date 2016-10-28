@@ -46,7 +46,7 @@ def main() -> None:
         parser.add_argument("-s", "--server",
                             help="Specifies the IRC Server. Defaults to irc.rizon.net")
         parser.add_argument("-d", "--destination",
-                            help="Specifies the target download destination. Defaults to CWD")
+                            help="Specifies the target download destination. Defaults to " + os.getcwd())
         parser.add_argument("-u", "--username",
                             help="Specifies the username")
         parser.add_argument("-v", "--verbosity", type=int,
