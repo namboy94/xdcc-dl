@@ -2,6 +2,7 @@ V 0.2.0:
   - More robust handling of unforeseen events
   - Unit Testing
   - XDCC Pack searchers
+  - Server-independent consecutive downloading
 V 0.1.0:
   - Simple Command Line script that downloads XDCC Packs based on XDCC messages
   - Defined XDCC Downloader layer structure
