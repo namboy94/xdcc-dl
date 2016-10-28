@@ -25,7 +25,6 @@ LICENSE
 # imports
 import os
 import sys
-import time
 import unittest
 from xdcc_dl.main import main
 
@@ -50,19 +49,18 @@ class UnitTests(unittest.TestCase):
         self.assertTrue(os.path.isfile("Gin.txt"))
         total_size = os.path.getsize("Gin.txt")
 
-        time.sleep(30)
         main()
 
         self.assertTrue(os.path.isfile("Gin.txt"))
         self.assertAlmostEqual(os.path.getsize("Gin.txt"), total_size)
 
-        time.sleep(30)
         with open("Gin.txt", 'rb') as f:
             content = f.read()
         with open("Gin.txt", 'wb') as f:
             f.write(content[0:int(total_size/2)])
 
         main()
+
         self.assertTrue(os.path.isfile("Gin.txt"))
         self.assertAlmostEqual(os.path.getsize("Gin.txt"), total_size)
         os.remove("Gin.txt")
@@ -76,13 +74,11 @@ class UnitTests(unittest.TestCase):
         self.assertTrue(os.path.isfile("mashiro.txt"))
         total_size = os.path.getsize("mashiro.txt")
 
-        time.sleep(30)
         main()
 
         self.assertTrue(os.path.isfile("mashiro.txt"))
         self.assertAlmostEqual(os.path.getsize("mashiro.txt"), total_size)
 
-        time.sleep(30)
         with open("mashiro.txt", 'rb') as f:
             content = f.read()
         with open("mashiro.txt", 'wb') as f:

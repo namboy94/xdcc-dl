@@ -125,6 +125,8 @@ class LoggingTypes:
     MESSAGE_SEND         = {"bg_color": BGColors.BLUE,          "fg_color": FGColors.BLACK,        "priority": 1}
     MESSAGE_RETRY        = {"bg_color": BGColors.BLUE,          "fg_color": FGColors.WHITE,        "priority": 1}
 
+    ALREADY_REQUESTED    = {"bg_color": BGColors.BLUE,          "fg_color": FGColors.LIGHT_RED,    "priority": 2}
+
     DCC_SEND_HANDSHAKE   = {"bg_color": BGColors.YELLOW,        "fg_color": FGColors.BLACK,        "priority": 2}
     DCC_RESUME_REQUEST   = {"bg_color": BGColors.YELLOW,        "fg_color": FGColors.DARK_GRAY,    "priority": 2}
     DCC_RESUME_SUCCESS   = {"bg_color": BGColors.YELLOW,        "fg_color": FGColors.WHITE,        "priority": 2}

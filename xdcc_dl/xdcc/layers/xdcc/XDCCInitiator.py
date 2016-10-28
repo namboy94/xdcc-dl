@@ -145,6 +145,7 @@ class XDCCInitiator(MessageSender):
         super().on_privnotice(connection, event)
         try:
             if "You already requested that pack" in event.arguments[0]:
+                self.logger.log("Pack already requested, waiting for next Ping", LOG.ALREADY_REQUESTED)
                 self.already_requested = True
         except IndexError:
             pass
@@ -157,8 +158,6 @@ class XDCCInitiator(MessageSender):
         :return:
         """
         super().on_ping(connection, event)
-        print("PING")
-        print(self.already_requested)
         if self.already_requested:
             log_message = "Resending XDCC Request to " + self.current_pack.get_bot()
             log_message += " for pack " + str(self.current_pack.get_packnumber())
