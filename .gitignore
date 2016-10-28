@@ -2,4 +2,5 @@ build
 dist
 xdcc_dl.egg-info
 .idea
-__pycache__
+*.pyc
+*.pyo
