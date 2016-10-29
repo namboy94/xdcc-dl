@@ -38,3 +38,8 @@ class Variables(object):
         self.logger = None
 
         self.progress = None
+
+        self.pack_queue = []
+        self.pack_states = {}
+
+        self.joined_channels = []

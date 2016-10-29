@@ -46,7 +46,8 @@ class MessageSender(BotFinder):
         :return:           None
         """
         if event.source.startswith(self.user.get_name()):
-            self.logger.log("Joined Channel " + event.target, LOG.CHANNEL_JOIN_SUCCESS)
+            if not self.user.get_name() == event.target:
+                self.logger.log("Joined Channel " + event.target, LOG.CHANNEL_JOIN_SUCCESS)
 
             if not self.channel_joined:  # Only send the XDCC message when the first channel was joined
                 self.channel_joined = True  # Let other on_joins know that message was already sent

@@ -93,8 +93,9 @@ class DownloadHandler(XDCCInitiator):
 
             else:
                 self.pack_states[self.current_pack] = "OK"
-                self.current_pack = self.pack_queue.pop()
                 self.reset_connection_state()
+                self.connected_to_server = True
+                self.current_pack = self.pack_queue.pop()
                 self.progress.next_file()
                 self.connection.whois(self.current_pack.get_bot())
 
