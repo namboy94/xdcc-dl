@@ -38,6 +38,9 @@ class ConnectionStates(object):
         """
         Initializes the state variables
         """
+        self.pack_queue = []  # DO NOT WIPE IN RESET METHOD!
+        self.pack_states = {}  # DO NOT WIPE IN RESET METHOD!
+
         # Connection
         self.connected_to_server = False
         self.channel_joined = False

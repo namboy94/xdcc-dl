@@ -85,5 +85,15 @@ class DownloadHandler(XDCCInitiator):
         if os.path.getsize(self.current_pack.get_filepath()) < self.filesize:
             raise IncompleteDownload()
 
-        self.connection.close()
-        self.connection.disconnect()  # -> on_diconnect
+        if len(self.pack_queue) > 0:
+
+            self.pack_states[self.current_pack] = "OK"
+            self.current_pack = self.pack_queue.pop()
+            self.reset_connection_state()
+            self.progress.next_file()
+            self.connection.whois(self.current_pack.get_bot())
+            connection.whois(self.current_pack.get_bot())
+
+        else:
+            self.connection.close()
+            self.connection.disconnect()  # -> on_diconnect
