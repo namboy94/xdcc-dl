@@ -59,7 +59,7 @@ class XDCCDownloader(DownloadHandler):
 
         while len(self.pack_queue) > 0:
 
-            self.current_pack = self.pack_queue.pop()
+            self.current_pack = self.pack_queue.pop(0)
             status_code = "OK"
 
             try:
