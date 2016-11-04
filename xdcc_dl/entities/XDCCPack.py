@@ -104,6 +104,12 @@ class XDCCPack(object):
         """
         return self.filename
 
+    def get_size(self) -> int:
+        """
+        :return: The currently set file size
+        """
+        return self.size
+
     def get_bot(self) -> str:
         """
         :return: The bot
