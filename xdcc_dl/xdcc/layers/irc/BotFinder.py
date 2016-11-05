@@ -89,7 +89,7 @@ class BotFinder(IrcEventPrinter):
                 connection.join(channel)  # -> on_join
 
         if not new_channel_joined:
-            print("Channels joined already")
+            self.logger.log("Channels joined already", LOG.CHANNEL_JOIN_SUCCESS)
             event.source = self.user.get_name()
             # noinspection PyUnresolvedReferences
             self.on_join(connection, event)

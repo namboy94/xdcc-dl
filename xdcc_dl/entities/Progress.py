@@ -44,7 +44,7 @@ class Progress(object):
                                 4: the total progress completion percentage
                                 5: the total progress
                                 6: the total progress size
-                                7: the current download speed in byte/s (Based on last 3 seconds)
+                                7: the current download speed in byte/s (Based on last 0.5 seconds)
                                 8: the average download speed over the entire downloading process
         """
         self.start_time = time.time()
@@ -96,17 +96,17 @@ class Progress(object):
 
     def calculate_current_download_speed(self) -> int:
         """
-        Calculates the current download speed based on the data downloaded every 3 seconds
+        Calculates the current download speed based on the data downloaded every 0.5 seconds
 
         :return: The speed in byte/s
         """
-        if time.time() - self.speed_counter < 3:
+        if time.time() - self.speed_counter < 0.5:
             return self.previous_speed
         else:
             bytes_downloaded = self.total_bytes - self.speed_byte_counter
             self.speed_byte_counter = self.total_bytes
 
-            self.previous_speed = int(bytes_downloaded / time.time() - self.speed_counter)
+            self.previous_speed = int(bytes_downloaded / (time.time() - self.speed_counter))
             self.speed_counter = time.time()
 
             return self.previous_speed
