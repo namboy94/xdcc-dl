@@ -41,7 +41,7 @@ run_unit_tests_python_3:
     - linux
     - python
   script:
-    - python3 setup.py nosetests --with-coverage --cover-package=xdcc_dl --cover-branches --cover-erase --cover-html --cover-inclusive
+    - python3 setup.py nosetests --with-coverage --cover-package=xdcc_dl --cover-branches --cover-erase --cover-html --cover-inclusive --nocapture
     - rsync -av cover/ /var/www/coverage.namibsun.net/public_html/xdcc-downloader --delete-before
     - python3 builder.py coverage-html /var/www/coverage.namibsun.net/public_html
 
