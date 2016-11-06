@@ -1,5 +1,7 @@
 V 0.3.0:
   - Enhanced the Progress structure with callbacks and calculations
+  - Fixed order issues
+  - Fixed scripts not running correctly
 V 0.2.0:
   - More robust handling of unforeseen events
   - Unit Testing

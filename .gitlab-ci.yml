@@ -1,6 +1,7 @@
 stages:
   - mirror
   - test
+  - install
   - build
   - deploy
   - release
@@ -41,6 +42,27 @@ run_unit_tests_python_3:
     - python
   script:
     - python3 setup.py test
+
+install_on_linux:
+  stage: install
+  only:
+    - master
+    - develop
+  tags:
+    - linux
+    - python
+  script:
+    - python3 setup.py install --user
+
+install_on_windows:
+  stage: install
+  only:
+    - master
+  tags:
+    - windows
+    - python
+  script:
+    - python setup.py install
 
 pyinstaller_linux:
   stage: build
