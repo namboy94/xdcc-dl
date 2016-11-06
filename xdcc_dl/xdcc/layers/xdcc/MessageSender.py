@@ -4,7 +4,7 @@ Copyright 2016 Hermann Krumrey
 
 This file is part of xdcc_dl.
 
-    xdcc_dl is a program that allows downloading files via hte XDCC
+    xdcc_dl is a program that allows downloading files via the XDCC
     protocol via file serving bots on IRC networks.
 
     xdcc_dl is free software: you can redistribute it and/or modify
@@ -46,7 +46,8 @@ class MessageSender(BotFinder):
         :return:           None
         """
         if event.source.startswith(self.user.get_name()):
-            self.logger.log("Joined Channel " + event.target, LOG.CHANNEL_JOIN_SUCCESS)
+            if not self.user.get_name() == event.target:
+                self.logger.log("Joined Channel " + event.target, LOG.CHANNEL_JOIN_SUCCESS)
 
             if not self.channel_joined:  # Only send the XDCC message when the first channel was joined
                 self.channel_joined = True  # Let other on_joins know that message was already sent

@@ -4,7 +4,7 @@ Copyright 2016 Hermann Krumrey
 
 This file is part of xdcc_dl.
 
-    xdcc_dl is a program that allows downloading files via hte XDCC
+    xdcc_dl is a program that allows downloading files via the XDCC
     protocol via file serving bots on IRC networks.
 
     xdcc_dl is free software: you can redistribute it and/or modify
@@ -147,6 +147,8 @@ class XDCCInitiator(MessageSender):
             if "You already requested that pack" in event.arguments[0]:
                 self.logger.log("Pack already requested, waiting for next Ping", LOG.ALREADY_REQUESTED)
                 self.already_requested = True
+            if "You will have to re-send that, to the bot that transferred the file." in event.arguments[0]:
+                connection.privmsg(self.current_pack.get_bot(), self.current_pack.get_request_message())
         except IndexError:
             pass
 

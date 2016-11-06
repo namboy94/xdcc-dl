@@ -4,7 +4,7 @@ Copyright 2016 Hermann Krumrey
 
 This file is part of xdcc_dl.
 
-    xdcc_dl is a program that allows downloading files via hte XDCC
+    xdcc_dl is a program that allows downloading files via the XDCC
     protocol via file serving bots on IRC networks.
 
     xdcc_dl is free software: you can redistribute it and/or modify
@@ -35,7 +35,7 @@ class UnitTests(unittest.TestCase):
     def setUp(self):
         sys.argv = [sys.argv[0]]
         sys.argv.append("-v")
-        sys.argv.append("2")
+        sys.argv.append("5")
 
     def tearDown(self):
         if os.path.isfile("Gin.txt"):
@@ -48,13 +48,13 @@ class UnitTests(unittest.TestCase):
         sys.argv.append("-m")
         sys.argv.append("/msg ginpachi-sensei xdcc send #1")
         main()
-        time.sleep(1)
+        time.sleep(5)
 
         self.assertTrue(os.path.isfile("Gin.txt"))
         total_size = os.path.getsize("Gin.txt")
 
         main()
-        time.sleep(1)
+        time.sleep(5)
 
         self.assertTrue(os.path.isfile("Gin.txt"))
         self.almost_equal(os.path.getsize("Gin.txt"), total_size)
@@ -65,6 +65,7 @@ class UnitTests(unittest.TestCase):
             f.write(content[0:int(total_size/2)])
 
         main()
+        time.sleep(5)
 
         self.assertTrue(os.path.isfile("Gin.txt"))
         self.almost_equal(os.path.getsize("Gin.txt"), total_size)
@@ -74,13 +75,13 @@ class UnitTests(unittest.TestCase):
         sys.argv.append("-m")
         sys.argv.append("/msg E-D|Mashiro xdcc send #1")
         main()
-        time.sleep(1)
+        time.sleep(5)
 
         self.assertTrue(os.path.isfile("mashiro.txt"))
         total_size = os.path.getsize("mashiro.txt")
 
         main()
-        time.sleep(1)
+        time.sleep(5)
 
         self.assertTrue(os.path.isfile("mashiro.txt"))
         self.almost_equal(os.path.getsize("mashiro.txt"), total_size)
@@ -91,6 +92,8 @@ class UnitTests(unittest.TestCase):
             f.write(content[0:int(total_size / 2)])
 
         main()
+        time.sleep(5)
+
         self.assertTrue(os.path.isfile("mashiro.txt"))
         self.almost_equal(os.path.getsize("mashiro.txt"), total_size)
 

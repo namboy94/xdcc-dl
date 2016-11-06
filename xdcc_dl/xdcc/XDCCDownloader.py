@@ -4,7 +4,7 @@ Copyright 2016 Hermann Krumrey
 
 This file is part of xdcc_dl.
 
-    xdcc_dl is a program that allows downloading files via hte XDCC
+    xdcc_dl is a program that allows downloading files via the XDCC
     protocol via file serving bots on IRC networks.
 
     xdcc_dl is free software: you can redistribute it and/or modify
@@ -42,6 +42,7 @@ class XDCCDownloader(DownloadHandler):
     def download(self, packs: List[XDCCPack], progress: Progress = None) -> Dict[XDCCPack, str]:
         """
         Downloads all XDCC packs specified. Optionally shares state with other threads using a Progress object
+        All packs need to connect to the same server
 
         :param packs:    The packs to download
         :param progress: Optional Progress object
@@ -53,15 +54,15 @@ class XDCCDownloader(DownloadHandler):
                          "EXISTED":      File already existed and was completely downloaded
         """
         self.progress = progress if progress is not None else Progress(len(packs))
+        self.pack_queue = packs
+        self.pack_states = {}
 
-        pack_states = {}
-        for pack in packs:
-            self.current_pack = pack
+        while len(self.pack_queue) > 0:
 
+            self.current_pack = self.pack_queue.pop(0)
             status_code = "OK"
 
             try:
-                print("starting")
                 self.start()
             except BotNotFoundException:
                 status_code = "BOTNOTFOUND"
@@ -72,8 +73,8 @@ class XDCCDownloader(DownloadHandler):
             except NetworkError:
                 status_code = "NETWORKERROR"
 
-            pack_states[self.current_pack] = status_code
+            self.pack_states[self.current_pack] = status_code
             self.reset_connection_state()
             self.progress.next_file()
 
-        return pack_states
+        return self.pack_states

@@ -4,7 +4,7 @@ Copyright 2016 Hermann Krumrey
 
 This file is part of xdcc_dl.
 
-    xdcc_dl is a program that allows downloading files via hte XDCC
+    xdcc_dl is a program that allows downloading files via the XDCC
     protocol via file serving bots on IRC networks.
 
     xdcc_dl is free software: you can redistribute it and/or modify
@@ -77,10 +77,22 @@ class BotFinder(IrcEventPrinter):
         channels = event.arguments[1].split("#")
         channels.pop(0)
 
+        new_channel_joined = False
+
         for channel in channels:
             channel = "#" + channel.split(" ")[0]
-            self.logger.log("Joining Channel " + channel, LOG.CHANNEL_JOIN_ATTEMPT)
-            connection.join(channel)  # -> on_join
+
+            if channel not in self.joined_channels:
+                new_channel_joined = True
+                self.joined_channels.append(channel)
+                self.logger.log("Joining Channel " + channel, LOG.CHANNEL_JOIN_ATTEMPT)
+                connection.join(channel)  # -> on_join
+
+        if not new_channel_joined:
+            self.logger.log("Channels joined already", LOG.CHANNEL_JOIN_SUCCESS)
+            event.source = self.user.get_name()
+            # noinspection PyUnresolvedReferences
+            self.on_join(connection, event)
 
     def on_endofwhois(self, connection: irc.client.ServerConnection, event: irc.client.Event) -> None:
         """

@@ -4,7 +4,7 @@ Copyright 2016 Hermann Krumrey
 
 This file is part of xdcc_dl.
 
-    xdcc_dl is a program that allows downloading files via hte XDCC
+    xdcc_dl is a program that allows downloading files via the XDCC
     protocol via file serving bots on IRC networks.
 
     xdcc_dl is free software: you can redistribute it and/or modify
@@ -103,6 +103,12 @@ class XDCCPack(object):
         :return: The currently set filename
         """
         return self.filename
+
+    def get_size(self) -> int:
+        """
+        :return: The currently set file size
+        """
+        return self.size
 
     def get_bot(self) -> str:
         """

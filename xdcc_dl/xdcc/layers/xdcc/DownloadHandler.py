@@ -4,7 +4,7 @@ Copyright 2016 Hermann Krumrey
 
 This file is part of xdcc_dl.
 
-    xdcc_dl is a program that allows downloading files via hte XDCC
+    xdcc_dl is a program that allows downloading files via the XDCC
     protocol via file serving bots on IRC networks.
 
     xdcc_dl is free software: you can redistribute it and/or modify
@@ -85,5 +85,20 @@ class DownloadHandler(XDCCInitiator):
         if os.path.getsize(self.current_pack.get_filepath()) < self.filesize:
             raise IncompleteDownload()
 
-        self.connection.close()
-        self.connection.disconnect()  # -> on_diconnect
+        if len(self.pack_queue) > 0:
+
+            if not self.current_pack.get_server().get_address() == self.pack_queue[0].get_server().get_address():
+                self.connection.close()
+                self.connection.disconnect()  # -> on_diconnect
+
+            else:
+                self.pack_states[self.current_pack] = "OK"
+                self.reset_connection_state()
+                self.connected_to_server = True
+                self.current_pack = self.pack_queue.pop(0)
+                self.progress.next_file()
+                self.connection.whois(self.current_pack.get_bot())
+
+        else:
+            self.connection.close()
+            self.connection.disconnect()  # -> on_diconnect

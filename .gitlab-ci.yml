@@ -1,6 +1,7 @@
 stages:
   - mirror
   - test
+  - install
   - build
   - deploy
   - release
@@ -40,7 +41,38 @@ run_unit_tests_python_3:
     - linux
     - python
   script:
-    - python3 setup.py test
+    - python3 setup.py nosetests --with-coverage --cover-package=xdcc_dl --cover-branches --cover-erase --cover-html --cover-inclusive --nocapture
+    - rsync -av cover/ /var/www/coverage.namibsun.net/public_html/xdcc-downloader --delete-before
+    - python3 builder.py coverage-html /var/www/coverage.namibsun.net/public_html
+
+run_unit_tests_windows:
+  stage: test
+  tags:
+    - windows
+    - python
+  script:
+    - python setup.py test
+
+install_on_linux:
+  stage: install
+  only:
+    - master
+    - develop
+  tags:
+    - linux
+    - python
+  script:
+    - python3 setup.py install --user
+
+install_on_windows:
+  stage: install
+  only:
+    - master
+  tags:
+    - windows
+    - python
+  script:
+    - python setup.py install
 
 pyinstaller_linux:
   stage: build
@@ -57,20 +89,20 @@ pyinstaller_linux:
     paths:
       - build/gitlab_build_scripts/*
 
-#pyinstaller_windows:
-#  stage: build
-#  only:
-#    - master
-#  tags:
-#    - windows
-#    - python
-#  script:
-#    - python setup.py install
-#    - python builder.py build pyinstaller_windows
-#    - pip uninstall xdcc_dl -y
-#  artifacts:
-#    paths:
-#      - build/gitlab_build_scripts/*
+pyinstaller_windows:
+  stage: build
+  only:
+    - master
+  tags:
+    - windows
+    - python
+  script:
+    - python setup.py install
+    - python builder.py build pyinstaller_windows
+    - pip uninstall xdcc_dl -y
+  artifacts:
+    paths:
+      - build/gitlab_build_scripts/*
 
 source_dist:
   stage: deploy

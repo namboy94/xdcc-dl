@@ -4,7 +4,7 @@ Copyright 2016 Hermann Krumrey
 
 This file is part of xdcc_dl.
 
-    xdcc_dl is a program that allows downloading files via hte XDCC
+    xdcc_dl is a program that allows downloading files via the XDCC
     protocol via file serving bots on IRC networks.
 
     xdcc_dl is free software: you can redistribute it and/or modify
@@ -34,6 +34,7 @@ def readme():
 
     :return: the readme file as a string
     """
+    # noinspection PyBroadException
     try:
         # noinspection PyPackageRequirements
         import pypandoc
@@ -42,7 +43,7 @@ def readme():
             markdown = f.read()
             rst = pypandoc.convert(markdown, 'rst', format='md')
             return rst
-    except (OSError, ImportError):
+    except:
         # If pandoc is not installed, just return the raw markdown text
         with open('README.md') as f:
             return f.read()

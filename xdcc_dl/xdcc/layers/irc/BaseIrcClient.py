@@ -4,7 +4,7 @@ Copyright 2016 Hermann Krumrey
 
 This file is part of xdcc_dl.
 
-    xdcc_dl is a program that allows downloading files via hte XDCC
+    xdcc_dl is a program that allows downloading files via the XDCC
     protocol via file serving bots on IRC networks.
 
     xdcc_dl is free software: you can redistribute it and/or modify
@@ -23,6 +23,8 @@ LICENSE
 """
 
 # imports
+import string
+import random
 import irc.client
 from jaraco.stream import buffer
 from xdcc_dl.entities.User import User
@@ -61,6 +63,13 @@ class NetworkError(Exception):
     pass
 
 
+class Banned(Exception):
+    """
+    Exception that gets raised when a network error occurs
+    """
+    pass
+
+
 class BaseIrclient(irc.client.SimpleIRCClient, ConnectionStates, Variables):
     """
     The Base IRC Client that defines the necessary features that an IRC Client must be able to do.
@@ -91,6 +100,9 @@ class BaseIrclient(irc.client.SimpleIRCClient, ConnectionStates, Variables):
         self.server = server if server.__class__ == IrcServer else IrcServer(server)
         self.logger = logger if logger.__class__ == Logger else Logger(logger)
 
+        if self.user.get_name() == "random":
+            self.user = User(self.generate_random_username())
+
     def connect(self) -> None:
         """
         Connects the IRC Client to the IRC Server
@@ -109,6 +121,9 @@ class BaseIrclient(irc.client.SimpleIRCClient, ConnectionStates, Variables):
         except irc.client.ServerConnectionError:
             self.logger.log("Failed to connect to Server", LOG.CONNECTION_FAILURE)
             raise NetworkError()
+        except Banned:
+            self.logger.log("Failed to connect due to a ban", LOG.BANNED)
+            raise NetworkError()
 
     def start(self) -> None:
         """
@@ -123,6 +138,7 @@ class BaseIrclient(irc.client.SimpleIRCClient, ConnectionStates, Variables):
         except Disconnect:
             pass
 
+    # noinspection PyMethodMayBeStatic
     def on_disconnect(self, connection: irc.client.ServerConnection, event: irc.client.Event) -> None:
         """
         Method called whenever the IRC connection is disconnected
@@ -133,3 +149,25 @@ class BaseIrclient(irc.client.SimpleIRCClient, ConnectionStates, Variables):
         :return:           None
         """
         raise Disconnect()
+
+    # noinspection PyMethodMayBeStatic
+    def on_error(self, connection: irc.client.ServerConnection, event: irc.client.Event) -> None:
+        """
+        Method called whenever the IRC connection throws an error event, which means that the user is banned
+
+        :param connection: the IRC Connection
+        :param event:      the IRC Event
+        :raises:           Disconnect, when the connection was disconnected by non-fatal means
+        :return:           None
+        """
+        raise Banned()
+
+    @staticmethod
+    def generate_random_username(length: int = 10) -> str:
+        """
+        Generates a random username of given length
+
+        :param length: The length of the username
+        :return:       The random username
+        """
+        return "".join(random.choice(string.ascii_uppercase) for _ in range(length))

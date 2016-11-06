@@ -4,7 +4,7 @@ Copyright 2016 Hermann Krumrey
 
 This file is part of xdcc_dl.
 
-    xdcc_dl is a program that allows downloading files via hte XDCC
+    xdcc_dl is a program that allows downloading files via the XDCC
     protocol via file serving bots on IRC networks.
 
     xdcc_dl is free software: you can redistribute it and/or modify
@@ -38,3 +38,8 @@ class Variables(object):
         self.logger = None
 
         self.progress = None
+
+        self.pack_queue = []
+        self.pack_states = {}
+
+        self.joined_channels = []
