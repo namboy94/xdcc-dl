@@ -35,7 +35,7 @@ class UnitTests(unittest.TestCase):
     def setUp(self):
         sys.argv = [sys.argv[0]]
         sys.argv.append("-v")
-        sys.argv.append("2")
+        sys.argv.append("5")
 
     def tearDown(self):
         if os.path.isfile("Gin.txt"):
