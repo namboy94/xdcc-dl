@@ -89,20 +89,20 @@ pyinstaller_linux:
     paths:
       - build/gitlab_build_scripts/*
 
-#pyinstaller_windows:
-#  stage: build
-#  only:
-#    - master
-#  tags:
-#    - windows
-#    - python
-#  script:
-#    - python setup.py install
-#    - python builder.py build pyinstaller_windows
-#    - pip uninstall xdcc_dl -y
-#  artifacts:
-#    paths:
-#      - build/gitlab_build_scripts/*
+pyinstaller_windows:
+  stage: build
+  only:
+    - master
+  tags:
+    - windows
+    - python
+  script:
+    - python setup.py install
+    - python builder.py build pyinstaller_windows
+    - pip uninstall xdcc_dl -y
+  artifacts:
+    paths:
+      - build/gitlab_build_scripts/*
 
 source_dist:
   stage: deploy
