@@ -103,6 +103,9 @@ A second optional Parameter is the progress. This parameter is an instance of th
 [Progress](xdcc_dl/entitites/Progress.py) class and can be used to see the progress of
 the downloads from a different point in the application
     
+## Projects using xdcc-downloader
+
+* [toktokkie](https://gitlab.namibsun.net/namboy94/toktokkie)
    
 ## Further Information
 
