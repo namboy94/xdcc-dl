@@ -1,5 +1,7 @@
 # XDCC Downloader
 
+![Logo](xdcc_dl/resources/logo/logo_256.png)
+
 An XDCC File downloader based on the [irclib](https://github.com/jaraco/irc) framework.
 
 ## Installation
@@ -45,9 +47,9 @@ XDCC Packlists usually list xdcc commands in the folowing form:
     
 By supplying this message as the ```-m``` parameter, the pack can be downloaded.
 
-**Example:**
+**Examples:**
 
-    # This is the xdcc message:  /msg the_bot xdcc send #1
+    # This is the xdcc message:  '/msg the_bot xdcc send #1'
     
     # This command downloads pack 1 from the_bot
     xdcc_dl -m "/msg the_bot xdcc send #1"
@@ -67,17 +69,49 @@ By supplying this message as the ```-m``` parameter, the pack can be downloaded.
     # random string of numbers will be used instead
     xdcc_dl -m "/msg the_bot xdcc send #1" --user Me
     
- 
+    # To specify how verbose the program is, you can pass the
+    verbosity parameter as a number between 0 and 6:
+    xdcc_dl -m "/msg the_bot xdcc send #1" --verbosity 3
+    
+
+### As a library:
+
+xdcc-downloader is built to be used as a library for use in other projects.
+To make use of the XDCC downloader in your application, you will first need to
+create a list of [XDCCPack](xdcc_dl/entitites/XDCCPack.py) objects, either by hand
+or by using the [PackSearcher](xdcc_dl/pack_searchers/PackSearcher.py). 
+
+Once this list of XDCCPacks is created, use one of the following classes:
+
+* [XDCCDownloader](xdcc_dl/xdcc/XDCCDownloader.py), if you can guarantee that every pack is on the same server
+* [MultipleServerDownloader](xdcc_dl/xdcc/MultipleServerDownloader), if the packs are on different IRC servers
+
+Both classes are initialized using the following parameters:
+
+**user**:  Either a string, or a [User](xdcc_dl/entitites/User.py) object which specifies
+           the username for connecting to the IRC network.
+           A random username can be generated when passing 'random' as the username
+           
+**logger**: Either pass an integer value between 0 and 6 to set the verbosity,
+            a [Logger](xdcc_dl/logging/Logger.py) object or another object of
+            a class that implements all of Logger's methods.
+
+Once initialized, start the XDCC downloads by passing the list of XDCCPacks
+to the downloader's download() method.
+
+A second optional Parameter is the progress. This parameter is an instance of the
+[Progress](xdcc_dl/entitites/Progress.py) class and can be used to see the progress of
+the downloads from a different point in the application
+    
+   
 ## Further Information
 
-[Documentation(HTML)](https://docs.namibsun.net/html_docs/xdcc_downloader/index.html)
-
-[Documentation(PDF)](https://docs.namibsun.net/pdf_docs/xdcc_downloader.pdf)
-
-[Python Package Index Site](https://pypi.python.org/pypi/xdcc_dl)
-
-[Git Statistics (gitstats)](https://gitstats.namibsun.net/gitstats/xdcc_downloader/index.html)
-
-[Git Statistics (git_stats)](https://gitstats.namibsun.net/git_stats/xdcc_downloader/index.html)
-
-[Changelog](https://gitlab.namibsun.net/namboy94/xdcc-downloader/raw/master/CHANGELOG)
+* [Changelog](https://gitlab.namibsun.net/namboy94/xdcc-downloader/raw/master/CHANGELOG)
+* [Gitlab](https://gitlab.namibsun.net/namboy94/xdcc-downloader)
+* [Github](https://github.com/namboy94/xdcc-downloader)
+* [Python Package Index Site](https://pypi.python.org/pypi/xdcc_dl)
+* [Documentation(HTML)](https://docs.namibsun.net/html_docs/xdcc_downloader/index.html)
+* [Documentation(PDF)](https://docs.namibsun.net/pdf_docs/xdcc_downloader.pdf)
+* [Git Statistics (gitstats)](https://gitstats.namibsun.net/gitstats/xdcc_downloader/index.html)
+* [Git Statistics (git_stats)](https://gitstats.namibsun.net/git_stats/xdcc_downloader/index.html)
+* [Test Coverage](https://coverage.namibsun.net/xdcc-downloader/index.html)
