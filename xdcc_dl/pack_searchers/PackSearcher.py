@@ -70,4 +70,8 @@ class PackSearcher(object):
         results = []
         for procedure in self.procedures:
             results += procedure(search_phrase)
+
+        for result in results:
+            result.set_original_filename(result.get_filename())
+
         return results

@@ -52,6 +52,17 @@ class XDCCPack(object):
         self.filename = ""
         self.size = 0
 
+        self.original_filename = ""
+
+    def is_filename_valid(self, filename: str) -> bool:
+        """
+        Checks if a filename is the same as the original filename, if one was set previously.
+
+        :param filename: The file name to check
+        :return:         True, if the names match, or no original filename was set, otherwise False
+        """
+        return filename == self.original_filename if self.original_filename != "" else True
+
     def set_filename(self, filename: str, override: bool = False) -> None:
         """
         Sets the filename (or only the file extension) of the target file
@@ -67,6 +78,17 @@ class XDCCPack(object):
 
         if not self.filename or override:
             self.filename = filename
+
+    def set_original_filename(self, filename: str) -> None:
+        """
+        Sets the 'original' filename, a.k.a the name of the actual file to download.
+        This is a method that should only be used by the pack searchers to add filename checks
+        during the download.
+
+        :param filename: The original filename as found by the PackSearcher
+        :return:         None
+        """
+        self.original_filename = filename
 
     def set_directory(self, directory: str) -> None:
         """

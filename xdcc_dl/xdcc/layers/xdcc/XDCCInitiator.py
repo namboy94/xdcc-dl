@@ -39,6 +39,13 @@ class AlreadyDownloaded(Exception):
     pass
 
 
+class IncorrectFileSentException(Exception):
+    """
+    Gets raised whenever the bot sends the incorrect, or at least not-predicted file
+    """
+    pass
+
+
 # noinspection PyUnusedLocal
 class XDCCInitiator(MessageSender):
     """
@@ -78,6 +85,10 @@ class XDCCInitiator(MessageSender):
         self.logger.log("Handling DCC SEND Handshake", LOG.DCC_SEND_HANDSHAKE)
 
         filename = ctcp_arguments[1]
+        if not self.current_pack.is_filename_valid(filename):
+            self.logger.log("Incorrect file sent", LOG.INCORRECT_FILE)
+            raise IncorrectFileSentException()
+
         self.peer_address = irc.client.ip_numstr_to_quad(ctcp_arguments[2])
         self.peer_port = int(ctcp_arguments[3])
         self.filesize = int(ctcp_arguments[4])

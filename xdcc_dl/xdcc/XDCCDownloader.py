@@ -29,8 +29,8 @@ from xdcc_dl.entities.XDCCPack import XDCCPack
 from xdcc_dl.entities.Progress import Progress
 from xdcc_dl.xdcc.layers.irc.BaseIrcClient import NetworkError
 from xdcc_dl.xdcc.layers.irc.BotFinder import BotNotFoundException
-from xdcc_dl.xdcc.layers.xdcc.XDCCInitiator import AlreadyDownloaded
-from xdcc_dl.xdcc.layers.xdcc.DownloadHandler import DownloadHandler, IncompleteDownload
+from xdcc_dl.xdcc.layers.xdcc.XDCCInitiator import AlreadyDownloaded, IncorrectFileSentException
+from xdcc_dl.xdcc.layers.xdcc.DownloadHandler import DownloadHandler
 
 
 class XDCCDownloader(DownloadHandler):
@@ -50,7 +50,7 @@ class XDCCDownloader(DownloadHandler):
                          "OK":           Download was successful
                          "BOTNOTFOUND":  Bot was not found
                          "NETWORKERROR": Download failed due to network error
-                         "INCOMPLETE":   Download was incomplete
+                         "INCORRECT":    Sent file was not the correct file
                          "EXISTED":      File already existed and was completely downloaded
         """
         self.progress = progress if progress is not None else Progress(len(packs))
@@ -68,6 +68,8 @@ class XDCCDownloader(DownloadHandler):
                 status_code = "BOTNOTFOUND"
             except AlreadyDownloaded:
                 status_code = "EXISTED"
+            except IncorrectFileSentException():
+                status_code = "INCORRECT"
             except NetworkError:
                 status_code = "NETWORKERROR"
 
