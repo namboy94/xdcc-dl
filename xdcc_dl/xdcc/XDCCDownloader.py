@@ -66,8 +66,6 @@ class XDCCDownloader(DownloadHandler):
                 self.start()
             except BotNotFoundException:
                 status_code = "BOTNOTFOUND"
-            except IncompleteDownload:
-                status_code = "INCOMPLETE"
             except AlreadyDownloaded:
                 status_code = "EXISTED"
             except NetworkError:

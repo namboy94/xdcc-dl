@@ -32,13 +32,6 @@ from xdcc_dl.logging.LoggingTypes import LoggingTypes as LOG
 from xdcc_dl.xdcc.layers.xdcc.XDCCInitiator import XDCCInitiator
 
 
-class IncompleteDownload(Exception):
-    """
-    Exception raised whenever a DCC connection was ended, but the file was not completed.
-    """
-    pass
-
-
 # noinspection PyUnusedLocal
 class DownloadHandler(XDCCInitiator):
     """
@@ -83,10 +76,9 @@ class DownloadHandler(XDCCInitiator):
         self.logger.log("\nDownload completed in %.2f seconds" % (time.time() - self.start_time))
 
         if os.path.getsize(self.current_pack.get_filepath()) < self.filesize:
-            connection.privmsg(self.current_pack.get_bot(), self.current_pack.get_request_message())
+            self.logger.log("Download Incomplete, Trying again.", LOG.INCOMPLETE_DOWNLOAD)
+            self.connection.privmsg(self.current_pack.get_bot(), self.current_pack.get_request_message())
             return
-            # raise IncompleteDownload()
-            # TODO CHECK IF THIS ACTUALLY WORKS AS INTENDED USING TEST RUNS
 
         if len(self.pack_queue) > 0:
 

@@ -137,6 +137,7 @@ class LoggingTypes:
     DOWNLOAD_RESUME      = {"bg_color": BGColors.YELLOW,        "fg_color": FGColors.LIGHT_BLUE,   "priority": 1}
     DOWNLOAD_PROGRESS    = {"bg_color": BGColors.LIGHT_YELLOW,  "fg_color": FGColors.BLACK,        "priority": 1}
     DOWNLOAD_WAS_DONE    = {"bg_color": BGColors.YELLOW,        "fg_color": FGColors.RED,          "priority": 1}
+    DOWNLOAD_INCOMPLETE  = {"bg_color": BGColors.YELLOW,        "fg_color": FGColors.LIGHT_RED,    "priority": 2}
 
     PRIVATE_NOTICE       = {"bg_color": BGColors.DEFAULT,      "fg_color": FGColors.BLUE,          "priority": 3}
     PRIVATE_MESSAGE      = {"bg_color": BGColors.DEFAULT,      "fg_color": FGColors.LIGHT_BLUE,    "priority": 3}
