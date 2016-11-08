@@ -57,6 +57,8 @@ class XDCCPack(object):
     def is_filename_valid(self, filename: str) -> bool:
         """
         Checks if a filename is the same as the original filename, if one was set previously.
+        This is used internally by the IRC Bot to check if a file that was offered to the bot actually matches
+        the file we want to download.
 
         :param filename: The file name to check
         :return:         True, if the names match, or no original filename was set, otherwise False
@@ -176,8 +178,13 @@ def xdcc_packs_from_xdcc_message(xdcc_message: str,
         packnumbers = xdcc_message.rsplit("#", 1)[1]
         start, end = packnumbers.split("-")
 
+        try:
+            step = int(end.split(",")[1])
+        except IndexError:
+            step = 1
+
         packs = []
-        for pack in range(int(start), int(end) + 1):
+        for pack in range(int(start), int(end) + 1, step):
             xdcc_pack = XDCCPack(IrcServer(server), bot, pack)
             xdcc_pack.set_directory(destination_directory)
             packs.append(xdcc_pack)

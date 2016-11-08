@@ -23,8 +23,6 @@ LICENSE
 """
 
 # imports
-import string
-import random
 import irc.client
 import jaraco.logging
 from jaraco.stream import buffer
@@ -103,9 +101,6 @@ class BaseIrclient(irc.client.SimpleIRCClient, ConnectionStates, Variables):
         self.server = server if server.__class__ == IrcServer else IrcServer(server)
         self.logger = logger if logger.__class__ == Logger else Logger(logger)
 
-        if self.user.get_name() == "random":
-            self.user = User(self.generate_random_username())
-
     def connect(self) -> None:
         """
         Connects the IRC Client to the IRC Server
@@ -164,13 +159,3 @@ class BaseIrclient(irc.client.SimpleIRCClient, ConnectionStates, Variables):
         :return:           None
         """
         raise Banned()
-
-    @staticmethod
-    def generate_random_username(length: int = 10) -> str:
-        """
-        Generates a random username of given length
-
-        :param length: The length of the username
-        :return:       The random username
-        """
-        return "".join(random.choice(string.ascii_uppercase) for _ in range(length))
