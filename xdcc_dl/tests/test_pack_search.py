@@ -38,35 +38,32 @@ class UnitTests(unittest.TestCase):
 
     def test_intel_haruhichan(self):
         results = PackSearcher(["intel_haruhichan"]).search("Gin.txt")
-
-        self.assertEqual(results[0].get_packnumber(), 1)
-        self.assertEqual(results[0].get_server().get_address(), "irc.rizon.net")
-        self.assertEqual(results[0].get_filepath(), os.path.join(os.getcwd(), results[0].get_filename()))
-        self.assertEqual(results[0].get_filename(), "Gin.txt")
-        self.assertEqual(results[0].get_bot(), "Ginpachi-Sensei")
+        self.verify_pack(results[0], 1, "irc.rizon.net", "Gin.txt", "Ginpachi-Sensei")
         self.assertEqual(len(results), 1)
 
     def test_nibl(self):
         results = PackSearcher(["nibl"]).search("Gin.txt")
-
-        self.assertEqual(results[0].get_packnumber(), 1)
-        self.assertEqual(results[0].get_server().get_address(), "irc.rizon.net")
-        self.assertEqual(results[0].get_filepath(), os.path.join(os.getcwd(), results[0].get_filename()))
-        self.assertEqual(results[0].get_filename(), "Gin.txt")
-        self.assertEqual(results[0].get_bot(), "Ginpachi-Sensei")
+        self.verify_pack(results[0], 1, "irc.rizon.net", "Gin.txt", "Ginpachi-Sensei")
         self.assertEqual(len(results), 1)
 
     def test_ixirc(self):
         results = PackSearcher(["ixirc"]).search("Gin.txt")
+        self.verify_pack(results[0], 1, "irc.abjects.net", "Gin.txt", "Beast-Gin-Anime")
+        self.assertEqual(len(results), 1)
 
-        self.assertEqual(results[0].get_packnumber(), 1)
-        self.assertEqual(results[0].get_server().get_address(), "irc.abjects.net")
-        self.assertEqual(results[0].get_filepath(), os.path.join(os.getcwd(), results[0].get_filename()))
-        self.assertEqual(results[0].get_filename(), "Gin.txt")
-        self.assertEqual(results[0].get_bot(), "Beast-Gin-Anime")
+    def test_namibsun(self):
+        results = PackSearcher(["namibsun"]).search("2_test.txt")
+        self.verify_pack(results[0], 2, "irc.namibsun.net", "2_test.txt", "xdcc_servbot")
         self.assertEqual(len(results), 1)
 
     def test_all_searchers(self):
 
         results = PackSearcher().search("Gin.txt")
-        self.assertEqual(len(results), len(PackSearcher.get_available_pack_searchers()))
+        self.assertEqual(len(results), 3)
+
+    def verify_pack(self, pack, pack_number, server_name, file_name, bot_name):
+        self.assertEqual(pack.get_packnumber(), pack_number)
+        self.assertEqual(pack.get_server().get_address(), server_name)
+        self.assertEqual(pack.get_filepath(), os.path.join(os.getcwd(), pack.get_filename()))
+        self.assertEqual(pack.get_filename(), file_name)
+        self.assertEqual(pack.get_bot(), bot_name)

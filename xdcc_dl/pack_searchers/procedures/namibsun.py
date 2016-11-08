@@ -44,6 +44,7 @@ def find_namibsun_packs(search_phrase: str) -> List[XDCCPack]:
     all_packs = []
     for i, item in enumerate(content):
         if item.text == search_phrase:
-            all_packs.append(XDCCPack(IrcServer("irc.namibsunnet"), "xdcc_servbot", i))
+            all_packs.append(XDCCPack(IrcServer("irc.namibsun.net"), "xdcc_servbot", i + 1))
+            all_packs[len(all_packs) -1].set_filename(item.text)
 
     return all_packs
