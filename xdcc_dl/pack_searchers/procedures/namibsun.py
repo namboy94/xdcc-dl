@@ -38,4 +38,12 @@ def find_namibsun_packs(search_phrase: str) -> List[XDCCPack]:
     :return:              The list of found XDCC Packs
     """
 
-    return None
+    soup = BeautifulSoup(requests.get("http://irc.namibsun.net:8000").text, "html.parser")
+    content = soup.select(".content")
+
+    all_packs = []
+    for i, item in enumerate(content):
+        if item.text == search_phrase:
+            all_packs.append(XDCCPack(IrcServer("irc.namibsunnet"), "xdcc_servbot", i))
+
+    return all_packs
