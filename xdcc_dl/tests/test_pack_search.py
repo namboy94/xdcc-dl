@@ -66,7 +66,7 @@ class UnitTests(unittest.TestCase):
         self.assertEqual(results[0].get_bot(), "Beast-Gin-Anime")
         self.assertEqual(len(results), 1)
 
-    def test_all(self):
+    def test_all_searchers(self):
 
         results = PackSearcher().search("Gin.txt")
         self.assertEqual(len(results), len(PackSearcher.get_available_pack_searchers()))

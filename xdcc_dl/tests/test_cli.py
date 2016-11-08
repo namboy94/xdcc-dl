@@ -65,21 +65,14 @@ class UnitTests(unittest.TestCase):
             testtwo.write("This is a Test File for XDCC File Transfers\n\n")
             testtwo.write("This is Pack 2")
 
-        size = os.path.getsize("2_test.txt")
-
         self.check_content(2)
-        self.assertEqual(os.path.getsize("2_test.txt"), size)
-
         main()
 
         self.check_content(2)
-        self.assertEqual(os.path.getsize("2_test.txt"), size)
         os.remove("2_test.txt")
-
         main()
 
         self.check_content(2)
-        self.assertEqual(os.path.getsize("2_test.txt"), size)
 
     def test_resume(self):
 
@@ -90,7 +83,6 @@ class UnitTests(unittest.TestCase):
             testthree.write("This is a Test File for XDCC File Transfers\n\nThis is Pack 3")
 
         self.check_content(3)
-        size = os.path.getsize("3_test.txt")
 
         with open("3_test.txt", 'rb') as testthree:
             binary = testthree.read()
@@ -99,9 +91,7 @@ class UnitTests(unittest.TestCase):
             testthree.write(binary[0:int(len(binary) / 2)])
 
         main()
-
         self.check_content(3)
-        self.assertEqual(os.path.getsize("3_test.txt"), size)
 
     def test_range_downloading(self):
 
