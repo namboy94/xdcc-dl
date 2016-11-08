@@ -38,6 +38,8 @@ class UnitTests(unittest.TestCase):
         sys.argv.append("-s")
         sys.argv.append("irc.namibsun.net")
 
+        self.filesizes = 59 if sys.platform == "linux" else 61
+
     def tearDown(self):
 
         sys.argv = [sys.argv[0]]
@@ -55,7 +57,7 @@ class UnitTests(unittest.TestCase):
         main()
 
         self.assertTrue(os.path.isfile("1_test.txt"))
-        self.assertEqual(os.path.getsize("1_test.txt"), 59)
+        self.assertEqual(os.path.getsize("1_test.txt"), self.filesizes)
 
         with open("1_test.txt", 'r') as f:
             content = f.read()
@@ -73,18 +75,18 @@ class UnitTests(unittest.TestCase):
             testtwo.write("This is Pack 2")
 
         self.assertTrue(os.path.isfile("2_test.txt"))
-        self.assertEqual(os.path.getsize("2_test.txt"), 59)
+        self.assertEqual(os.path.getsize("2_test.txt"), self.filesizes)
 
         main()
 
         self.assertTrue(os.path.isfile("2_test.txt"))
-        self.assertEqual(os.path.getsize("2_test.txt"), 59)
+        self.assertEqual(os.path.getsize("2_test.txt"), self.filesizes)
         os.remove("2_test.txt")
 
         main()
 
         self.assertTrue(os.path.isfile("2_test.txt"))
-        self.assertEqual(os.path.getsize("2_test.txt"), 59)
+        self.assertEqual(os.path.getsize("2_test.txt"), self.filesizes)
 
     def test_resume(self):
 
@@ -100,12 +102,10 @@ class UnitTests(unittest.TestCase):
         with open("3_test.txt", 'wb') as testthree:
             testthree.write(binary[0:int(len(binary) / 2)])
 
-        os.system("cat 3_test.txt")
         main()
-        os.system("cat 3_test.txt")
 
         self.assertTrue(os.path.isfile("3_test.txt"))
-        self.assertEqual(os.path.getsize("3_test.txt"), 59)
+        self.assertEqual(os.path.getsize("3_test.txt"), self.filesizes)
 
         with open("3_test.txt", 'r') as testthree:
             three = testthree.read()
@@ -120,11 +120,11 @@ class UnitTests(unittest.TestCase):
         main()
 
         self.assertTrue(os.path.isfile("1_test.txt"))
-        self.assertEqual(os.path.getsize("1_test.txt"), 59)
+        self.assertEqual(os.path.getsize("1_test.txt"), self.filesizes)
         self.assertTrue(os.path.isfile("2_test.txt"))
-        self.assertEqual(os.path.getsize("2_test.txt"), 59)
+        self.assertEqual(os.path.getsize("2_test.txt"), self.filesizes)
         self.assertTrue(os.path.isfile("3_test.txt"))
-        self.assertEqual(os.path.getsize("3_test.txt"), 59)
+        self.assertEqual(os.path.getsize("3_test.txt"), self.filesizes)
 
         with open("1_test.txt", 'r') as testone:
             one = testone.read()
