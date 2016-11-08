@@ -180,7 +180,8 @@ def xdcc_packs_from_xdcc_message(xdcc_message: str,
 
         try:
             step = int(end.split(",")[1])
-        except IndexError:
+            end = end.split(",")[0]
+        except (IndexError, ValueError):
             step = 1
 
         packs = []

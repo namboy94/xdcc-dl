@@ -127,7 +127,6 @@ class Progress(object):
         :return:      None
         """
         self.single_total = total
-        self.handle_callback()
 
     def set_single_progress(self, progress: int) -> None:
         """

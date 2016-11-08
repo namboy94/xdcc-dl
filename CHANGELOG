@@ -1,3 +1,8 @@
+V 0.4.0:
+  - Extensive independent unit testing
+  - Added test coverage report
+  - Directly implemented random username generation in the User class
+  - Implemented pack skipping
 V 0.3.0:
   - Enhanced the Progress structure with callbacks and calculations
   - Fixed order issues

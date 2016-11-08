@@ -23,6 +23,7 @@ LICENSE
 """
 
 # imports
+import time
 import unittest
 from xdcc_dl.entities.Progress import Progress
 
@@ -70,8 +71,12 @@ class UnitTests(unittest.TestCase):
             self.assertEqual(total_total, 2)
             self.assertLess(total_percentage, 50.0)
             self.assertLess(0.0, total_percentage)
-            self.assertAlmostEqual(current_speed, 10.0)
-            self.assertAlmostEqual(average_speed, 10.0)
+            self.assertAlmostEqual(current_speed, 100, delta=5)
+            self.assertAlmostEqual(average_speed, 100, delta=5)
 
         progress_with_callback = Progress(2, callback=callback_tester)
+        progress_with_callback.set_single_progress_total(1000)
+        time.sleep(3)
         progress_with_callback.add_single_progress(300)
+
+        self.assertTrue(self.callback_called)
