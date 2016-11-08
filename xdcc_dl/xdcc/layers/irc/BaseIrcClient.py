@@ -26,6 +26,7 @@ LICENSE
 import string
 import random
 import irc.client
+import jaraco.logging
 from jaraco.stream import buffer
 from xdcc_dl.entities.User import User
 from xdcc_dl.logging.Logger import Logger
@@ -92,6 +93,8 @@ class BaseIrclient(irc.client.SimpleIRCClient, ConnectionStates, Variables):
         super().__init__()
         Variables.__init__(self)
         ConnectionStates.__init__(self)
+
+        jaraco.logging.log_level("0")
 
         irc.client.ServerConnection.buffer_class = IgnoreErrorsBuffer
         irc.client.SimpleIRCClient.buffer_class = IgnoreErrorsBuffer

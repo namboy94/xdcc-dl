@@ -25,7 +25,6 @@ LICENSE
 # imports
 import os
 import sys
-import time
 import unittest
 from xdcc_dl.main import main
 
@@ -36,66 +35,107 @@ class UnitTests(unittest.TestCase):
         sys.argv = [sys.argv[0]]
         sys.argv.append("-v")
         sys.argv.append("5")
+        sys.argv.append("-s")
+        sys.argv.append("irc.namibsun.net")
 
     def tearDown(self):
-        if os.path.isfile("Gin.txt"):
-            os.remove("Gin.txt")
-        if os.path.isfile("mashiro.txt"):
-            os.remove("mashiro.txt")
 
-    def test_gin_txt(self):
+        sys.argv = [sys.argv[0]]
+        if os.path.isfile("1_test.txt"):
+            os.remove("1_test.txt")
+        if os.path.isfile("2_test.txt"):
+            os.remove("2_test.txt")
+        if os.path.isfile("3_test.txt"):
+            os.remove("3_test.txt")
 
-        sys.argv.append("-m")
-        sys.argv.append("/msg ginpachi-sensei xdcc send #1")
-        main()
-        time.sleep(5)
-
-        self.assertTrue(os.path.isfile("Gin.txt"))
-        total_size = os.path.getsize("Gin.txt")
-
-        main()
-        time.sleep(5)
-
-        self.assertTrue(os.path.isfile("Gin.txt"))
-        self.almost_equal(os.path.getsize("Gin.txt"), total_size)
-
-        with open("Gin.txt", 'rb') as f:
-            content = f.read()
-        with open("Gin.txt", 'wb') as f:
-            f.write(content[0:int(total_size/2)])
-
-        main()
-        time.sleep(5)
-
-        self.assertTrue(os.path.isfile("Gin.txt"))
-        self.almost_equal(os.path.getsize("Gin.txt"), total_size)
-
-    def test_mashiro_txt_download(self):
+    def test_single_download(self):
 
         sys.argv.append("-m")
-        sys.argv.append("/msg E-D|Mashiro xdcc send #1")
+        sys.argv.append("/msg xdcc_servbot xdcc send #1")
         main()
-        time.sleep(5)
 
-        self.assertTrue(os.path.isfile("mashiro.txt"))
-        total_size = os.path.getsize("mashiro.txt")
+        self.assertTrue(os.path.isfile("1_test.txt"))
+        self.assertEqual(os.path.getsize("1_test.txt"), 59)
 
-        main()
-        time.sleep(5)
-
-        self.assertTrue(os.path.isfile("mashiro.txt"))
-        self.almost_equal(os.path.getsize("mashiro.txt"), total_size)
-
-        with open("mashiro.txt", 'rb') as f:
+        with open("1_test.txt", 'r') as f:
             content = f.read()
-        with open("mashiro.txt", 'wb') as f:
-            f.write(content[0:int(total_size / 2)])
+
+            self.assertTrue("This is a Test File for XDCC File Transfers" in content)
+            self.assertTrue("This is Pack 1" in content)
+
+    def test_already_requested_ping_timeout(self):
+
+        sys.argv.append("-m")
+        sys.argv.append("/msg xdcc_servbot xdcc send #2")
+
+        with open("2_test.txt", 'w') as testtwo:
+            testtwo.write("This is a Test File for XDCC File Transfers\n\n")
+            testtwo.write("This is Pack 2")
+
+        self.assertTrue(os.path.isfile("2_test.txt"))
+        self.assertEqual(os.path.getsize("2_test.txt"), 59)
 
         main()
-        time.sleep(5)
 
-        self.assertTrue(os.path.isfile("mashiro.txt"))
-        self.almost_equal(os.path.getsize("mashiro.txt"), total_size)
+        self.assertTrue(os.path.isfile("2_test.txt"))
+        self.assertEqual(os.path.getsize("2_test.txt"), 59)
+        os.remove("2_test.txt")
 
-    def almost_equal(self, param_one, param_two):
-        self.assertTrue(param_two - 15 <= param_one <= param_two + 15)
+        main()
+
+        self.assertTrue(os.path.isfile("2_test.txt"))
+        self.assertEqual(os.path.getsize("2_test.txt"), 59)
+
+    def test_resume(self):
+
+        sys.argv.append("-m")
+        sys.argv.append("/msg xdcc_servbot xdcc send #3")
+
+        with open("3_test.txt", 'w') as testthree:
+            testthree.write("This is a Test File for XDCC File Transfers\n\nThis is Pack 3")
+
+        with open("3_test.txt", 'rb') as testthree:
+            binary = testthree.read()
+
+        with open("3_test.txt", 'wb') as testthree:
+            testthree.write(binary[0:int(len(binary) / 2)])
+
+        os.system("cat 3_test.txt")
+        main()
+        os.system("cat 3_test.txt")
+
+        self.assertTrue(os.path.isfile("3_test.txt"))
+        self.assertEqual(os.path.getsize("3_test.txt"), 59)
+
+        with open("3_test.txt", 'r') as testthree:
+            three = testthree.read()
+
+            self.assertTrue("This is a Test File for XDCC File Transfers" in three)
+            self.assertTrue("This is Pack 3" in three)
+
+    def test_range_downloading(self):
+
+        sys.argv.append("-m")
+        sys.argv.append("/msg xdcc_servbot xdcc send #1-3")
+        main()
+
+        self.assertTrue(os.path.isfile("1_test.txt"))
+        self.assertEqual(os.path.getsize("1_test.txt"), 59)
+        self.assertTrue(os.path.isfile("2_test.txt"))
+        self.assertEqual(os.path.getsize("2_test.txt"), 59)
+        self.assertTrue(os.path.isfile("3_test.txt"))
+        self.assertEqual(os.path.getsize("3_test.txt"), 59)
+
+        with open("1_test.txt", 'r') as testone:
+            one = testone.read()
+        with open("2_test.txt", 'r') as testtwo:
+            two = testtwo.read()
+        with open("3_test.txt", 'r') as testthree:
+            three = testthree.read()
+
+        self.assertTrue("This is a Test File for XDCC File Transfers" in one)
+        self.assertTrue("This is a Test File for XDCC File Transfers" in two)
+        self.assertTrue("This is a Test File for XDCC File Transfers" in three)
+        self.assertTrue("This is Pack 1" in one)
+        self.assertTrue("This is Pack 2" in two)
+        self.assertTrue("This is Pack 3" in three)
