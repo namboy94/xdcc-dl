@@ -25,7 +25,6 @@ LICENSE
 # imports
 import os
 import unittest
-from xdcc_dl.main import generate_random_username
 from xdcc_dl.pack_searchers.PackSearcher import PackSearcher
 from xdcc_dl.xdcc.MultipleServerDownloader import MultipleServerDownloader
 
