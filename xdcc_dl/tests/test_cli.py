@@ -38,8 +38,6 @@ class UnitTests(unittest.TestCase):
         sys.argv.append("-s")
         sys.argv.append("irc.namibsun.net")
 
-        self.filesizes = 59 if sys.platform == "linux" else 61
-
     def tearDown(self):
 
         sys.argv = [sys.argv[0]]
@@ -56,14 +54,7 @@ class UnitTests(unittest.TestCase):
         sys.argv.append("/msg xdcc_servbot xdcc send #1")
         main()
 
-        self.assertTrue(os.path.isfile("1_test.txt"))
-        self.assertEqual(os.path.getsize("1_test.txt"), self.filesizes)
-
-        with open("1_test.txt", 'r') as f:
-            content = f.read()
-
-            self.assertTrue("This is a Test File for XDCC File Transfers" in content)
-            self.assertTrue("This is Pack 1" in content)
+        self.check_content(1)
 
     def test_already_requested_ping_timeout(self):
 
@@ -74,19 +65,21 @@ class UnitTests(unittest.TestCase):
             testtwo.write("This is a Test File for XDCC File Transfers\n\n")
             testtwo.write("This is Pack 2")
 
-        self.assertTrue(os.path.isfile("2_test.txt"))
-        self.assertEqual(os.path.getsize("2_test.txt"), self.filesizes)
+        size = os.path.getsize("2_test.txt")
+
+        self.check_content(2)
+        self.assertEqual(os.path.getsize("2_test.txt"), size)
 
         main()
 
-        self.assertTrue(os.path.isfile("2_test.txt"))
-        self.assertEqual(os.path.getsize("2_test.txt"), self.filesizes)
+        self.check_content(2)
+        self.assertEqual(os.path.getsize("2_test.txt"), size)
         os.remove("2_test.txt")
 
         main()
 
-        self.assertTrue(os.path.isfile("2_test.txt"))
-        self.assertEqual(os.path.getsize("2_test.txt"), self.filesizes)
+        self.check_content(2)
+        self.assertEqual(os.path.getsize("2_test.txt"), size)
 
     def test_resume(self):
 
@@ -96,6 +89,9 @@ class UnitTests(unittest.TestCase):
         with open("3_test.txt", 'w') as testthree:
             testthree.write("This is a Test File for XDCC File Transfers\n\nThis is Pack 3")
 
+        self.check_content(3)
+        size = os.path.getsize("3_test.txt")
+
         with open("3_test.txt", 'rb') as testthree:
             binary = testthree.read()
 
@@ -104,14 +100,8 @@ class UnitTests(unittest.TestCase):
 
         main()
 
-        self.assertTrue(os.path.isfile("3_test.txt"))
-        self.assertEqual(os.path.getsize("3_test.txt"), self.filesizes)
-
-        with open("3_test.txt", 'r') as testthree:
-            three = testthree.read()
-
-            self.assertTrue("This is a Test File for XDCC File Transfers" in three)
-            self.assertTrue("This is Pack 3" in three)
+        self.check_content(3)
+        self.assertEqual(os.path.getsize("3_test.txt"), size)
 
     def test_range_downloading(self):
 
@@ -119,23 +109,15 @@ class UnitTests(unittest.TestCase):
         sys.argv.append("/msg xdcc_servbot xdcc send #1-3")
         main()
 
-        self.assertTrue(os.path.isfile("1_test.txt"))
-        self.assertEqual(os.path.getsize("1_test.txt"), self.filesizes)
-        self.assertTrue(os.path.isfile("2_test.txt"))
-        self.assertEqual(os.path.getsize("2_test.txt"), self.filesizes)
-        self.assertTrue(os.path.isfile("3_test.txt"))
-        self.assertEqual(os.path.getsize("3_test.txt"), self.filesizes)
+        self.check_content(1)
+        self.check_content(2)
+        self.check_content(3)
 
-        with open("1_test.txt", 'r') as testone:
-            one = testone.read()
-        with open("2_test.txt", 'r') as testtwo:
-            two = testtwo.read()
-        with open("3_test.txt", 'r') as testthree:
-            three = testthree.read()
+    def check_content(self, number):
 
-        self.assertTrue("This is a Test File for XDCC File Transfers" in one)
-        self.assertTrue("This is a Test File for XDCC File Transfers" in two)
-        self.assertTrue("This is a Test File for XDCC File Transfers" in three)
-        self.assertTrue("This is Pack 1" in one)
-        self.assertTrue("This is Pack 2" in two)
-        self.assertTrue("This is Pack 3" in three)
+        self.assertTrue(os.path.isfile(str(number) + "_test.txt"))
+        with open(str(number) + "_test.txt", 'r') as f:
+
+            content = f.read()
+            self.assertTrue("This is a Test File for XDCC File Transfers" in content)
+            self.assertTrue("This is Pack " + str(number) in content)
