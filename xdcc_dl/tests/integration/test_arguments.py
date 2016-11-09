@@ -24,9 +24,13 @@ LICENSE
 
 # imports
 import sys
-import builtins
 import unittest
 from xdcc_dl.main import main
+
+try:
+    exec("import __builtin__")
+except ImportError:
+    import builtins as __builtin__
 
 
 class UnitTests(unittest.TestCase):
@@ -52,9 +56,9 @@ class UnitTests(unittest.TestCase):
             else:
                 self.assertEqual("Thanks for using xdcc-downloader!", arg)
 
-        real_print = builtins.print
-        builtins.print = interrupt
+        real_print = __builtin__.print
+        __builtin__.print = interrupt
 
         main()
 
-        builtins.print = real_print
+        __builtin__.print = real_print
