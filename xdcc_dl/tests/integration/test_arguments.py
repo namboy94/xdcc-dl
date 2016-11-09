@@ -45,7 +45,7 @@ class UnitTests(unittest.TestCase):
     def test_keyboard_interrupt(self):
 
         if sys.version_info[0] >= 3:
-            exec("import builtins as __builtin__")
+            exec("import builtins as __builtin__") in globals()
 
             # noinspection PyUnusedLocal
             def interrupt(arg):
@@ -54,9 +54,9 @@ class UnitTests(unittest.TestCase):
                 else:
                     self.assertEqual("Thanks for using xdcc-downloader!", arg)
 
-            exec("real_print = __builtin__.print")
-            exec("__builtin__.print = interrupt")
+            exec("real_print = __builtin__.print") in globals()
+            exec("__builtin__.print = interrupt") in globals()
 
             main()
 
-            exec("__builtin__.print = real_print")
+            exec("__builtin__.print = real_print") in globals()
