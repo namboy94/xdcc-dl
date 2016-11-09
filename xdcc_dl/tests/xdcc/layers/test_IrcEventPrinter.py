@@ -88,6 +88,7 @@ class UnitTests(unittest.TestCase):
             # noinspection PyUnusedLocal
             def print_check(string, formatting):
                 self.assertEqual(string, "VERSION")
+                print()
 
             client.logger.log = print_check
             event.arguments = ["VERSION"]
