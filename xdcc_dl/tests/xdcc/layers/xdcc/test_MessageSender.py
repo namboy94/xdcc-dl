@@ -21,42 +21,43 @@ This file is part of toktokkie.
     along with toktokkie.  If not, see <http://www.gnu.org/licenses/>.
 LICENSE
 """
+
 # imports
-import sys
 import unittest
-from xdcc_dl.main import main
+from xdcc_dl.xdcc.layers.xdcc.MessageSender import MessageSender
+
+
+class TestException(Exception):
+    pass
 
 
 class UnitTests(unittest.TestCase):
 
     def setUp(self):
-        sys.argv = [sys.argv[0]]
+        self.client = MessageSender
 
     def tearDown(self):
-        sys.argv = [sys.argv[0]]
+        self.client.quit()
 
-    def test_no_arguments(self):
+    def test_logging(self):
+
+        class Tester(MessageSender):
+            def on_welcome(self, conn, event):
+
+                self.on_currenttopic(conn, event)
+                self.on_topicinfo(conn, event)
+                self.on_quit(conn, event)
+                self.on_part(conn, event)
+                self.on_kick(conn, event)
+                self.on_mode(conn, event)
+                self.on_action(conn, event)
+                self.on_nick(conn, event)
+
+                raise TestException()
+
+        self.client = Tester("irc.namibsun.net", "random")
         try:
-            main()
-            self.assertEqual(True, False)
-        except SystemExit:
-            self.assertEqual(True, True)
-
-    def test_keyboard_interrupt(self):
-
-        if sys.version_info[0] >= 3:
-            exec("import builtins as __builtin__")
-
-            # noinspection PyUnusedLocal
-            def interrupt(arg):
-                if arg == "No arguments passed. See --help for more details":
-                    raise KeyboardInterrupt()
-                else:
-                    self.assertEqual("Thanks for using xdcc-downloader!", arg)
-
-            exec("real_print = __builtin__.print")
-            exec("__builtin__.print = interrupt")
-
-            main()
-
-            exec("__builtin__.print = real_print")
+            self.client.start()
+            self.assertFalse(True)
+        except TestException:
+            self.assertTrue(True)

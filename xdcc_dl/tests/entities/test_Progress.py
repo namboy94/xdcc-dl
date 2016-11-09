@@ -98,3 +98,16 @@ class UnitTests(unittest.TestCase):
         progress = Progress(0)
         self.assertEqual(progress.get_single_progress_percentage(), 0.0)
         self.assertEqual(progress.get_total_percentage(), 0.0)
+
+    def test_finished_numbers(self):
+
+        while self.progress.get_total_percentage() < 100.0:
+            self.progress.set_single_progress_total(100)
+            while self.progress.get_single_progress_percentage() < 100.0:
+                self.progress.add_single_progress(1)
+            self.progress.next_file()
+
+        self.assertEqual(self.progress.get_total_percentage(), 100.0)
+        self.assertEqual(self.progress.get_single_progress_percentage(), 100.0)
+        self.assertEqual(self.progress.get_single_progress(), 100)
+        self.assertEqual(self.progress.get_single_progress(), self.progress.get_single_progress_total())

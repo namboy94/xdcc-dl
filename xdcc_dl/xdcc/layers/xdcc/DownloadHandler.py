@@ -54,8 +54,6 @@ class DownloadHandler(XDCCInitiator):
         :param event:      the IRC Event
         :return:           None
         """
-        print("DCCMSG")
-
         if self.already_downloaded:  # Send a single message to the server indicating that the transfer is done
             self.dcc_connection.send_bytes(struct.pack(b"!I", self.progress.get_single_progress_total()))
 

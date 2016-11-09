@@ -80,8 +80,12 @@ class Progress(object):
 
         :return: None
         """
-        self.total_progress += 1 if self.total_progress < self.total_total else self.total_progress
-        self.single_progress = 0
+        if self.total_progress < self.total_total:
+            self.total_progress += 1
+
+            if self.total_progress != self.total_total:
+                self.single_progress = 0
+                self.single_total = 0
         
     def handle_callback(self) -> None:
         """
@@ -153,6 +157,9 @@ class Progress(object):
         """
         :return: The percentage of total progress
         """
+        if self.total_progress == self.total_total and self.total_progress != 0:
+            return 100.0
+
         try:
             total_percentage = self.total_progress / self.total_total
             single_percentage = (self.get_single_progress_percentage() / 100)

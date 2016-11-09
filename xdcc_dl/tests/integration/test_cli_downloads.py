@@ -56,6 +56,15 @@ class UnitTests(unittest.TestCase):
 
         self.check_content(1)
 
+    def test_wrong_server(self):
+
+        sys.argv.pop()
+        sys.argv.pop()
+
+        sys.argv.append("-m")
+        sys.argv.append("/msg xdcc_servbot xdcc send #1")
+        self.assertFalse(os.path.isfile("1_test.txt"))
+
     def test_repeated_download(self):
 
         sys.argv.append("-m")
@@ -101,6 +110,16 @@ class UnitTests(unittest.TestCase):
 
         self.check_content(1)
         self.check_content(2)
+        self.check_content(3)
+
+    def test_range_downloading_with_steps(self):
+
+        sys.argv.append("-m")
+        sys.argv.append("/msg xdcc_servbot xdcc send #1-3,2")
+        main()
+
+        self.check_content(1)
+        self.assertFalse(os.path.isfile("2_test.txt"))
         self.check_content(3)
 
     def check_content(self, number):

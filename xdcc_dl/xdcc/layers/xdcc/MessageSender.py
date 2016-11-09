@@ -92,7 +92,7 @@ class MessageSender(BotFinder):
         :param event:      the IRC Event
         :return:           None
         """
-        self.logger.log("Topic " + event.arguments[0] + ": " + event.arguments[1], LOG.CHANNEL_TOPIC)
+        self.logger.log("Topic " + str(event.arguments), LOG.CHANNEL_TOPIC)
 
     def on_topicinfo(self, connection: irc.client.ServerConnection, event: irc.client.Event) -> None:
         """
@@ -102,7 +102,7 @@ class MessageSender(BotFinder):
         :param event:      the IRC Event
         :return:           None
         """
-        self.logger.log("Topic Info: " + event.arguments[1], LOG.CHANNEL_TOPIC)
+        self.logger.log("Topic Info: " + str(event.arguments), LOG.CHANNEL_TOPIC)
 
     def on_quit(self, connection: irc.client.ServerConnection, event: irc.client.Event) -> None:
         """

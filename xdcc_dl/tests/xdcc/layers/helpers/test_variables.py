@@ -21,42 +21,16 @@ This file is part of toktokkie.
     along with toktokkie.  If not, see <http://www.gnu.org/licenses/>.
 LICENSE
 """
+
 # imports
-import sys
 import unittest
-from xdcc_dl.main import main
 
 
 class UnitTests(unittest.TestCase):
 
     def setUp(self):
-        sys.argv = [sys.argv[0]]
+        pass
 
     def tearDown(self):
-        sys.argv = [sys.argv[0]]
+        pass
 
-    def test_no_arguments(self):
-        try:
-            main()
-            self.assertEqual(True, False)
-        except SystemExit:
-            self.assertEqual(True, True)
-
-    def test_keyboard_interrupt(self):
-
-        if sys.version_info[0] >= 3:
-            exec("import builtins as __builtin__")
-
-            # noinspection PyUnusedLocal
-            def interrupt(arg):
-                if arg == "No arguments passed. See --help for more details":
-                    raise KeyboardInterrupt()
-                else:
-                    self.assertEqual("Thanks for using xdcc-downloader!", arg)
-
-            exec("real_print = __builtin__.print")
-            exec("__builtin__.print = interrupt")
-
-            main()
-
-            exec("__builtin__.print = real_print")
