@@ -21,17 +21,10 @@ This file is part of toktokkie.
     along with toktokkie.  If not, see <http://www.gnu.org/licenses/>.
 LICENSE
 """
-from __future__ import print_function
-
 # imports
 import sys
 import unittest
 from xdcc_dl.main import main
-
-try:
-    exec("import __builtin__")
-except ImportError:
-    import builtins as __builtin__
 
 
 class UnitTests(unittest.TestCase):
@@ -51,15 +44,18 @@ class UnitTests(unittest.TestCase):
 
     def test_keyboard_interrupt(self):
 
-        def interrupt(arg):
-            if arg == "No arguments passed. See --help for more details":
-                raise KeyboardInterrupt()
-            else:
-                self.assertEqual("Thanks for using xdcc-downloader!", arg)
+        if sys.version_info[0] >= 3:
+            import builtins as __builtin__
 
-        real_print = __builtin__.print
-        __builtin__.print = interrupt
+            def interrupt(arg):
+                if arg == "No arguments passed. See --help for more details":
+                    raise KeyboardInterrupt()
+                else:
+                    self.assertEqual("Thanks for using xdcc-downloader!", arg)
 
-        main()
+            real_print = __builtin__.print
+            __builtin__.print = interrupt
 
-        __builtin__.print = real_print
+            main()
+
+            __builtin__.print = real_print
