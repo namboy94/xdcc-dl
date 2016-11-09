@@ -43,8 +43,6 @@ class UnitTests(unittest.TestCase):
             os.remove("2_test.txt")
         if os.path.isfile("3_test.txt"):
             os.remove("3_test.txt")
-        if os.path.isfile("Gin.txt"):
-            os.remove("Gin.txt")
 
     def test_download_multiple_packs_same_server(self):
 
@@ -68,10 +66,10 @@ class UnitTests(unittest.TestCase):
         downloader = MultipleServerDownloader("random")
 
         downloader.download([XDCCPack(IrcServer("irc.namibsun.net"), "xdcc_servbot", 2),
-                             XDCCPack(IrcServer("irc.rizon.net"), "ginpachi-sensei", 1)], progress)
+                             XDCCPack(IrcServer("namibsun.net"), "xdcc_servbot", 3)], progress)
 
         self.assertTrue(os.path.isfile("2_test.txt"))
-        self.assertTrue(os.path.isfile("Gin.txt"))
+        self.assertTrue(os.path.isfile("3_test.txt"))
 
         self.assertEqual(progress.get_single_progress_percentage(), 100.0)
         self.assertEqual(progress.get_total_percentage(), 100.0)
