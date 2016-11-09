@@ -34,7 +34,7 @@ class UnitTests(unittest.TestCase):
     def setUp(self):
         sys.argv = [sys.argv[0]]
         sys.argv.append("-v")
-        sys.argv.append("3")
+        sys.argv.append("0")
         sys.argv.append("-s")
         sys.argv.append("irc.namibsun.net")
 

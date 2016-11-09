@@ -26,8 +26,7 @@ LICENSE
 import unittest
 from xdcc_dl.entities.XDCCPack import XDCCPack
 from xdcc_dl.entities.IrcServer import IrcServer
-from xdcc_dl.xdcc.layers.irc.BotFinder import BotFinder
-from xdcc_dl.xdcc.layers.irc.BaseIrcClient import Disconnect
+from xdcc_dl.xdcc.layers.irc.BotFinder import BotFinder, BotNotFoundException
 
 
 class TestException(Exception):
@@ -98,7 +97,7 @@ class UnitTests(unittest.TestCase):
             def on_nosuchnick(self, conn, event):
                 try:
                     super().on_nosuchnick(conn, event)
-                except Disconnect:
+                except BotNotFoundException:
                     self.incorrect_nick_detected = True
                 raise TestException()
 

@@ -90,6 +90,9 @@ Once this list of XDCCPacks is created, use one of the following classes:
 * [XDCCDownloader](xdcc_dl/xdcc/XDCCDownloader.py), if you can guarantee that every pack is on the same server
 * [MultipleServerDownloader](xdcc_dl/xdcc/MultipleServerDownloader), if the packs are on different IRC servers
 
+Do not use any classes in ```xdcc_dl.xdcc.layers```, those all work in tandem to create these two higher-level
+classes.
+
 Both classes are initialized using the following parameters:
 
 **user**:  Either a string, or a [User](xdcc_dl/entitites/User.py) object which specifies

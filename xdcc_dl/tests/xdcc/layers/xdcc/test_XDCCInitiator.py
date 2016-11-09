@@ -23,7 +23,13 @@ LICENSE
 """
 
 # imports
+import os
 import unittest
+from xdcc_dl.xdcc.layers.xdcc.XDCCInitiator import XDCCInitiator
+
+
+class TestException(Exception):
+    pass
 
 
 class UnitTests(unittest.TestCase):
@@ -33,3 +39,18 @@ class UnitTests(unittest.TestCase):
 
     def tearDown(self):
         pass
+
+    def test_dcc_check(self):
+
+        class Tester(XDCCInitiator):
+
+            def on_welcome(self, conn, event):
+                event.arguments = ["NOTDCC"]
+                self.on_ctcp(conn, event)
+                raise TestException()
+
+        try:
+            Tester("irc.namibsun.net", "random").start()
+            self.assertTrue(False)
+        except TestException:
+            self.assertTrue(True)

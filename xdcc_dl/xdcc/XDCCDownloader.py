@@ -52,6 +52,7 @@ class XDCCDownloader(DownloadHandler):
                          "NETWORKERROR": Download failed due to network error
                          "INCORRECT":    Sent file was not the correct file
                          "EXISTED":      File already existed and was completely downloaded
+                         "OTHERSERVER":  If a pack was found that is hosted on a different server
         """
         self.progress = progress if progress is not None else Progress(len(packs))
         self.pack_queue = packs
@@ -60,6 +61,11 @@ class XDCCDownloader(DownloadHandler):
         while len(self.pack_queue) > 0:
 
             self.current_pack = self.pack_queue.pop(0)
+
+            if self.current_pack.get_server().get_address() != self.server.get_address():
+                self.pack_states[self.current_pack] = "OTHERSERVER"
+                continue
+
             status_code = "OK"
 
             try:

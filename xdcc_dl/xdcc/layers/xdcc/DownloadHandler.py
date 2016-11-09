@@ -86,12 +86,13 @@ class DownloadHandler(XDCCInitiator):
         """
         if self.file is not None:
             self.file.close()
-            self.logger.log("\nDownload completed in %.2f seconds" % (time.time() - self.start_time))
 
-        if os.path.getsize(self.current_pack.get_filepath()) < self.filesize:
-            self.logger.log("Download Incomplete, Trying again.", LOG.DOWNLOAD_INCOMPLETE)
-            self.connection.privmsg(self.current_pack.get_bot(), self.current_pack.get_request_message())
-            return
+            if os.path.getsize(self.current_pack.get_filepath()) < self.filesize:
+                self.logger.log("Download Incomplete, Trying again.", LOG.DOWNLOAD_INCOMPLETE)
+                self.connection.privmsg(self.current_pack.get_bot(), self.current_pack.get_request_message())
+                return
+            else:
+                self.logger.log("\nDownload completed in %.2f seconds" % (time.time() - self.start_time), LOG.DEFAULT)
 
         if len(self.pack_queue) > 0:
 

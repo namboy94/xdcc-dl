@@ -53,7 +53,7 @@ class UnitTests(unittest.TestCase):
 
         results = self.downloader.download(packs, progress)
 
-        for pack in packs:
+        for pack in results:
             self.assertTrue(os.path.isfile(pack.get_filepath()))
             self.assertEqual(results[pack], "OK")
 
@@ -90,6 +90,16 @@ class UnitTests(unittest.TestCase):
 
     def test_network_error(self):
 
-        pack = XDCCPack(IrcServer("irc.namibsun.net"), "xdcc_servbot", 2)
-        results = XDCCDownloader("gitlab.naibsun.net", "random").download([pack])
+        pack = XDCCPack(IrcServer("gitlab.namibsun.net"), "xdcc_servbot", 2)
+        results = XDCCDownloader("gitlab.namibsun.net", "random").download([pack])
         self.assertEqual(results[pack], "NETWORKERROR")
+
+    def test_different_servers(self):
+
+        packs_one = XDCCPack(IrcServer("irc.namibsun.net"), "xdcc_servbot", 2)
+        pack_two = XDCCPack(IrcServer("irc.rizon.net"), "xdcc_servbot", 2)
+
+        results = self.downloader.download([packs_one, pack_two])
+
+        self.assertEqual(results[packs_one], "OK")
+        self.assertEqual(results[pack_two], "OTHERSERVER")

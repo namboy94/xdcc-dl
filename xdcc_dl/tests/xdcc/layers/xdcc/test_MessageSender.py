@@ -61,3 +61,39 @@ class UnitTests(unittest.TestCase):
             self.assertFalse(True)
         except TestException:
             self.assertTrue(True)
+
+    def test_other_user_joined_channel(self):
+
+        class Tester(MessageSender):
+            def on_welcome(self, conn, event):
+
+                event.source = "Other User"
+                self.on_join(conn, event)
+
+            def on_join(self, conn, event):
+                super().on_join(conn, event)
+                raise TestException()
+
+        self.client = Tester("irc.namibsun.net", "random")
+        try:
+            self.client.start()
+            self.assertFalse(True)
+        except TestException:
+            self.assertTrue(True)
+
+    def test_joining_second_channel(self):
+
+        class Tester(MessageSender):
+            def on_welcome(self, conn, event):
+
+                self.channel_joined = True
+                event.source = self.user.get_name()
+                self.on_join(conn, event)
+                raise TestException()
+
+        self.client = Tester("irc.namibsun.net", "random")
+        try:
+            self.client.start()
+            self.assertFalse(True)
+        except TestException:
+            self.assertTrue(True)

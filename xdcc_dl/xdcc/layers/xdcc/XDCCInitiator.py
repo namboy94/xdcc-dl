@@ -65,6 +65,8 @@ class XDCCInitiator(MessageSender):
             self.dcc_send_handler(payload, connection)
         elif payload[0] == "ACCEPT":
             self.dcc_accept_handler(payload, connection)
+        else:  # pragma: no cover
+            return
 
     def dcc_send_handler(self, ctcp_arguments: List[str], connection: irc.client.ServerConnection) -> None:
         """
@@ -147,13 +149,14 @@ class XDCCInitiator(MessageSender):
         :param event:      the IRC event
         :return:           None
         """
-        super().on_privnotice(connection, event)
         try:
             if "You already requested that pack" in event.arguments[0]:
                 self.logger.log("Pack already requested, waiting for next Ping", LOG.ALREADY_REQUESTED)
                 self.already_requested = True
-            if "You will have to re-send that, to the bot that transferred the file." in event.arguments[0]:
+            elif "You will have to re-send that, to the bot that transferred the file." in event.arguments[0]:
                 connection.privmsg(self.current_pack.get_bot(), self.current_pack.get_request_message())
+            else:
+                super().on_privnotice(connection, event)
         except IndexError:
             pass
 
