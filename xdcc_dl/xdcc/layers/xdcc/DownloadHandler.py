@@ -83,8 +83,7 @@ class DownloadHandler(XDCCInitiator):
         if len(self.pack_queue) > 0:
 
             if not self.current_pack.get_server().get_address() == self.pack_queue[0].get_server().get_address():
-                self.connection.close()
-                self.connection.disconnect()  # -> on_diconnect
+                self.quit()  # -> on_diconnect
 
             else:
                 self.pack_states[self.current_pack] = "OK"
@@ -95,5 +94,4 @@ class DownloadHandler(XDCCInitiator):
                 self.connection.whois(self.current_pack.get_bot())
 
         else:
-            self.connection.close()
-            self.connection.disconnect()  # -> on_diconnect
+            self.quit()  # -> on_diconnect

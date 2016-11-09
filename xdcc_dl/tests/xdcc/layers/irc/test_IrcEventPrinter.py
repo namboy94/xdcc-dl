@@ -24,8 +24,8 @@ LICENSE
 
 # imports
 import unittest
-from nose.tools import timed
-from xdcc_dl.xdcc.layers.irc.BaseIrcClient import BaseIrclient, NetworkError
+import irc.events
+from xdcc_dl.xdcc.layers.irc.IrcEventPrinter import IrcEventPrinter
 
 
 class TestException(Exception):
@@ -35,27 +35,42 @@ class TestException(Exception):
 class UnitTests(unittest.TestCase):
 
     def setUp(self):
-        self.client = BaseIrclient
+        self.client = IrcEventPrinter
 
     def tearDown(self):
         self.client.quit()
 
-    def test_faulty_server(self):
+    def test_defined_methods(self):
 
-        self.client = BaseIrclient("gitlab.namibsun.net", "random")
+        class Tester(IrcEventPrinter):
+            def on_welcome(self, conn, event):
+
+                self.on_privnotice(conn, event)
+                self.on_privmsg(conn, event)
+                self.on_pubnotice(conn, event)
+                self.on_pubmsg(conn, event)
+                self.on_ping(conn, event)
+                self.on_ctcp(conn, event)
+                raise TestException()
+
+        self.client = Tester("irc.namibsun.net", "random")
         try:
             self.client.start()
             self.assertTrue(False)
-        except NetworkError as e:
-            self.assertEqual(str(e), "Failed to connect to Server")
+        except TestException:
+            self.assertTrue(True)
 
-    @timed(3)
-    def test_server_connect(self):
+    def test_auto_generated_methods(self):
 
-        class Tester(BaseIrclient):
+        class Tester(IrcEventPrinter):
 
-            # noinspection PyMethodMayBeStatic
+            assertions_true = True
+
+            # noinspection PyUnusedLocal
             def on_welcome(self, conn, event):
+
+                for event in irc.events.all:
+                    self.assertions_true = self.assertions_true and callable(getattr(self, "on_" + event))
                 raise TestException()
 
         self.client = Tester("irc.namibsun.net", "random")
@@ -64,19 +79,29 @@ class UnitTests(unittest.TestCase):
             self.client.start()
             self.assertTrue(False)
         except TestException:
-            self.assertTrue(True)
+            self.assertTrue(self.client.assertions_true)
 
-    @timed(3)
-    def test_on_banned(self):
+    def test_version_ctcp(self):
 
-        class Tester(BaseIrclient):
+        class Tester(IrcEventPrinter):
+
+            assertions_true = False
+
             def on_welcome(self, conn, event):
-                self.on_error(conn, event)
+
+                event.arguments = ["VERSION"]
+                self.on_ctcp(conn, event)
+
+                raise TestException()
+
+            def on_ctcp(self, conn, event):
+                super().on_ctcp(conn, event)
+                self.assertions_true = event.arguments[0] == "VERSION"
 
         self.client = Tester("irc.namibsun.net", "random")
 
         try:
             self.client.start()
             self.assertTrue(False)
-        except NetworkError as e:
-            self.assertEqual(str(e), "Failed to connect due to a ban")
+        except TestException:
+            self.assertTrue(self.client.assertions_true)
