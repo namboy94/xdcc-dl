@@ -38,6 +38,9 @@ def find_intel_haruhichan_packs(search_phrase: str) -> List[XDCCPack]:
     :return:              The list of found XDCC Packs
     """
 
+    if not search_phrase:
+        return []
+
     # Generate the search string that can be inserted into intel.haruhichan.com's URL to conduct a search
     # Intel Haruhichan uses %20 to separate spaces in their search query URLs
     split_search_term = search_phrase.split(" ")
