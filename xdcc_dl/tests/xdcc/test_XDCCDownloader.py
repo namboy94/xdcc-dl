@@ -34,7 +34,7 @@ from xdcc_dl.xdcc.XDCCDownloader import XDCCDownloader
 class UnitTests(unittest.TestCase):
 
     def setUp(self):
-        pass
+        self.downloader = XDCCDownloader("irc.namibsun.net", "random")
 
     def tearDown(self):
         if os.path.isfile("1_test.txt"):
@@ -44,16 +44,52 @@ class UnitTests(unittest.TestCase):
         if os.path.isfile("3_test.txt"):
             os.remove("3_test.txt")
 
-    def test_download_multiple_packs_same_server(self):
+    def test_download_multiple_packs(self):
 
         progress = Progress(2)
 
-        downloader = XDCCDownloader("irc.namibsun.net", "random")
-        downloader.download([XDCCPack(IrcServer("irc.namibsun.net"), "xdcc_servbot", 2),
-                             XDCCPack(IrcServer("irc.namibsun.net"), "xdcc_servbot", 3)], progress)
+        packs = [XDCCPack(IrcServer("irc.namibsun.net"), "xdcc_servbot", 2),
+                 XDCCPack(IrcServer("irc.namibsun.net"), "xdcc_servbot", 3)]
 
-        self.assertTrue(os.path.isfile("2_test.txt"))
-        self.assertTrue(os.path.isfile("3_test.txt"))
+        results = self.downloader.download(packs, progress)
+
+        for pack in packs:
+            self.assertTrue(os.path.isfile(pack.get_filepath()))
+            self.assertEqual(results[pack], "OK")
 
         self.assertEqual(progress.get_single_progress_percentage(), 100.0)
         self.assertEqual(progress.get_total_percentage(), 100.0)
+
+    def test_bot_not_found(self):
+
+        pack = XDCCPack(IrcServer("irc.namibsun.net"), "nosuchbot", 2)
+        results = self.downloader.download([pack])
+
+        self.assertFalse(os.path.isfile(pack.get_filepath()))
+        self.assertEqual(results[pack], "BOTNOTFOUND")
+
+    def test_file_existed(self):
+
+        pack = XDCCPack(IrcServer("irc.namibsun.net"), "xdcc_servbot", 2)
+
+        self.downloader.download([pack])
+        self.assertTrue(os.path.isfile(pack.get_filepath()))
+
+        results = self.downloader.download([pack])
+        self.assertTrue(os.path.isfile(pack.get_filepath()))
+        self.assertEqual(results[pack], "EXISTED")
+
+    def test_incorrect_file_sent(self):
+
+        pack = XDCCPack(IrcServer("irc.namibsun.net"), "xdcc_servbot", 2)
+        pack.set_original_filename("something_else.txt")
+
+        results = self.downloader.download([pack])
+        self.assertFalse(os.path.isfile(pack.get_filepath()))
+        self.assertEqual(results[pack], "INCORRECT")
+
+    def test_network_error(self):
+
+        pack = XDCCPack(IrcServer("irc.namibsun.net"), "xdcc_servbot", 2)
+        results = XDCCDownloader("gitlab.naibsun.net", "random").download([pack])
+        self.assertEqual(results[pack], "NETWORKERROR")

@@ -111,3 +111,17 @@ class UnitTests(unittest.TestCase):
         self.assertEqual(self.progress.get_single_progress_percentage(), 100.0)
         self.assertEqual(self.progress.get_single_progress(), 100)
         self.assertEqual(self.progress.get_single_progress(), self.progress.get_single_progress_total())
+
+    def test_going_past_total_limit(self):
+
+        while self.progress.get_total_percentage() < 100.0:
+            self.progress.next_file()
+
+        self.assertEqual(self.progress.get_total_percentage(), 100.0)
+        self.assertEqual(self.progress.total_progress, 10)
+        self.progress.next_file()
+        self.assertEqual(self.progress.get_total_percentage(), 100.0)
+        self.assertEqual(self.progress.total_progress, 10)
+        self.progress.next_file()
+        self.assertEqual(self.progress.get_total_percentage(), 100.0)
+        self.assertEqual(self.progress.total_progress, 10)

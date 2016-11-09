@@ -27,8 +27,8 @@ from typing import List, Dict
 
 from xdcc_dl.entities.XDCCPack import XDCCPack
 from xdcc_dl.entities.Progress import Progress
+from xdcc_dl.xdcc.layers.irc.BaseIrcClient import NetworkError
 from xdcc_dl.xdcc.layers.irc.BotFinder import BotNotFoundException
-from xdcc_dl.xdcc.layers.irc.BaseIrcClient import NetworkError, Disconnect
 from xdcc_dl.xdcc.layers.xdcc.XDCCInitiator import IncorrectFileSentException
 from xdcc_dl.xdcc.layers.xdcc.DownloadHandler import DownloadHandler, AlreadyDownloaded
 
@@ -77,9 +77,6 @@ class XDCCDownloader(DownloadHandler):
             self.reset_connection_state()
             self.progress.next_file()
 
-        try:
-            self.quit()
-        except Disconnect:
-            pass
+        self.quit()
 
         return self.pack_states
