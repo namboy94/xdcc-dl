@@ -99,6 +99,7 @@ class LoggingTypes:
         DEFAULT BG + MANGENTA/L_MAGENTA FG:    Undefined events
     """
 
+    INVISIBLE            = {"bg_color": BGColors.DEFAULT,      "fg_color": FGColors.DEFAULT,        "priority": 0}
     DEFAULT              = {"bg_color": BGColors.DEFAULT,      "fg_color": FGColors.DEFAULT,        "priority": 1}
 
     CONNECTION_ATTEMPT   = {"bg_color": BGColors.DEFAULT,      "fg_color": FGColors.DEFAULT,        "priority": 2}

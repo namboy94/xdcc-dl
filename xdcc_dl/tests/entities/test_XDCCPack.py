@@ -44,7 +44,7 @@ class UnitTests(unittest.TestCase):
         self.assertEqual(self.pack.get_filename(), "")
         self.assertEqual(self.pack.get_size(), 0)
         self.assertEqual(self.pack.get_server().get_address(), "irc.namibsun.net")
-        self.assertEqual(self.pack.get_filepath(), os.getcwd() + "/")
+        self.assertEqual(self.pack.get_filepath(), os.getcwd() + os.sep)
         self.assertEqual(self.pack.get_request_message(), "xdcc send #1")
 
     def test_setting_filename(self):
@@ -69,6 +69,10 @@ class UnitTests(unittest.TestCase):
         self.assertEqual(self.pack.get_filename(), "something.txt")
         self.assertEqual(self.pack.get_filepath(), os.path.join(os.getcwd(), "test", "something.txt"))
 
+        self.pack.set_directory(os.path.join(os.getcwd(), "test"))
+        self.assertEqual(self.pack.get_filename(), "something.txt")
+        self.assertEqual(self.pack.get_filepath(), os.path.join(os.getcwd(), "test", "something.txt"))
+
     def test_original_filename_check(self):
 
         self.assertTrue(self.pack.is_filename_valid("the_original"))
@@ -86,7 +90,7 @@ class UnitTests(unittest.TestCase):
         self.assertEqual(pack.get_packnumber(), 1)
         self.assertEqual(pack.get_bot(), "xdcc_servbot")
         self.assertEqual(pack.get_server().get_address(), "irc.namibsun.net")
-        self.assertEqual(pack.get_filepath(), "testdir/")
+        self.assertEqual(pack.get_filepath(), "testdir" + os.sep)
         self.assertTrue(pack.get_request_message() in "/msg xdcc_servbot xdcc send #1")
 
     def test_generating_from_xdcc_message_range(self):
@@ -97,7 +101,7 @@ class UnitTests(unittest.TestCase):
         for i, pack in enumerate(packs):
             self.assertEqual(pack.get_packnumber(), i + 1)
             self.assertEqual(pack.get_server().get_address(), "irc.rizon.net")
-            self.assertEqual(pack.get_filepath(), os.getcwd() + "/")
+            self.assertEqual(pack.get_filepath(), os.getcwd() + os.sep)
 
     def test_generating_from_xdcc_message_range_with_jumps(self):
 

@@ -80,3 +80,21 @@ class UnitTests(unittest.TestCase):
         progress_with_callback.add_single_progress(300)
 
         self.assertTrue(self.callback_called)
+
+    def test_current_download_speed(self):
+
+        self.assertEqual(self.progress.calculate_current_download_speed(), 0)
+        self.progress.add_single_progress(50)
+        time.sleep(0.25)
+
+        self.assertEqual(self.progress.calculate_current_download_speed(), 0)
+        self.progress.add_single_progress(50)
+        time.sleep(0.75)
+
+        self.assertAlmostEqual(self.progress.calculate_current_download_speed(), 100, delta=5)
+
+    def test_for_zero_division_errors(self):
+
+        progress = Progress(0)
+        self.assertEqual(progress.get_single_progress_percentage(), 0.0)
+        self.assertEqual(progress.get_total_percentage(), 0.0)
