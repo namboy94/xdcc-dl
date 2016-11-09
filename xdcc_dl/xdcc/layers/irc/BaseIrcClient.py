@@ -45,7 +45,7 @@ class IgnoreErrorsBuffer(buffer.DecodingLineBuffer):
         Handles the Exception itself, does nothing.
         :return: None
         """
-        pass
+        pass  # pragma: no cover
 
 
 class Disconnect(Exception):
@@ -112,16 +112,9 @@ class BaseIrclient(irc.client.SimpleIRCClient, ConnectionStates, Variables):
         self.logger.log("Using Port:            " + str(self.server.get_port()), LOG.CONNECTION_ATTEMPT)
         self.logger.log("As User:               " + self.user.get_name(), LOG.CONNECTION_ATTEMPT)
 
-        try:
-            super().connect(self.server.get_address(), int(self.server.get_port()), self.user.get_name())
-            self.logger.log("Established Connection to Server", LOG.CONNECTION_SUCCESS)
-            self.connected_to_server = True
-        except irc.client.ServerConnectionError:
-            self.logger.log("Failed to connect to Server", LOG.CONNECTION_FAILURE)
-            raise NetworkError()
-        except Banned:
-            self.logger.log("Failed to connect due to a ban", LOG.BANNED)
-            raise NetworkError()
+        super().connect(self.server.get_address(), int(self.server.get_port()), self.user.get_name())
+        self.logger.log("Established Connection to Server", LOG.CONNECTION_SUCCESS)
+        self.connected_to_server = True
 
     def start(self) -> None:
         """
@@ -133,6 +126,12 @@ class BaseIrclient(irc.client.SimpleIRCClient, ConnectionStates, Variables):
         try:
             self.connect()
             super().start()
+        except irc.client.ServerConnectionError:
+            self.logger.log("Failed to connect to Server", LOG.CONNECTION_FAILURE)
+            raise NetworkError("Failed to connect to Server")
+        except Banned:
+            self.logger.log("Failed to connect due to a ban", LOG.BANNED)
+            raise NetworkError("Failed to connect due to a ban")
         except Disconnect:
             pass
 
