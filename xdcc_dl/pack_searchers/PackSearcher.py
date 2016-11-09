@@ -50,7 +50,7 @@ class PackSearcher(object):
         """
         return list(PackSearcher.procedure_map.keys())
 
-    def __init__(self, procedures: List[str] = list(procedure_map.keys())) -> None:
+    def __init__(self, procedures: List[str] = get_available_pack_searchers()) -> None:
         """
         Initializes the Packsearcher with a list of procedures to consider
         All procedures are used by default

@@ -66,3 +66,15 @@ class UnitTests(unittest.TestCase):
 
     def test_ignore_verbosity(self):
         self.test_verbosity(True)
+
+    def test_logger_with_existing_logfile(self):
+
+        with open(self.logfile, 'w') as f:
+            f.write("Testing Logger\n")
+
+        logger = Logger(1, self.logfile)
+        logger.log("Test")
+
+        with open(self.logfile, 'r') as f:
+            self.assertEqual(f.read(), "Testing Logger\nTest\n")
+

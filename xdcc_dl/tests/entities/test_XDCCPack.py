@@ -65,13 +65,17 @@ class UnitTests(unittest.TestCase):
         self.assertEqual(self.pack.get_filename(), "something.txt")
         self.assertEqual(self.pack.get_filepath(), os.path.join(os.getcwd(), "something.txt"))
 
-        self.pack.set_directory(os.path.join(os.getcwd(), "test"))
+        self.pack.set_filename("something_else.txt")
         self.assertEqual(self.pack.get_filename(), "something.txt")
-        self.assertEqual(self.pack.get_filepath(), os.path.join(os.getcwd(), "test", "something.txt"))
+        self.assertEqual(self.pack.get_filepath(), os.path.join(os.getcwd(), "something.txt"))
+
+        self.pack.set_filename("something_else.mkv")
+        self.assertEqual(self.pack.get_filename(), "something.txt.mkv")
+        self.assertEqual(self.pack.get_filepath(), os.path.join(os.getcwd(), "something.txt.mkv"))
 
         self.pack.set_directory(os.path.join(os.getcwd(), "test"))
-        self.assertEqual(self.pack.get_filename(), "something.txt")
-        self.assertEqual(self.pack.get_filepath(), os.path.join(os.getcwd(), "test", "something.txt"))
+        self.assertEqual(self.pack.get_filename(), "something.txt.mkv")
+        self.assertEqual(self.pack.get_filepath(), os.path.join(os.getcwd(), "test", "something.txt.mkv"))
 
     def test_original_filename_check(self):
 
