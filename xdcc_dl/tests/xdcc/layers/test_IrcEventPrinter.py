@@ -35,71 +35,71 @@ class TestException(Exception):
 class UnitTests(unittest.TestCase):
 
     def setUp(self):
-        pass
+        self.client = IrcEventPrinter
 
     def tearDown(self):
-        pass
+        self.client.quit()
 
     def test_defined_methods(self):
 
-        # noinspection PyUnusedLocal,PyShadowingNames
-        def raise_exception(client, conn, event):
+        class Tester(IrcEventPrinter):
+            def on_welcome(self, conn, event):
 
-            client.on_privnotice(conn, event)
-            client.on_privmsg(conn, event)
-            client.on_ping(conn, event)
-            client.on_ctcp(conn, event)
+                self.on_privnotice(conn, event)
+                self.on_privmsg(conn, event)
+                self.on_ping(conn, event)
+                self.on_ctcp(conn, event)
+                raise TestException()
 
-            raise TestException()
-
-        IrcEventPrinter.on_welcome = raise_exception
-        client = IrcEventPrinter("irc.namibsun.net", "random")
-
+        self.client = Tester("irc.namibsun.net", "random")
         try:
-            client.start()
+            self.client.start()
             self.assertTrue(False)
         except TestException:
             self.assertTrue(True)
 
     def test_auto_generated_methods(self):
 
-        # noinspection PyUnusedLocal,PyShadowingNames
-        def raise_exception(client, conn, event):
+        class Tester(IrcEventPrinter):
 
-            for event in irc.events.all:
-                self.assertTrue(callable(getattr(client, "on_" + event)))
+            assertions_true = True
 
-            raise TestException()
+            # noinspection PyUnusedLocal
+            def on_welcome(self, conn, event):
 
-        IrcEventPrinter.on_welcome = raise_exception
-        client = IrcEventPrinter("irc.namibsun.net", "random")
+                for event in irc.events.all:
+                    self.assertions_true = self.assertions_true and callable(getattr(self, "on_" + event))
+                raise TestException()
+
+        self.client = Tester("irc.namibsun.net", "random")
 
         try:
-            client.start()
+            self.client.start()
             self.assertTrue(False)
         except TestException:
-            self.assertTrue(True)
+            self.assertTrue(self.client.assertions_true)
 
     def test_version_ctcp(self):
 
-        # noinspection PyUnusedLocal,PyShadowingNames
-        def raise_exception(client, conn, event):
+        class Tester(IrcEventPrinter):
 
-            # noinspection PyUnusedLocal
-            def print_check(string, formatting):
-                self.assertEqual(string, "VERSION")
-                print()
+            assertions_true = False
 
-            client.logger.log = print_check
-            event.arguments = ["VERSION"]
-            client.on_ctcp(conn, event)
-            raise TestException()
+            def on_welcome(self, conn, event):
 
-        IrcEventPrinter.on_welcome = raise_exception
-        client = IrcEventPrinter("irc.namibsun.net", "random")
+                event.arguments = ["VERSION"]
+                self.on_ctcp(conn, event)
+
+                raise TestException()
+
+            def on_ctcp(self, conn, event):
+                super().on_ctcp(conn, event)
+                self.assertions_true = event.arguments[0] == "VERSION"
+
+        self.client = Tester("irc.namibsun.net", "random")
 
         try:
-            client.start()
+            self.client.start()
             self.assertTrue(False)
         except TestException:
-            self.assertTrue(True)
+            self.assertTrue(self.client.assertions_true)

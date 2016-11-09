@@ -135,6 +135,21 @@ class BaseIrclient(irc.client.SimpleIRCClient, ConnectionStates, Variables):
         except Disconnect:
             pass
 
+        self.quit()
+
+    def quit(self) -> None:
+        """
+        Forcibly closes the connection
+
+        :return: None
+        """
+
+        try:
+            self.connection.disconnect()
+            self.connection.quit()
+        except (Disconnect, irc.client.ServerNotConnectedError):
+            pass
+
     # noinspection PyMethodMayBeStatic
     def on_disconnect(self, connection: irc.client.ServerConnection, event: irc.client.Event) -> None:
         """

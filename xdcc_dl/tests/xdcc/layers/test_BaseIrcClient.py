@@ -28,18 +28,23 @@ from nose.tools import timed
 from xdcc_dl.xdcc.layers.irc.BaseIrcClient import BaseIrclient, NetworkError
 
 
+class TestException(Exception):
+    pass
+
+
 class UnitTests(unittest.TestCase):
 
     def setUp(self):
-        pass
+        self.client = BaseIrclient
 
     def tearDown(self):
-        pass
+        self.client.quit()
 
     def test_faulty_server(self):
 
+        self.client = BaseIrclient("gitlab.namibsun.net", "random")
         try:
-            BaseIrclient("gitlab.namibsun.net", "random").start()
+            self.client.start()
             self.assertTrue(False)
         except NetworkError as e:
             self.assertEqual(str(e), "Failed to connect to Server")
@@ -47,18 +52,16 @@ class UnitTests(unittest.TestCase):
     @timed(3)
     def test_server_connect(self):
 
-        class TestException(Exception):
-            pass
+        class Tester(BaseIrclient):
 
-        # noinspection PyUnusedLocal,PyShadowingNames
-        def raise_exception(self, conn, event):
-            raise TestException()
+            # noinspection PyMethodMayBeStatic
+            def on_welcome(self, conn, event):
+                raise TestException()
 
-        BaseIrclient.on_welcome = raise_exception
-        client = BaseIrclient("irc.namibsun.net", "random")
+        self.client = Tester("irc.namibsun.net", "random")
 
         try:
-            client.start()
+            self.client.start()
             self.assertTrue(False)
         except TestException:
             self.assertTrue(True)
@@ -66,15 +69,14 @@ class UnitTests(unittest.TestCase):
     @timed(3)
     def test_on_banned(self):
 
-        # noinspection PyShadowingNames
-        def raise_banned(client, conn, event):
-            client.on_error(conn, event)
+        class Tester(BaseIrclient):
+            def on_welcome(self, conn, event):
+                self.on_error(conn, event)
 
-        BaseIrclient.on_welcome = raise_banned
-        client = BaseIrclient("irc.namibsun.net", "random")
+        self.client = Tester("irc.namibsun.net", "random")
 
         try:
-            client.start()
+            self.client.start()
             self.assertTrue(False)
         except NetworkError as e:
             self.assertEqual(str(e), "Failed to connect due to a ban")
