@@ -24,6 +24,7 @@ LICENSE
 
 # imports
 import os
+import sys
 import argparse
 from xdcc_dl.metadata import SentryLogger
 from xdcc_dl.xdcc.XDCCDownloader import XDCCDownloader
@@ -68,18 +69,19 @@ def main() -> None:
             for result in results:
                 print(result.get_filepath().ljust(max_length) + " - " + results[result])
 
-        elif args.gui:
+        elif args.gui:  # pragma: no cover
             print("Gui Not yet implemented")
 
         else:
             print("No arguments passed. See --help for more details")
+            sys.exit(0)
 
     except KeyboardInterrupt:
         print("Thanks for using xdcc-downloader!")
-    except Exception as e:
+    except Exception as e:  # pragma: no cover
         SentryLogger.sentry.captureException()
         raise e
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     main()

@@ -82,7 +82,7 @@ def find_intel_haruhichan_packs(search_phrase: str) -> List[XDCCPack]:
             pass    # Skip the 'requests' section
         elif (i - 3) % 5 == 0:
             size = line.text
-        elif (i - 4) % 5 == 0:
+        else:
             result = XDCCPack(IrcServer("irc.rizon.net"), bot, packnumber)
             result.set_size(size)
             result.set_filename(line.text)

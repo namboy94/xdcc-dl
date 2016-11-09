@@ -28,7 +28,7 @@ notably by the setup.py file
 """
 
 
-class GitRepository:
+class GitRepository:  # pragma: no cover
     """
     Class that stores information about the git repository sites used by this project
     """
@@ -64,7 +64,7 @@ class GitRepository:
     """
 
 
-class General:
+class General:  # pragma: no cover
     """
     Class that stores general information about a project
     """
@@ -105,7 +105,7 @@ class General:
     """
 
 
-class PypiVariables:
+class PypiVariables:  # pragma: no cover
     """
     Variables used for distributing with setuptools to the python package index
     """
@@ -174,7 +174,7 @@ class PypiVariables:
     """
 
 
-class SentryLogger:
+class SentryLogger:  # pragma: no cover
     """
     Class that handles the sentry logger initialization
     """
