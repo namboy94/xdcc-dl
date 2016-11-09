@@ -32,13 +32,6 @@ from xdcc_dl.logging.LoggingTypes import LoggingTypes as LOG
 from xdcc_dl.xdcc.layers.xdcc.MessageSender import MessageSender
 
 
-class AlreadyDownloaded(Exception):
-    """
-    Gets thrown if a file already exists with size >= download size
-    """
-    pass
-
-
 class IncorrectFileSentException(Exception):
     """
     Gets raised whenever the bot sends the incorrect, or at least not-predicted file
@@ -102,8 +95,9 @@ class XDCCInitiator(MessageSender):
 
             if position >= self.filesize:
 
-                self.logger.log("File already completely downloaded.", LOG.DOWNLOAD_WAS_DONE)
-                raise AlreadyDownloaded()
+                self.logger.log("File already completely downloaded. Aborting", LOG.DOWNLOAD_WAS_DONE)
+                self.already_downloaded = True
+                self.dcc_connection = self.dcc_connect(self.peer_address, self.peer_port, "raw")
 
             else:
 

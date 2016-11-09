@@ -34,7 +34,7 @@ class UnitTests(unittest.TestCase):
     def setUp(self):
         sys.argv = [sys.argv[0]]
         sys.argv.append("-v")
-        sys.argv.append("5")
+        sys.argv.append("3")
         sys.argv.append("-s")
         sys.argv.append("irc.namibsun.net")
 
@@ -56,7 +56,7 @@ class UnitTests(unittest.TestCase):
 
         self.check_content(1)
 
-    def test_already_requested_ping_timeout(self):
+    def test_repeated_download(self):
 
         sys.argv.append("-m")
         sys.argv.append("/msg xdcc_servbot xdcc send #2")

@@ -29,8 +29,8 @@ from xdcc_dl.entities.XDCCPack import XDCCPack
 from xdcc_dl.entities.Progress import Progress
 from xdcc_dl.xdcc.layers.irc.BaseIrcClient import NetworkError
 from xdcc_dl.xdcc.layers.irc.BotFinder import BotNotFoundException
-from xdcc_dl.xdcc.layers.xdcc.XDCCInitiator import AlreadyDownloaded, IncorrectFileSentException
-from xdcc_dl.xdcc.layers.xdcc.DownloadHandler import DownloadHandler
+from xdcc_dl.xdcc.layers.xdcc.XDCCInitiator import IncorrectFileSentException
+from xdcc_dl.xdcc.layers.xdcc.DownloadHandler import DownloadHandler, AlreadyDownloaded
 
 
 class XDCCDownloader(DownloadHandler):
@@ -68,7 +68,7 @@ class XDCCDownloader(DownloadHandler):
                 status_code = "BOTNOTFOUND"
             except AlreadyDownloaded:
                 status_code = "EXISTED"
-            except IncorrectFileSentException():
+            except IncorrectFileSentException:
                 status_code = "INCORRECT"
             except NetworkError:
                 status_code = "NETWORKERROR"

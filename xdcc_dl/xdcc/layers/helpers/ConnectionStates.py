@@ -47,6 +47,7 @@ class ConnectionStates(object):
         self.already_requested = False
         self.download_started = False
         self.dcc_resume_requested = False
+        self.already_downloaded = False
 
         # Download File Specific
         self.current_pack = None
@@ -74,6 +75,7 @@ class ConnectionStates(object):
         self.already_requested = False
         self.download_started = False
         self.dcc_resume_requested = False
+        self.already_downloaded = False
 
         # Download File Specific
         self.current_pack = None

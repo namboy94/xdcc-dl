@@ -123,19 +123,33 @@ class BaseIrclient(irc.client.SimpleIRCClient, ConnectionStates, Variables):
         :raises: NetworkError if the connection to the server did not succeed
         :return: None
         """
+        network_error = ""
+
         try:
             self.connect()
             super().start()
         except irc.client.ServerConnectionError:
             self.logger.log("Failed to connect to Server", LOG.CONNECTION_FAILURE)
-            raise NetworkError("Failed to connect to Server")
+            network_error = "Failed to connect to Server"
         except Banned:
             self.logger.log("Failed to connect due to a ban", LOG.BANNED)
-            raise NetworkError("Failed to connect due to a ban")
+            network_error = "Failed to connect due to a ban"
+        except Exception as e:
+            try:
+                self.quit()
+            except (Disconnect, irc.client.ServerNotConnectedError):
+                pass
+            if str(type(e)) != "<class 'xdcc_dl.xdcc.layers.irc.BaseIrcClient.Disconnect'>":
+                self.connected_to_server = False
+                raise e
+
+        try:
+            self.quit()
         except Disconnect:
             pass
 
-        self.quit()
+        if network_error:
+            raise NetworkError(network_error)
 
     def quit(self) -> None:
         """
@@ -148,7 +162,14 @@ class BaseIrclient(irc.client.SimpleIRCClient, ConnectionStates, Variables):
             self.connection.disconnect()
             self.connection.quit()
         except (Disconnect, irc.client.ServerNotConnectedError):
-            pass
+            try:
+                self.connection.quit()
+            except (Disconnect, irc.client.ServerNotConnectedError):
+                pass
+
+        if self.connected_to_server:
+            self.connected_to_server = False
+            raise Disconnect()
 
     # noinspection PyMethodMayBeStatic
     def on_disconnect(self, connection: irc.client.ServerConnection, event: irc.client.Event) -> None:
