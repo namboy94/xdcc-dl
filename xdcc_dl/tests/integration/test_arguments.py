@@ -21,6 +21,7 @@ This file is part of toktokkie.
     along with toktokkie.  If not, see <http://www.gnu.org/licenses/>.
 LICENSE
 """
+from __future__ import print_function
 
 # imports
 import sys
