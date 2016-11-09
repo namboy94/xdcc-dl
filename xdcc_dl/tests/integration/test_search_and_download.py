@@ -23,6 +23,7 @@ LICENSE
 """
 
 # imports
+import os
 import unittest
 from xdcc_dl.xdcc.XDCCDownloader import XDCCDownloader
 from xdcc_dl.pack_searchers.PackSearcher import PackSearcher
@@ -34,7 +35,10 @@ class UnitTests(unittest.TestCase):
         pass
 
     def tearDown(self):
-        pass
+        if os.path.isfile("1_test.txt"):
+            os.remove("1_test.txt")
+        if os.path.isfile("2_test.txt"):
+            os.remove("2_test.txt")
 
     def test_search_and_download_namibsun(self):
 
@@ -42,3 +46,6 @@ class UnitTests(unittest.TestCase):
         packs = searcher.search("1_test.txt") + searcher.search("2_test.txt")
 
         XDCCDownloader(packs[0].get_server(), "random").download(packs)
+
+        self.assertTrue(os.path.isfile("1_test.txt"))
+        self.assertTrue(os.path.isfile("2_test.txt"))
