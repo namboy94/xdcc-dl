@@ -154,7 +154,7 @@ class XDCCPack(object):
         :return:     The generated message string
         """
         if full:
-            return "/msg " + self.bot + "xdcc send #" + str(self.packnumber)
+            return "/msg " + self.bot + " xdcc send #" + str(self.packnumber)
         else:
             return "xdcc send #" + str(self.packnumber)
 

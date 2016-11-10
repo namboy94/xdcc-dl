@@ -23,14 +23,17 @@ LICENSE
 """
 
 # imports
+import os
 import sys
 import time
 from threading import Thread
+from xdcc_dl.entities.Progress import Progress
 from xdcc_dl.pack_searchers.PackSearcher import PackSearcher
+from xdcc_dl.entities.XDCCPack import xdcc_packs_from_xdcc_message
 from xdcc_dl.gui.pyuic.xdcc_downloader import Ui_XDCCDownloaderWindow
-from PyQt5.QtWidgets import QMainWindow, QApplication, QTreeWidgetItem, QPushButton
+from xdcc_dl.xdcc.MultipleServerDownloader import MultipleServerDownloader
+from PyQt5.QtWidgets import QMainWindow, QApplication, QTreeWidgetItem, QPushButton, QMessageBox
 from PyQt5.QtCore import pyqtSignal, Qt
-
 
 
 class XDCCDownloaderGui(QMainWindow, Ui_XDCCDownloaderWindow):  # pragma: no cover
@@ -41,6 +44,8 @@ class XDCCDownloaderGui(QMainWindow, Ui_XDCCDownloaderWindow):  # pragma: no cov
     spinner_start_signal = pyqtSignal(str, name="spinner_start")
     spinner_updater_signal = pyqtSignal(QPushButton, str, name="spinner_updater")
     refresh_search_results_signal = pyqtSignal(str, name="refresh_search_results")
+    refresh_download_queue_signal = pyqtSignal(str, name="refresh_download_queue")
+    progress_update_signal = pyqtSignal(float, float, name="progress_update")
 
     def __init__(self, parent: QMainWindow = None) -> None:
         """
@@ -57,6 +62,8 @@ class XDCCDownloaderGui(QMainWindow, Ui_XDCCDownloaderWindow):  # pragma: no cov
         self.spinner_start_signal.connect(lambda x: self.start_spinner(x))
         self.spinner_updater_signal.connect(lambda x, y: self.update_spinner(x, y))
         self.refresh_search_results_signal.connect(self.refresh_search_results)
+        self.refresh_download_queue_signal.connect(self.refresh_download_queue)
+        self.progress_update_signal.connect(self.progress_update)
 
         self.searching = False
         self.downloading = False
@@ -71,10 +78,18 @@ class XDCCDownloaderGui(QMainWindow, Ui_XDCCDownloaderWindow):  # pragma: no cov
         self.download_button.clicked.connect(self.download)
         self.add_button.clicked.connect(self.add_pack)
 
-        self.up_arrow_button.clicked.connect(lambda: self.move_pack(1))
-        self.down_arrow_button.clicked.connect(lambda: self.move_pack(-1))
-        self.left_arrow_button.clicked.connect(self.remove_packs)
-        self.rigth_arrow_button.clicked.connect(self.add_packs)
+        self.up_arrow_button.clicked.connect(lambda: self.move_packs(up=True))
+        self.down_arrow_button.clicked.connect(lambda: self.move_packs(down=True))
+        self.left_arrow_button.clicked.connect(self.remove_packs_from_queue)
+        self.rigth_arrow_button.clicked.connect(self.add_packs_to_queue)
+
+    def add_pack(self):
+
+        message = self.message_edit.text()
+        server = self.server_edit.text()
+
+        self.download_queue.append(xdcc_packs_from_xdcc_message(message, server=server)[0])
+        self.refresh_download_queue()
 
     def search(self) -> None:
         """
@@ -159,7 +174,7 @@ class XDCCDownloaderGui(QMainWindow, Ui_XDCCDownloaderWindow):  # pragma: no cov
         """
         widget.setText(text)
 
-    def add_packs(self):
+    def add_packs_to_queue(self):
         """
         Adds selected packs from the search results tree widget to the download queue
 
@@ -167,12 +182,11 @@ class XDCCDownloaderGui(QMainWindow, Ui_XDCCDownloaderWindow):  # pragma: no cov
         """
 
         for item in self.search_result_tree_widget.selectedItems():
-            print(item.text(4))
-            self.download_queue.append(self.search_results[int(item[0])])
+            self.download_queue.append(self.search_results[int(item.text(0))])
 
         self.refresh_download_queue()
 
-    def remove_packs(self):
+    def remove_packs_from_queue(self):
         """
         Removes the currently selected Packs from the download queue
 
@@ -184,22 +198,28 @@ class XDCCDownloaderGui(QMainWindow, Ui_XDCCDownloaderWindow):  # pragma: no cov
 
         self.refresh_download_queue()
 
-    def add_to_queue(self) -> None:
+    def move_packs(self, up: bool = False, down: bool = False) -> None:
         """
-        Add the currently selected items in the search result list to the download queue
+        Moves items on the queue up or down
 
-        :return: None
+        :param up:   Pushes the selected elements up
+        :param down: Pushes the selected elements down
+        :return:     None
         """
-        for index, row in enumerate(self.search_result_tree_widget.selectedIndexes()):
-            if index % 5 != 0:
-                continue
 
-            self.search_result_tree_widget.selectedItems()
+        size_check = (lambda x: x > 0) if up and not down else (lambda x: x < len(self.download_queue) - 1)
+        index_change = (lambda x: x - 1) if up and not down else (lambda x: x + 1)
 
-            self.download_queue_list.append(self.search_results[row.row()])
-            self.refresh_download_queue()
+        indexes = self.download_queue_list_widget.selectedIndexes() if up and not down \
+            else reversed(self.download_queue_list_widget.selectedIndexes())
 
-        self.search_result_list.clearSelection()
+        for row in indexes:
+
+            index = row.row()
+            if size_check(index):
+                self.download_queue.insert(index_change(index), self.download_queue.pop(index))
+
+        self.refresh_download_queue()
 
     def remove_from_queue(self) -> None:
         """
@@ -221,15 +241,73 @@ class XDCCDownloaderGui(QMainWindow, Ui_XDCCDownloaderWindow):  # pragma: no cov
         for pack in self.download_queue:
             self.download_queue_list_widget.addItem(pack.get_request_message(full=True))
 
-
     def download(self):
-        pass
-    def cleanup_download_queue(self):
-        pass
-    def add_pack(self):
-        pass
-    def move_pack(self, direction: int):
-        pass
+        """
+        Starts the download of all packs in the download queue
+
+        :return: None
+        """
+
+        if not self.downloading:
+
+            directory = self.destination_edit.text()
+
+            if not os.path.isdir(directory):
+
+                self.generate_message(QMessageBox.Warning,
+                                      "Invalid Directory", "The entered directory is not valid", directory).exec_()
+
+            else:
+
+                self.downloading = True
+
+                for pack in self.download_queue:
+                    pack.set_directory(directory)
+
+                def do_download():
+
+                    progress = Progress(len(self.download_queue),
+                                        callback=lambda a, b, sin, d, e, tot, g, h: self.progress_update_signal.emit(
+                                            sin, tot))
+
+                    self.spinner_start_signal.emit("download")
+                    MultipleServerDownloader("random").download(self.download_queue, progress)
+                    self.download_queue = []
+                    self.refresh_download_queue_signal.emit("")
+                    self.progress_update_signal.emit(0.0, 0.0)
+                    self.downloading = False
+
+                Thread(target=do_download).start()
+
+    def progress_update(self, single_percentage: float, total_percentage: float):
+        """
+        Updates the progress bars
+
+        :param single_percentage: The single completion percentage
+        :param total_percentage:  The total completion percentage
+        :return:                  None
+        """
+        self.single_progress_bar.setValue(single_percentage)
+        self.total_progress_bar.setValue(total_percentage)
+
+    # noinspection PyMethodMayBeStatic
+    def generate_message(self, icon: int, title: str, text: str, detailed_text: str) -> QMessageBox:
+        """
+        Generates a Message Dialog
+
+        :param icon:           The icon to display
+        :param title:          The title to display
+        :param text:           The primary text to display
+        :param detailed_text:  The detailed text to display
+        :return:               The generated message dialog
+        """
+        msg = QMessageBox()
+        msg.setIcon(icon)
+        msg.setWindowTitle(title)
+        msg.setText(text)
+        msg.setInformativeText(detailed_text)
+        msg.setStandardButtons(QMessageBox.Ok)
+        return msg
 
 
 def start():  # pragma: no cover

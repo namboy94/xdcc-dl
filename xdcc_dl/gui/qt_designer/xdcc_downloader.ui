@@ -28,7 +28,7 @@
     <item row="11" column="9" colspan="2">
      <widget class="QProgressBar" name="total_progress_bar">
       <property name="value">
-       <number>24</number>
+       <number>0</number>
       </property>
      </widget>
     </item>
@@ -132,7 +132,10 @@
     <item row="10" column="9" colspan="2">
      <widget class="QProgressBar" name="single_progress_bar">
       <property name="value">
-       <number>24</number>
+       <number>0</number>
+      </property>
+      <property name="invertedAppearance">
+       <bool>false</bool>
       </property>
      </widget>
     </item>
@@ -174,6 +177,9 @@
         <width>16777215</width>
         <height>20</height>
        </size>
+      </property>
+      <property name="text">
+       <string>irc.rizon,net</string>
       </property>
      </widget>
     </item>
