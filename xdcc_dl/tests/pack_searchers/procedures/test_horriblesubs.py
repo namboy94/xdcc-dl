@@ -23,37 +23,36 @@ LICENSE
 """
 
 # imports
+import os
 import unittest
-from xdcc_dl.pack_searchers.PackSearcher import PackSearcher
+from xdcc_dl.pack_searchers.procedures.horriblesubs import find_horriblesubs_packs
 
 
 class UnitTests(unittest.TestCase):
-
     def setUp(self):
         pass
 
     def tearDown(self):
         pass
 
-    def test_all_searchers(self):
+    def test_empty_query(self):
+        packs = find_horriblesubs_packs("")
+        self.assertEqual(len(packs), 0)
 
-        results = PackSearcher().search("Gin.txt")
-        self.assertEqual(len(results), 4)
+    def test_gin_txt(self):
+        packs = find_horriblesubs_packs("Gin.txt")
+        self.assertEqual(len(packs), 1)
 
-    def test_getting_searchers(self):
+        pack = packs[0]
+        self.assertEqual(pack.get_packnumber(), 1)
+        self.assertEqual(pack.get_server().get_address(), "irc.rizon.net")
+        self.assertEqual(pack.get_filepath(), os.path.join(os.getcwd(), pack.get_filename()))
+        self.assertEqual(pack.get_filename(), "Gin.txt")
+        self.assertEqual(pack.get_bot(), "Ginpachi-Sensei")
 
-        procedures = PackSearcher.get_available_pack_searchers()
-        searcher = PackSearcher()
+    def test_larger_result(self):
+        packs = find_horriblesubs_packs("One Punch Man")
+        self.assertLess(10, len(packs))
 
-        for procedure in procedures:
-            self.assertTrue(PackSearcher.procedure_map[procedure] in searcher.procedures)
-
-    def test_selected_searchers(self):
-
-        searcher = PackSearcher(["nibl", "namibsun"])
-        self.assertEqual(len(searcher.search("Gin.txt")), 1)
-
-        for procedure in PackSearcher.get_available_pack_searchers():
-
-            if procedure not in ["nibl", "namibsun"]:
-                self.assertFalse(PackSearcher.procedure_map[procedure] in searcher.procedures)
+    def test_non_result_query(self):
+        self.assertEqual(0, len(find_horriblesubs_packs("sdgyfdhkdashsahdqhdsadlsajdhsaohdsausahoashdsahdlahdsah")))

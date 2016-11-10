@@ -35,6 +35,9 @@ def find_horriblesubs_packs(search_phrase: str) -> List[XDCCPack]:
 
     :return: the search results as a list of XDCCPack objects
     """
+    if not search_phrase:
+        return []
+
     search_query = search_phrase.replace(" ", "%20")
     search_query = search_query.replace("!", "%21")
 
@@ -75,3 +78,5 @@ def get_attribute(pack_string: str, attribute: str) -> str or int:
         return attribute_value + "M"  # Size is in Megabyte
     elif attribute == "n":
         return int(attribute_value)
+    else:  # pragma: no cover
+        pass
