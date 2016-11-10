@@ -99,54 +99,57 @@ class LoggingTypes:
         DEFAULT BG + MANGENTA/L_MAGENTA FG:    Undefined events
     """
 
-    DEFAULT              = {"bg_color": BGColors.DEFAULT,      "fg_color": FGColors.DEFAULT,       "priority": 1}
+    INVISIBLE            = {"bg_color": BGColors.DEFAULT,      "fg_color": FGColors.DEFAULT,        "priority": 0}
+    DEFAULT              = {"bg_color": BGColors.DEFAULT,      "fg_color": FGColors.DEFAULT,        "priority": 1}
 
-    CONNECTION_ATTEMPT   = {"bg_color": BGColors.DEFAULT,      "fg_color": FGColors.DEFAULT,       "priority": 2}
-    CONNECTION_SUCCESS   = {"bg_color": BGColors.DEFAULT,      "fg_color": FGColors.LIGHT_GREEN,   "priority": 2}
-    CONNECTION_FAILURE   = {"bg_color": BGColors.DEFAULT,      "fg_color": FGColors.LIGHT_RED,     "priority": 2}
-    BANNED               = {"bg_color": BGColors.LIGHT_RED,    "fg_color": FGColors.LIGHT_MAGENTA, "priority": 1}
+    CONNECTION_ATTEMPT   = {"bg_color": BGColors.DEFAULT,      "fg_color": FGColors.DEFAULT,        "priority": 2}
+    CONNECTION_SUCCESS   = {"bg_color": BGColors.DEFAULT,      "fg_color": FGColors.LIGHT_GREEN,    "priority": 2}
+    CONNECTION_FAILURE   = {"bg_color": BGColors.DEFAULT,      "fg_color": FGColors.LIGHT_RED,      "priority": 2}
+    BANNED               = {"bg_color": BGColors.LIGHT_RED,    "fg_color": FGColors.LIGHT_MAGENTA,  "priority": 1}
 
-    WHOIS_SEND           = {"bg_color": BGColors.CYAN,         "fg_color": FGColors.BLACK,         "priority": 2}
-    WHOIS_SUCCESS        = {"bg_color": BGColors.CYAN,         "fg_color": FGColors.WHITE,         "priority": 2}
-    WHOIS_NO_RESULT      = {"bg_color": BGColors.CYAN,         "fg_color": FGColors.LIGHT_RED,     "priority": 2}
-    WHOIS_USER           = {"bg_color": BGColors.CYAN,         "fg_color": FGColors.DARK_GRAY,     "priority": 4}
-    WHOIS_SERVER         = {"bg_color": BGColors.CYAN,         "fg_color": FGColors.LIGHT_GRAY,    "priority": 4}
+    WHOIS_SEND           = {"bg_color": BGColors.CYAN,         "fg_color": FGColors.BLACK,          "priority": 2}
+    WHOIS_SUCCESS        = {"bg_color": BGColors.CYAN,         "fg_color": FGColors.WHITE,          "priority": 2}
+    WHOIS_NO_RESULT      = {"bg_color": BGColors.CYAN,         "fg_color": FGColors.LIGHT_RED,      "priority": 2}
+    WHOIS_USER           = {"bg_color": BGColors.CYAN,         "fg_color": FGColors.DARK_GRAY,      "priority": 4}
+    WHOIS_SERVER         = {"bg_color": BGColors.CYAN,         "fg_color": FGColors.LIGHT_GRAY,     "priority": 4}
 
-    CHANNEL_JOIN_ATTEMPT = {"bg_color": BGColors.GREEN,        "fg_color": FGColors.BLACK,         "priority": 2}
-    CHANNEL_JOIN_SUCCESS = {"bg_color": BGColors.GREEN,        "fg_color": FGColors.LIGHT_GREEN,   "priority": 2}
-    CHANNEL_USERS        = {"bg_color": BGColors.GREEN,        "fg_color": FGColors.LIGHT_BLUE,    "priority": 6}
-    CHANNEL_TOPIC        = {"bg_color": BGColors.GREEN,        "fg_color": FGColors.MAGENTA,       "priority": 6}
-    CHANNEL_QUIT         = {"bg_color": BGColors.GREEN,        "fg_color": FGColors.RED,           "priority": 6}
-    CHANNEL_PART         = {"bg_color": BGColors.GREEN,        "fg_color": FGColors.LIGHT_MAGENTA, "priority": 6}
-    CHANNEL_KICK         = {"bg_color": BGColors.GREEN,        "fg_color": FGColors.LIGHT_RED,     "priority": 6}
-    CHANNEL_MODE_CHANGE  = {"bg_color": BGColors.GREEN,        "fg_color": FGColors.LIGHT_YELLOW,  "priority": 6}
-    CHANNEL_ACTION       = {"bg_color": BGColors.GREEN,        "fg_color": FGColors.YELLOW,        "priority": 6}
-    CHANNEL_NICK_CHANGED = {"bg_color": BGColors.GREEN,        "fg_color": FGColors.LIGHT_CYAN,    "priority": 6}
+    CHANNEL_JOIN_ATTEMPT = {"bg_color": BGColors.GREEN,        "fg_color": FGColors.BLACK,          "priority": 2}
+    CHANNEL_JOIN_SUCCESS = {"bg_color": BGColors.GREEN,        "fg_color": FGColors.LIGHT_GREEN,    "priority": 2}
+    CHANNEL_USERS        = {"bg_color": BGColors.GREEN,        "fg_color": FGColors.LIGHT_BLUE,     "priority": 6}
+    CHANNEL_TOPIC        = {"bg_color": BGColors.GREEN,        "fg_color": FGColors.MAGENTA,        "priority": 6}
+    CHANNEL_QUIT         = {"bg_color": BGColors.GREEN,        "fg_color": FGColors.RED,            "priority": 6}
+    CHANNEL_PART         = {"bg_color": BGColors.GREEN,        "fg_color": FGColors.LIGHT_MAGENTA,  "priority": 6}
+    CHANNEL_KICK         = {"bg_color": BGColors.GREEN,        "fg_color": FGColors.LIGHT_RED,      "priority": 6}
+    CHANNEL_MODE_CHANGE  = {"bg_color": BGColors.GREEN,        "fg_color": FGColors.LIGHT_YELLOW,   "priority": 6}
+    CHANNEL_ACTION       = {"bg_color": BGColors.GREEN,        "fg_color": FGColors.YELLOW,         "priority": 6}
+    CHANNEL_NICK_CHANGED = {"bg_color": BGColors.GREEN,        "fg_color": FGColors.LIGHT_CYAN,     "priority": 6}
 
-    MESSAGE_SEND         = {"bg_color": BGColors.BLUE,          "fg_color": FGColors.BLACK,        "priority": 1}
-    MESSAGE_RETRY        = {"bg_color": BGColors.BLUE,          "fg_color": FGColors.WHITE,        "priority": 1}
+    MESSAGE_SEND         = {"bg_color": BGColors.BLUE,          "fg_color": FGColors.BLACK,         "priority": 1}
+    MESSAGE_RETRY        = {"bg_color": BGColors.BLUE,          "fg_color": FGColors.WHITE,         "priority": 1}
 
-    ALREADY_REQUESTED    = {"bg_color": BGColors.BLUE,          "fg_color": FGColors.LIGHT_RED,    "priority": 2}
+    ALREADY_REQUESTED    = {"bg_color": BGColors.BLUE,          "fg_color": FGColors.LIGHT_RED,     "priority": 2}
 
-    DCC_SEND_HANDSHAKE   = {"bg_color": BGColors.YELLOW,        "fg_color": FGColors.BLACK,        "priority": 2}
-    DCC_RESUME_REQUEST   = {"bg_color": BGColors.YELLOW,        "fg_color": FGColors.DARK_GRAY,    "priority": 2}
-    DCC_RESUME_SUCCESS   = {"bg_color": BGColors.YELLOW,        "fg_color": FGColors.WHITE,        "priority": 2}
-    DCC_RESUME_FAILED    = {"bg_color": BGColors.YELLOW,        "fg_color": FGColors.LIGHT_RED,    "priority": 2}
+    INCORRECT_FILE       = {"bg_color": BGColors.YELLOW,        "fg_color": FGColors.LIGHT_MAGENTA, "priority": 1}
+    DCC_SEND_HANDSHAKE   = {"bg_color": BGColors.YELLOW,        "fg_color": FGColors.BLACK,         "priority": 2}
+    DCC_RESUME_REQUEST   = {"bg_color": BGColors.YELLOW,        "fg_color": FGColors.DARK_GRAY,     "priority": 2}
+    DCC_RESUME_SUCCESS   = {"bg_color": BGColors.YELLOW,        "fg_color": FGColors.WHITE,         "priority": 2}
+    DCC_RESUME_FAILED    = {"bg_color": BGColors.YELLOW,        "fg_color": FGColors.LIGHT_RED,     "priority": 2}
 
-    DOWNLOAD_START       = {"bg_color": BGColors.YELLOW,        "fg_color": FGColors.LIGHT_GREEN,  "priority": 1}
-    DOWNLOAD_RESUME      = {"bg_color": BGColors.YELLOW,        "fg_color": FGColors.LIGHT_BLUE,   "priority": 1}
-    DOWNLOAD_PROGRESS    = {"bg_color": BGColors.LIGHT_YELLOW,  "fg_color": FGColors.BLACK,        "priority": 1}
-    DOWNLOAD_WAS_DONE    = {"bg_color": BGColors.YELLOW,        "fg_color": FGColors.RED,          "priority": 1}
+    DOWNLOAD_START       = {"bg_color": BGColors.LIGHT_YELLOW,  "fg_color": FGColors.LIGHT_GREEN,   "priority": 1}
+    DOWNLOAD_RESUME      = {"bg_color": BGColors.LIGHT_YELLOW,  "fg_color": FGColors.LIGHT_BLUE,    "priority": 1}
+    DOWNLOAD_PROGRESS    = {"bg_color": BGColors.LIGHT_YELLOW,  "fg_color": FGColors.BLACK,         "priority": 1}
+    DOWNLOAD_WAS_DONE    = {"bg_color": BGColors.LIGHT_YELLOW,  "fg_color": FGColors.RED,           "priority": 1}
+    DOWNLOAD_INCOMPLETE  = {"bg_color": BGColors.LIGHT_YELLOW,  "fg_color": FGColors.LIGHT_RED,     "priority": 2}
 
-    PRIVATE_NOTICE       = {"bg_color": BGColors.DEFAULT,      "fg_color": FGColors.BLUE,          "priority": 3}
-    PRIVATE_MESSAGE      = {"bg_color": BGColors.DEFAULT,      "fg_color": FGColors.LIGHT_BLUE,    "priority": 3}
-    PUBLIC_NOTICE        = {"bg_color": BGColors.DEFAULT,      "fg_color": FGColors.YELLOW,        "priority": 4}
-    PUBLIC_MESSAGE       = {"bg_color": BGColors.DEFAULT,      "fg_color": FGColors.LIGHT_YELLOW,  "priority": 4}
+    PRIVATE_NOTICE       = {"bg_color": BGColors.DEFAULT,      "fg_color": FGColors.BLUE,           "priority": 3}
+    PRIVATE_MESSAGE      = {"bg_color": BGColors.DEFAULT,      "fg_color": FGColors.LIGHT_BLUE,     "priority": 3}
+    PUBLIC_NOTICE        = {"bg_color": BGColors.DEFAULT,      "fg_color": FGColors.YELLOW,         "priority": 4}
+    PUBLIC_MESSAGE       = {"bg_color": BGColors.DEFAULT,      "fg_color": FGColors.LIGHT_YELLOW,   "priority": 4}
 
-    MESSAGE_OF_THE_DAY   = {"bg_color": BGColors.DEFAULT,      "fg_color": FGColors.LIGHT_GRAY,    "priority": 4}
-    WELCOME              = {"bg_color": BGColors.DEFAULT,      "fg_color": FGColors.DARK_GRAY,     "priority": 4}
-    CTCP_VERSION         = {"bg_color": BGColors.DEFAULT,      "fg_color": FGColors.WHITE,         "priority": 4}
-    PING                 = {"bg_color": BGColors.LIGHT_GREEN,  "fg_color": FGColors.BLACK,         "priority": 4}
+    MESSAGE_OF_THE_DAY   = {"bg_color": BGColors.DEFAULT,      "fg_color": FGColors.LIGHT_GRAY,     "priority": 4}
+    WELCOME              = {"bg_color": BGColors.DEFAULT,      "fg_color": FGColors.DARK_GRAY,      "priority": 4}
+    CTCP_VERSION         = {"bg_color": BGColors.DEFAULT,      "fg_color": FGColors.WHITE,          "priority": 4}
+    PING                 = {"bg_color": BGColors.LIGHT_GREEN,  "fg_color": FGColors.BLACK,          "priority": 4}
 
-    EVENT                = {"bg_color": BGColors.DEFAULT,      "fg_color": FGColors.MAGENTA,       "priority": 5}
-    EVENT_TEXT           = {"bg_color": BGColors.DEFAULT,      "fg_color": FGColors.LIGHT_MAGENTA, "priority": 5}
+    EVENT                = {"bg_color": BGColors.DEFAULT,      "fg_color": FGColors.MAGENTA,        "priority": 5}
+    EVENT_TEXT           = {"bg_color": BGColors.DEFAULT,      "fg_color": FGColors.LIGHT_MAGENTA,  "priority": 5}

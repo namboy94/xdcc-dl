@@ -35,7 +35,7 @@ run_unit_tests_python_2:
     - 3to2 . --write
     - python2 setup.py test
 
-run_unit_tests_python_3:
+run_unit_tests_python_3_with_coverage:
   stage: test
   tags:
     - linux
@@ -173,10 +173,6 @@ generate_sphinx_documentation:
     - rsync -av build/html/ /var/www/docs.namibsun.net/public_html/html_docs/xdcc_downloader --delete-before
     - cd ..
     - python3 builder.py documentation-html /var/www/docs.namibsun.net/public_html
-  artifacts:
-    paths:
-      - doc/build/latex/xdcc_dl.pdf
-      - doc/build/html
 
 gitstats:
   stage: docstats
@@ -191,7 +187,3 @@ gitstats:
     - git_stats generate
     - rsync -av git_stats/ /var/www/gitstats.namibsun.net/public_html/git_stats/xdcc_downloader --delete-before
     - python3 builder.py gitstats-html /var/www/gitstats.namibsun.net/public_html
-  artifacts:
-    paths:
-      - gitstats
-      - git_stats

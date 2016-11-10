@@ -23,6 +23,7 @@ LICENSE
 """
 
 # imports
+import os
 from typing import Dict
 from xdcc_dl.logging.LoggingTypes import LoggingTypes
 
@@ -49,6 +50,10 @@ class Logger(object):
         self.logfile = logfile
         self.ignore_logfile_verbosity = ignore_verbosity_in_logfile
 
+        if self.logfile is not None:
+            if not os.path.isfile(self.logfile):
+                open(self.logfile, 'w').close()
+
     def log(self, message: str, logging_type: Dict[str, str or int]=None, carriage_return: bool = False) -> None:
         """
         Logs a message to the console and optionally to a logfile
@@ -66,7 +71,7 @@ class Logger(object):
         if self.logfile is not None:
             if self.ignore_logfile_verbosity or self.verbosity_level >= priority:
                 with open(self.logfile, 'a') as log:
-                    log.write(message)
+                    log.write(message + "\n")
 
         if self.verbosity_level >= priority:
 

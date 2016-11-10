@@ -45,8 +45,9 @@ class MessageSender(BotFinder):
         :param event:      the IRC Event
         :return:           None
         """
-        if event.source.startswith(self.user.get_name()):
-            if not self.user.get_name() == event.target:
+        if event.source.startswith(self.user.get_name()):   # Check if we were the ones joining
+            if not self.user.get_name() == event.target and self.channel_join_required:
+                # Check if we didn't ask a channelless bot
                 self.logger.log("Joined Channel " + event.target, LOG.CHANNEL_JOIN_SUCCESS)
 
             if not self.channel_joined:  # Only send the XDCC message when the first channel was joined
@@ -91,7 +92,7 @@ class MessageSender(BotFinder):
         :param event:      the IRC Event
         :return:           None
         """
-        self.logger.log("Topic " + event.arguments[0] + ": " + event.arguments[1], LOG.CHANNEL_TOPIC)
+        self.logger.log("Topic " + str(event.arguments), LOG.CHANNEL_TOPIC)
 
     def on_topicinfo(self, connection: irc.client.ServerConnection, event: irc.client.Event) -> None:
         """
@@ -101,7 +102,7 @@ class MessageSender(BotFinder):
         :param event:      the IRC Event
         :return:           None
         """
-        self.logger.log("Topic Info: " + event.arguments[1], LOG.CHANNEL_TOPIC)
+        self.logger.log("Topic Info: " + str(event.arguments), LOG.CHANNEL_TOPIC)
 
     def on_quit(self, connection: irc.client.ServerConnection, event: irc.client.Event) -> None:
         """

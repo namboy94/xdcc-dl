@@ -23,9 +23,8 @@ LICENSE
 """
 
 # imports
-import string
-import random
 import irc.client
+import jaraco.logging
 from jaraco.stream import buffer
 from xdcc_dl.entities.User import User
 from xdcc_dl.logging.Logger import Logger
@@ -46,7 +45,7 @@ class IgnoreErrorsBuffer(buffer.DecodingLineBuffer):
         Handles the Exception itself, does nothing.
         :return: None
         """
-        pass
+        pass  # pragma: no cover
 
 
 class Disconnect(Exception):
@@ -93,15 +92,14 @@ class BaseIrclient(irc.client.SimpleIRCClient, ConnectionStates, Variables):
         Variables.__init__(self)
         ConnectionStates.__init__(self)
 
+        jaraco.logging.log_level("0")
+
         irc.client.ServerConnection.buffer_class = IgnoreErrorsBuffer
         irc.client.SimpleIRCClient.buffer_class = IgnoreErrorsBuffer
 
         self.user = user if user.__class__ == User else User(user)
         self.server = server if server.__class__ == IrcServer else IrcServer(server)
         self.logger = logger if logger.__class__ == Logger else Logger(logger)
-
-        if self.user.get_name() == "random":
-            self.user = User(self.generate_random_username())
 
     def connect(self) -> None:
         """
@@ -114,16 +112,9 @@ class BaseIrclient(irc.client.SimpleIRCClient, ConnectionStates, Variables):
         self.logger.log("Using Port:            " + str(self.server.get_port()), LOG.CONNECTION_ATTEMPT)
         self.logger.log("As User:               " + self.user.get_name(), LOG.CONNECTION_ATTEMPT)
 
-        try:
-            super().connect(self.server.get_address(), int(self.server.get_port()), self.user.get_name())
-            self.logger.log("Established Connection to Server", LOG.CONNECTION_SUCCESS)
-            self.connected_to_server = True
-        except irc.client.ServerConnectionError:
-            self.logger.log("Failed to connect to Server", LOG.CONNECTION_FAILURE)
-            raise NetworkError()
-        except Banned:
-            self.logger.log("Failed to connect due to a ban", LOG.BANNED)
-            raise NetworkError()
+        super().connect(self.server.get_address(), int(self.server.get_port()), self.user.get_name())
+        self.logger.log("Established Connection to Server", LOG.CONNECTION_SUCCESS)
+        self.connected_to_server = True
 
     def start(self) -> None:
         """
@@ -132,11 +123,53 @@ class BaseIrclient(irc.client.SimpleIRCClient, ConnectionStates, Variables):
         :raises: NetworkError if the connection to the server did not succeed
         :return: None
         """
+        network_error = ""
+
         try:
             self.connect()
             super().start()
+        except irc.client.ServerConnectionError:
+            self.logger.log("Failed to connect to Server", LOG.CONNECTION_FAILURE)
+            network_error = "Failed to connect to Server"
+        except Banned:
+            self.logger.log("Failed to connect due to a ban", LOG.BANNED)
+            network_error = "Failed to connect due to a ban"
+        except Exception as e:
+            try:
+                self.quit()
+            except (Disconnect, irc.client.ServerNotConnectedError):
+                pass
+            if str(type(e)) != "<class 'xdcc_dl.xdcc.layers.irc.BaseIrcClient.Disconnect'>":
+                self.connected_to_server = False
+                raise e
+
+        try:
+            self.quit()
         except Disconnect:
             pass
+
+        if network_error:
+            raise NetworkError(network_error)
+
+    def quit(self) -> None:
+        """
+        Forcibly closes the connection
+
+        :return: None
+        """
+
+        try:
+            self.connection.disconnect()
+            self.connection.quit()
+        except (Disconnect, irc.client.ServerNotConnectedError):
+            try:
+                self.connection.quit()
+            except (Disconnect, irc.client.ServerNotConnectedError):
+                pass
+
+        if self.connected_to_server:
+            self.connected_to_server = False
+            raise Disconnect()
 
     # noinspection PyMethodMayBeStatic
     def on_disconnect(self, connection: irc.client.ServerConnection, event: irc.client.Event) -> None:
@@ -161,13 +194,3 @@ class BaseIrclient(irc.client.SimpleIRCClient, ConnectionStates, Variables):
         :return:           None
         """
         raise Banned()
-
-    @staticmethod
-    def generate_random_username(length: int = 10) -> str:
-        """
-        Generates a random username of given length
-
-        :param length: The length of the username
-        :return:       The random username
-        """
-        return "".join(random.choice(string.ascii_uppercase) for _ in range(length))

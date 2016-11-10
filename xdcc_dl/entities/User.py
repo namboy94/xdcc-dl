@@ -22,22 +22,41 @@ This file is part of xdcc_dl.
 LICENSE
 """
 
+# imports
+import random
+import string
+
 
 class User(object):
     """
     Models an IRC user
     """
 
-    def __init__(self, username: str) -> None:
+    def __init__(self, username: str = "random") -> None:
         """
         Initializes the User
 
-        :param username: teh user's username
+        :param username: the user's username. If left empty, or the string 'random' is passed, a random
+                         username consisting only of ASCII characters will be generated as the username
+                         An empty string will also result in a random username
         """
-        self.username = username
+        if username == "random" or username == "":
+            self.username = self.generate_random_username()
+        else:
+            self.username = username
 
     def get_name(self) -> str:
         """
         :return: The user's username
         """
         return self.username
+
+    @staticmethod
+    def generate_random_username(length: int = 10) -> str:
+        """
+        Generates a random username of given length
+
+        :param length: The length of the username
+        :return:       The random username
+        """
+        return "".join(random.choice(string.ascii_uppercase) for _ in range(length))

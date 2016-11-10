@@ -37,6 +37,10 @@ def find_ixirc_packs(search_phrase: str) -> List[XDCCPack]:
     :param search_phrase: The search phrase to search for
     :return:              The list of found XDCC Packs
     """
+
+    if not search_phrase:
+        return []
+
     # ixIRC.com replaces spaces with + symbols for search query URLs
     split_search_term = search_phrase.split(" ")
     prepared_search_term = split_search_term[0]

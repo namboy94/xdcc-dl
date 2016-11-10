@@ -29,8 +29,8 @@ from xdcc_dl.entities.XDCCPack import XDCCPack
 from xdcc_dl.entities.Progress import Progress
 from xdcc_dl.xdcc.layers.irc.BaseIrcClient import NetworkError
 from xdcc_dl.xdcc.layers.irc.BotFinder import BotNotFoundException
-from xdcc_dl.xdcc.layers.xdcc.XDCCInitiator import AlreadyDownloaded
-from xdcc_dl.xdcc.layers.xdcc.DownloadHandler import DownloadHandler, IncompleteDownload
+from xdcc_dl.xdcc.layers.xdcc.XDCCInitiator import IncorrectFileSentException
+from xdcc_dl.xdcc.layers.xdcc.DownloadHandler import DownloadHandler, AlreadyDownloaded
 
 
 class XDCCDownloader(DownloadHandler):
@@ -50,8 +50,9 @@ class XDCCDownloader(DownloadHandler):
                          "OK":           Download was successful
                          "BOTNOTFOUND":  Bot was not found
                          "NETWORKERROR": Download failed due to network error
-                         "INCOMPLETE":   Download was incomplete
+                         "INCORRECT":    Sent file was not the correct file
                          "EXISTED":      File already existed and was completely downloaded
+                         "OTHERSERVER":  If a pack was found that is hosted on a different server
         """
         self.progress = progress if progress is not None else Progress(len(packs))
         self.pack_queue = packs
@@ -60,21 +61,28 @@ class XDCCDownloader(DownloadHandler):
         while len(self.pack_queue) > 0:
 
             self.current_pack = self.pack_queue.pop(0)
+
+            if self.current_pack.get_server().get_address() != self.server.get_address():
+                self.pack_states[self.current_pack] = "OTHERSERVER"
+                continue
+
             status_code = "OK"
 
             try:
                 self.start()
             except BotNotFoundException:
                 status_code = "BOTNOTFOUND"
-            except IncompleteDownload:
-                status_code = "INCOMPLETE"
             except AlreadyDownloaded:
                 status_code = "EXISTED"
+            except IncorrectFileSentException:
+                status_code = "INCORRECT"
             except NetworkError:
                 status_code = "NETWORKERROR"
 
             self.pack_states[self.current_pack] = status_code
             self.reset_connection_state()
             self.progress.next_file()
+
+        self.quit()
 
         return self.pack_states

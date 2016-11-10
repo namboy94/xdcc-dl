@@ -32,9 +32,9 @@ from xdcc_dl.logging.LoggingTypes import LoggingTypes as LOG
 from xdcc_dl.xdcc.layers.xdcc.MessageSender import MessageSender
 
 
-class AlreadyDownloaded(Exception):
+class IncorrectFileSentException(Exception):
     """
-    Gets thrown if a file already exists with size >= download size
+    Gets raised whenever the bot sends the incorrect, or at least not-predicted file
     """
     pass
 
@@ -65,6 +65,8 @@ class XDCCInitiator(MessageSender):
             self.dcc_send_handler(payload, connection)
         elif payload[0] == "ACCEPT":
             self.dcc_accept_handler(payload, connection)
+        else:  # pragma: no cover
+            return
 
     def dcc_send_handler(self, ctcp_arguments: List[str], connection: irc.client.ServerConnection) -> None:
         """
@@ -78,6 +80,10 @@ class XDCCInitiator(MessageSender):
         self.logger.log("Handling DCC SEND Handshake", LOG.DCC_SEND_HANDSHAKE)
 
         filename = ctcp_arguments[1]
+        if not self.current_pack.is_filename_valid(filename):
+            self.logger.log("Incorrect file sent", LOG.INCORRECT_FILE)
+            raise IncorrectFileSentException()
+
         self.peer_address = irc.client.ip_numstr_to_quad(ctcp_arguments[2])
         self.peer_port = int(ctcp_arguments[3])
         self.filesize = int(ctcp_arguments[4])
@@ -91,8 +97,9 @@ class XDCCInitiator(MessageSender):
 
             if position >= self.filesize:
 
-                self.logger.log("File already completely downloaded.", LOG.DOWNLOAD_WAS_DONE)
-                raise AlreadyDownloaded()
+                self.logger.log("File already completely downloaded. Aborting", LOG.DOWNLOAD_WAS_DONE)
+                self.already_downloaded = True
+                self.dcc_connection = self.dcc_connect(self.peer_address, self.peer_port, "raw")
 
             else:
 
@@ -142,13 +149,14 @@ class XDCCInitiator(MessageSender):
         :param event:      the IRC event
         :return:           None
         """
-        super().on_privnotice(connection, event)
         try:
             if "You already requested that pack" in event.arguments[0]:
                 self.logger.log("Pack already requested, waiting for next Ping", LOG.ALREADY_REQUESTED)
                 self.already_requested = True
-            if "You will have to re-send that, to the bot that transferred the file." in event.arguments[0]:
+            elif "You will have to re-send that, to the bot that transferred the file." in event.arguments[0]:
                 connection.privmsg(self.current_pack.get_bot(), self.current_pack.get_request_message())
+            else:
+                super().on_privnotice(connection, event)
         except IndexError:
             pass
 

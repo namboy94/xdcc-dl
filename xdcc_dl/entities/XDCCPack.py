@@ -52,6 +52,19 @@ class XDCCPack(object):
         self.filename = ""
         self.size = 0
 
+        self.original_filename = ""
+
+    def is_filename_valid(self, filename: str) -> bool:
+        """
+        Checks if a filename is the same as the original filename, if one was set previously.
+        This is used internally by the IRC Bot to check if a file that was offered to the bot actually matches
+        the file we want to download.
+
+        :param filename: The file name to check
+        :return:         True, if the names match, or no original filename was set, otherwise False
+        """
+        return filename == self.original_filename if self.original_filename != "" else True
+
     def set_filename(self, filename: str, override: bool = False) -> None:
         """
         Sets the filename (or only the file extension) of the target file
@@ -67,6 +80,17 @@ class XDCCPack(object):
 
         if not self.filename or override:
             self.filename = filename
+
+    def set_original_filename(self, filename: str) -> None:
+        """
+        Sets the 'original' filename, a.k.a the name of the actual file to download.
+        This is a method that should only be used by the pack searchers to add filename checks
+        during the download.
+
+        :param filename: The original filename as found by the PackSearcher
+        :return:         None
+        """
+        self.original_filename = filename
 
     def set_directory(self, directory: str) -> None:
         """
@@ -154,8 +178,14 @@ def xdcc_packs_from_xdcc_message(xdcc_message: str,
         packnumbers = xdcc_message.rsplit("#", 1)[1]
         start, end = packnumbers.split("-")
 
+        try:
+            step = int(end.split(",")[1])
+            end = end.split(",")[0]
+        except (IndexError, ValueError):
+            step = 1
+
         packs = []
-        for pack in range(int(start), int(end) + 1):
+        for pack in range(int(start), int(end) + 1, step):
             xdcc_pack = XDCCPack(IrcServer(server), bot, pack)
             xdcc_pack.set_directory(destination_directory)
             packs.append(xdcc_pack)

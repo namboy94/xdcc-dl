@@ -28,7 +28,7 @@ notably by the setup.py file
 """
 
 
-class GitRepository:
+class GitRepository:  # pragma: no cover
     """
     Class that stores information about the git repository sites used by this project
     """
@@ -64,7 +64,7 @@ class GitRepository:
     """
 
 
-class General:
+class General:  # pragma: no cover
     """
     Class that stores general information about a project
     """
@@ -74,7 +74,7 @@ class General:
     A short description of the project
     """
 
-    version_number = "0.3.0"
+    version_number = "0.4.0"
     """
     The current version of the program.
     """
@@ -105,7 +105,7 @@ class General:
     """
 
 
-class PypiVariables:
+class PypiVariables:  # pragma: no cover
     """
     Variables used for distributing with setuptools to the python package index
     """
@@ -127,7 +127,7 @@ class PypiVariables:
     The list trove classifiers applicable to this project
     """
 
-    install_requires = ["raven", "irc", "bs4", "requests"]
+    install_requires = ["raven", "irc", "bs4", "requests", "cfscrape"]
     """
     Python Packaging Index dependencies
     """
@@ -174,7 +174,7 @@ class PypiVariables:
     """
 
 
-class SentryLogger:
+class SentryLogger:  # pragma: no cover
     """
     Class that handles the sentry logger initialization
     """

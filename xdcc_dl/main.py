@@ -24,8 +24,7 @@ LICENSE
 
 # imports
 import os
-import string
-import random
+import sys
 import argparse
 from xdcc_dl.metadata import SentryLogger
 from xdcc_dl.xdcc.XDCCDownloader import XDCCDownloader
@@ -42,7 +41,7 @@ def main() -> None:
 
         parser = argparse.ArgumentParser()
         parser.add_argument("-m", "--message",
-                            help="An XDCC Message")
+                            help="An XDCC Message. Supports ranges (1-100) and also ranges with steps (1-100,2)")
         parser.add_argument("-s", "--server",
                             help="Specifies the IRC Server. Defaults to irc.rizon.net")
         parser.add_argument("-d", "--destination",
@@ -59,7 +58,7 @@ def main() -> None:
 
             destination = os.getcwd() if not args.destination else args.destination
             server = "irc.rizon.net" if not args.server else args.server
-            user = generate_random_username() if not args.username else args.username
+            user = "random" if not args.username else args.username
             verbosity = 1 if not args.verbosity else int(args.verbosity)
 
             packs = xdcc_packs_from_xdcc_message(args.message, destination, server)
@@ -70,28 +69,19 @@ def main() -> None:
             for result in results:
                 print(result.get_filepath().ljust(max_length) + " - " + results[result])
 
-        elif args.gui:
+        elif args.gui:  # pragma: no cover
             print("Gui Not yet implemented")
 
         else:
             print("No arguments passed. See --help for more details")
+            sys.exit(0)
 
     except KeyboardInterrupt:
         print("Thanks for using xdcc-downloader!")
-    except Exception as e:
+    except Exception as e:  # pragma: no cover
         SentryLogger.sentry.captureException()
         raise e
 
 
-def generate_random_username(length: int = 10) -> str:
-    """
-    Generates a random username of given length
-
-    :param length: The length of the username
-    :return:       The random username
-    """
-    return "".join(random.choice(string.ascii_uppercase) for _ in range(length))
-
-
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     main()
