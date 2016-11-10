@@ -28,13 +28,19 @@ import time
 from threading import Thread
 from xdcc_dl.pack_searchers.PackSearcher import PackSearcher
 from xdcc_dl.gui.pyuic.xdcc_downloader import Ui_XDCCDownloaderWindow
-from PyQt5.QtWidgets import QMainWindow, QApplication, QTreeWidgetItem
+from PyQt5.QtWidgets import QMainWindow, QApplication, QTreeWidgetItem, QPushButton
+from PyQt5.QtCore import pyqtSignal, Qt
 
 
-class XDCCDownloaderGui(QMainWindow, Ui_XDCCDownloaderWindow):
+
+class XDCCDownloaderGui(QMainWindow, Ui_XDCCDownloaderWindow):  # pragma: no cover
     """
     Class that models a QT GUI for the XDCC Downloader
     """
+
+    spinner_start_signal = pyqtSignal(str, name="spinner_start")
+    spinner_updater_signal = pyqtSignal(QPushButton, str, name="spinner_updater")
+    refresh_search_results_signal = pyqtSignal(str, name="refresh_search_results")
 
     def __init__(self, parent: QMainWindow = None) -> None:
         """
@@ -45,10 +51,18 @@ class XDCCDownloaderGui(QMainWindow, Ui_XDCCDownloaderWindow):
         super().__init__(parent)
         self.setupUi(self)
 
+        header = self.search_result_tree_widget.header()
+        header.hideSection(header.logicalIndex(header.visualIndex(0)))
+
+        self.spinner_start_signal.connect(lambda x: self.start_spinner(x))
+        self.spinner_updater_signal.connect(lambda x, y: self.update_spinner(x, y))
+        self.refresh_search_results_signal.connect(self.refresh_search_results)
+
         self.searching = False
         self.downloading = False
 
         self.search_results = []
+        self.download_queue = []
 
         for searcher in ["All"] + PackSearcher.get_available_pack_searchers():
             self.search_engine_combo_box.addItem(searcher)
@@ -57,14 +71,8 @@ class XDCCDownloaderGui(QMainWindow, Ui_XDCCDownloaderWindow):
         self.download_button.clicked.connect(self.download)
         self.add_button.clicked.connect(self.add_pack)
 
-        # UI Updaters
-        self.search_button.windowTitleChanged.connect(self.refresh_search_results)
-        self.search_button.customContextMenuRequested.connect(lambda: self.start_spinner(search=True))
-        self.download_button.windowTitleChanged.connect(self.cleanup_download_queue)
-        self.download_button.customContextMenuRequested.connect(lambda: self.start_spinner(download=True))
-
-        self.up_arrow_button.clicked.connect(lambda: self.move(1))
-        self.down_arrow_button.clicked.connect(lambda: self.move(-1))
+        self.up_arrow_button.clicked.connect(lambda: self.move_pack(1))
+        self.down_arrow_button.clicked.connect(lambda: self.move_pack(-1))
         self.left_arrow_button.clicked.connect(self.remove_packs)
         self.rigth_arrow_button.clicked.connect(self.add_packs)
 
@@ -86,9 +94,9 @@ class XDCCDownloaderGui(QMainWindow, Ui_XDCCDownloaderWindow):
 
             def search_thread():
 
-                self.search_button.customContextMenuRequested.emit()
+                self.spinner_start_signal.emit("search")
                 self.search_results = searcher.search(search_term)
-                self.search_button.windowTitleChanged.emit()
+                self.refresh_search_results_signal.emit("")
                 self.searching = False
 
             Thread(target=search_thread).start()
@@ -100,31 +108,131 @@ class XDCCDownloaderGui(QMainWindow, Ui_XDCCDownloaderWindow):
         :return: None
         """
         self.search_result_tree_widget.clear()
-        for result in self.search_results:
-            column = [result.get_bot(), str(result.get_pack_number()), result.get_size(), result.get_filename()]
+        self.search_results.sort(key=lambda x: x.get_bot())
+
+        for i, result in enumerate(self.search_results):
+            column = [str(i),
+                      result.get_bot(), str(result.get_packnumber()), str(result.get_size()), result.get_filename()]
             self.search_result_tree_widget.addTopLevelItem(QTreeWidgetItem(column))
 
-    def start_spinner(self, search: bool = False, download: bool = False) -> None:
+        self.search_result_tree_widget.sortByColumn(1, Qt.AscendingOrder)
+
+    def start_spinner(self, spinner_type: str) -> None:
         """
         Starts a spinner animation while either searching or downloading
 
-        :param search:   Starts the search spinner if set
-        :param download: Starts the download spinner if set
+        :param spinner_type: The type of spinner (a string that's either 'download' or 'search')
         :return:         None
         """
+        def spin():
 
-        while self.searching or self.downloading:
+            search = spinner_type == "search"
+            download = spinner_type == "download"
 
-            if self.searching and search:
-                self.search_button.setText("Searching" + (self.search_button.text().count(".") % 3 + 1) * ".")
+            while self.searching or self.downloading:
 
-            if self.downloading and download:
-                self.download_button.setText("Searching" + (self.download_button.text().count(".") % 3 + 1) * ".")
+                if self.searching and search:
+                    new_text = "Searching" + (self.search_button.text().count(".") % 3 + 1) * "."
+                    self.spinner_updater_signal.emit(self.search_button, new_text)
 
-            time.sleep(0.3)
+                if self.downloading and download:
+                    new_text = "Downloading" + (self.download_button.text().count(".") % 3 + 1) * "."
+                    self.spinner_updater_signal.emit(self.download_button, new_text)
+
+                time.sleep(0.3)
+
+            if search and not self.searching:
+                self.search_button.setText("Search")
+            if download and not self.downloading:
+                self.search_button.setText("Download")
+
+        Thread(target=spin).start()
+
+    # noinspection PyMethodMayBeStatic
+    def update_spinner(self, widget: QPushButton, text: str) -> None:
+        """
+        Sets the text of the given spinner button
+
+        :param widget: The button to change the text of
+        :param text:   The text to display
+        :return:       None
+        """
+        widget.setText(text)
+
+    def add_packs(self):
+        """
+        Adds selected packs from the search results tree widget to the download queue
+
+        :return: None
+        """
+
+        for item in self.search_result_tree_widget.selectedItems():
+            print(item.text(4))
+            self.download_queue.append(self.search_results[int(item[0])])
+
+        self.refresh_download_queue()
+
+    def remove_packs(self):
+        """
+        Removes the currently selected Packs from the download queue
+
+        :return: None
+        """
+
+        for item in self.download_queue_list_widget.selectedIndexes():
+            self.download_queue_list_widget.pop(item.row())
+
+        self.refresh_download_queue()
+
+    def add_to_queue(self) -> None:
+        """
+        Add the currently selected items in the search result list to the download queue
+
+        :return: None
+        """
+        for index, row in enumerate(self.search_result_tree_widget.selectedIndexes()):
+            if index % 5 != 0:
+                continue
+
+            self.search_result_tree_widget.selectedItems()
+
+            self.download_queue_list.append(self.search_results[row.row()])
+            self.refresh_download_queue()
+
+        self.search_result_list.clearSelection()
+
+    def remove_from_queue(self) -> None:
+        """
+        Removes all selected elements from the Download Queue
+
+        :return: None
+        """
+        for row in reversed(self.download_queue_list_widget.selectedIndexes()):
+            self.download_queue.pop(row.row())
+        self.refresh_download_queue()
+
+    def refresh_download_queue(self):
+        """
+        Reloads all elements currently in the download queue
+
+        :return: None
+        """
+        self.download_queue_list_widget.clear()
+        for pack in self.download_queue:
+            self.download_queue_list_widget.addItem(pack.get_request_message(full=True))
 
 
-def start():
+    def download(self):
+        pass
+    def cleanup_download_queue(self):
+        pass
+    def add_pack(self):
+        pass
+    def move_pack(self, direction: int):
+        pass
+
+
+def start():  # pragma: no cover
     """
     Starts the Start Page GUI
 

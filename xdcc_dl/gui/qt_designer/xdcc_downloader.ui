@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>967</width>
+    <width>928</width>
     <height>543</height>
    </rect>
   </property>
@@ -15,6 +15,16 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
+    <item row="7" column="5">
+     <widget class="QPushButton" name="search_button">
+      <property name="toolTip">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Start the search&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+      <property name="text">
+       <string>Search</string>
+      </property>
+     </widget>
+    </item>
     <item row="11" column="9" colspan="2">
      <widget class="QProgressBar" name="total_progress_bar">
       <property name="value">
@@ -97,22 +107,6 @@
       </property>
      </widget>
     </item>
-    <item row="5" column="7">
-     <widget class="QPushButton" name="left_arrow_button">
-      <property name="maximumSize">
-       <size>
-        <width>80</width>
-        <height>16777215</height>
-       </size>
-      </property>
-      <property name="toolTip">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Remove items from queue&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-      </property>
-      <property name="text">
-       <string>◄</string>
-      </property>
-     </widget>
-    </item>
     <item row="0" column="6" colspan="4">
      <widget class="QLabel" name="label_2">
       <property name="sizePolicy">
@@ -135,8 +129,15 @@
       </property>
      </widget>
     </item>
+    <item row="10" column="9" colspan="2">
+     <widget class="QProgressBar" name="single_progress_bar">
+      <property name="value">
+       <number>24</number>
+      </property>
+     </widget>
+    </item>
     <item row="3" column="9" rowspan="4" colspan="2">
-     <widget class="QListWidget" name="doqnload_queue_list_widget">
+     <widget class="QListWidget" name="download_queue_list_widget">
       <property name="sizePolicy">
        <sizepolicy hsizetype="MinimumExpanding" vsizetype="Expanding">
         <horstretch>0</horstretch>
@@ -166,29 +167,6 @@
       </property>
      </widget>
     </item>
-    <item row="4" column="7">
-     <widget class="QPushButton" name="rigth_arrow_button">
-      <property name="maximumSize">
-       <size>
-        <width>80</width>
-        <height>16777215</height>
-       </size>
-      </property>
-      <property name="toolTip">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Add packs to queue&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-      </property>
-      <property name="text">
-       <string>►</string>
-      </property>
-     </widget>
-    </item>
-    <item row="10" column="9" colspan="2">
-     <widget class="QProgressBar" name="single_progress_bar">
-      <property name="value">
-       <number>24</number>
-      </property>
-     </widget>
-    </item>
     <item row="1" column="6" colspan="4">
      <widget class="QLineEdit" name="server_edit">
       <property name="maximumSize">
@@ -199,13 +177,25 @@
       </property>
      </widget>
     </item>
-    <item row="7" column="5">
-     <widget class="QPushButton" name="search_button">
+    <item row="4" column="7">
+     <widget class="QPushButton" name="rigth_arrow_button">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>40</width>
+        <height>16777215</height>
+       </size>
+      </property>
       <property name="toolTip">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Start the search&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Add packs to queue&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
       <property name="text">
-       <string>Search</string>
+       <string>►</string>
       </property>
      </widget>
     </item>
@@ -254,6 +244,16 @@
       </property>
      </widget>
     </item>
+    <item row="10" column="1" colspan="4">
+     <widget class="QLineEdit" name="destination_edit">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+        <horstretch>100</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+     </widget>
+    </item>
     <item row="6" column="7">
      <spacer name="verticalSpacer_4">
       <property name="orientation">
@@ -283,16 +283,6 @@
       </property>
       <property name="text">
        <string>Add</string>
-      </property>
-     </widget>
-    </item>
-    <item row="10" column="1" colspan="4">
-     <widget class="QLineEdit" name="destination_edit">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-        <horstretch>100</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
       </property>
      </widget>
     </item>
@@ -328,6 +318,13 @@
       </property>
      </spacer>
     </item>
+    <item row="7" column="0" colspan="4">
+     <widget class="QLineEdit" name="search_term_edit">
+      <property name="toolTip">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Enter the search term here&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+     </widget>
+    </item>
     <item row="7" column="9">
      <widget class="QPushButton" name="up_arrow_button">
       <property name="toolTip">
@@ -335,6 +332,44 @@
       </property>
       <property name="text">
        <string>▲</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="6" rowspan="4">
+     <spacer name="horizontalSpacer_2">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeType">
+       <enum>QSizePolicy::Fixed</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>20</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item row="5" column="7">
+     <widget class="QPushButton" name="left_arrow_button">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>40</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="toolTip">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Remove items from queue&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+      <property name="text">
+       <string>◄</string>
       </property>
      </widget>
     </item>
@@ -373,6 +408,14 @@
       <property name="selectionMode">
        <enum>QAbstractItemView::ExtendedSelection</enum>
       </property>
+      <property name="sortingEnabled">
+       <bool>true</bool>
+      </property>
+      <column>
+       <property name="text">
+        <string>Index</string>
+       </property>
+      </column>
       <column>
        <property name="text">
         <string>Bot</string>
@@ -395,37 +438,14 @@
       </column>
      </widget>
     </item>
-    <item row="3" column="6" rowspan="4">
-     <spacer name="horizontalSpacer_2">
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
-      </property>
-      <property name="sizeType">
-       <enum>QSizePolicy::Fixed</enum>
-      </property>
-      <property name="sizeHint" stdset="0">
-       <size>
-        <width>20</width>
-        <height>20</height>
-       </size>
-      </property>
-     </spacer>
-    </item>
-    <item row="7" column="0" colspan="4">
-     <widget class="QLineEdit" name="search_term_edit">
-      <property name="toolTip">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Enter the search term here&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-      </property>
-     </widget>
-    </item>
-    <item row="10" column="7" colspan="2">
+    <item row="10" column="6" colspan="3">
      <widget class="QLabel" name="label_4">
       <property name="text">
        <string>Single Progress</string>
       </property>
      </widget>
     </item>
-    <item row="11" column="7" colspan="2">
+    <item row="11" column="6" colspan="3">
      <widget class="QLabel" name="label_5">
       <property name="text">
        <string>Total Progress</string>
