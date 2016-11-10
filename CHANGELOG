@@ -3,6 +3,7 @@ V 0.4.0:
   - Added test coverage report
   - Directly implemented random username generation in the User class
   - Implemented pack skipping
+  - Implemented Horriblesubs Pack Searcher using cfscrape
 V 0.3.0:
   - Enhanced the Progress structure with callbacks and calculations
   - Fixed order issues
