@@ -28,6 +28,7 @@ from xdcc_dl.entities.XDCCPack import XDCCPack
 from xdcc_dl.pack_searchers.procedures.nibl import find_nibl_packs
 from xdcc_dl.pack_searchers.procedures.ixirc import find_ixirc_packs
 from xdcc_dl.pack_searchers.procedures.namibsun import find_namibsun_packs
+from xdcc_dl.pack_searchers.procedures.horriblesubs import find_horriblesubs_packs
 from xdcc_dl.pack_searchers.procedures.intel_haruhichan import find_intel_haruhichan_packs
 
 
@@ -39,6 +40,7 @@ class PackSearcher(object):
     procedure_map = {"nibl": find_nibl_packs,
                      "ixirc": find_ixirc_packs,
                      "namibsun": find_namibsun_packs,
+                     "horriblesubs": find_horriblesubs_packs,
                      "intel_haruhichan": find_intel_haruhichan_packs}
 
     @staticmethod
