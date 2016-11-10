@@ -68,6 +68,7 @@ install_on_windows:
   stage: install
   only:
     - master
+    - develop
   tags:
     - windows
     - python
