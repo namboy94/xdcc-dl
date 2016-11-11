@@ -85,6 +85,10 @@ class UnitTests(unittest.TestCase):
         self.assertTrue(self.pack.is_filename_valid("the_original"))
         self.assertFalse(self.pack.is_filename_valid("not_the_original"))
 
+    def test_request_message(self):
+        self.assertEqual(self.pack.get_request_message(), "xdcc send #1")
+        self.assertEqual(self.pack.get_request_message(full=True), "/msg xdcc_servbot xdcc send #1")
+
     def test_generating_from_xdcc_message_single(self):
 
         packs = xdcc_packs_from_xdcc_message("/msg xdcc_servbot xdcc send #1", "testdir", "irc.namibsun.net")
@@ -116,3 +120,8 @@ class UnitTests(unittest.TestCase):
         for pack in packs:
             self.assertEqual(pack.get_packnumber(), i)
             i += 2
+
+    def test_generating_invalid_xdcc_message(self):
+
+        packs = xdcc_packs_from_xdcc_message("randomnonesense")
+        self.assertEqual(len(packs), 0)
