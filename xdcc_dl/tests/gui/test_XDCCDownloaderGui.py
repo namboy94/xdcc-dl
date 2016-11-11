@@ -30,19 +30,12 @@ try:
 except ImportError:
     Qt = QTest = XDCCDownloaderGui = QApplication = None
 
-
 import os
 import sys
 import time
 import unittest
 from xdcc_dl.entities.XDCCPack import XDCCPack
 from xdcc_dl.entities.IrcServer import IrcServer
-
-
-class ExtendedXDCCDownloaderGui(XDCCDownloaderGui):
-
-    def __init__(self, parent=None):
-        super().__init__(parent)
 
 
 class UnitTests(unittest.TestCase):
@@ -58,7 +51,7 @@ class UnitTests(unittest.TestCase):
 
     def setUp(self):
         sys.argv = [sys.argv[0], "-platform", "minimal"]
-        self.form = ExtendedXDCCDownloaderGui()
+        self.form = XDCCDownloaderGui()
 
     def tearDown(self):
         self.form.downloading = False
