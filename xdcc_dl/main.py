@@ -28,8 +28,12 @@ import sys
 import argparse
 from xdcc_dl.metadata import SentryLogger
 from xdcc_dl.xdcc.XDCCDownloader import XDCCDownloader
-from xdcc_dl.gui.XDCCDownloaderGui import start as start_gui
 from xdcc_dl.entities.XDCCPack import xdcc_packs_from_xdcc_message
+
+try:
+    from xdcc_dl.gui.XDCCDownloaderGui import start as start_gui
+except ImportError:
+    start_gui = None
 
 
 def main() -> None:
@@ -71,7 +75,10 @@ def main() -> None:
                 print(result.get_filepath().ljust(max_length) + " - " + results[result])
 
         elif args.gui:  # pragma: no cover
-            start_gui()
+            if start_gui is not None:
+                start_gui()
+            else:
+                print("Error: PyQt5 not installed")
 
         else:
             print("No arguments passed. See --help for more details")
