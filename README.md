@@ -77,6 +77,15 @@ By supplying this message as the ```-m``` parameter, the pack can be downloaded.
     # verbosity parameter as a number between 0 and 6:
     $ xdcc_dl -m "/msg the_bot xdcc send #1" --verbosity 3
     
+### GUI
+
+By calling the program with the ```-g``` flag (or without arguments on Windows)
+a graphical user interface is started. It offers searching for packs using various
+web scrapers or adding packs manually like with the CLI, adding these packs
+to a download queue and then downloading these queued packs.
+
+![Screenshot](xdcc_dl/resources/screenshots/opm_example.png)
+    
 
 ### As a library:
 

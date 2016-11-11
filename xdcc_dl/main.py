@@ -85,4 +85,7 @@ def main() -> None:
 
 
 if __name__ == "__main__":  # pragma: no cover
+
+    if sys.platform == "win32" and len(sys.argv) == 1:
+        sys.argv.append("-g")
     main()
