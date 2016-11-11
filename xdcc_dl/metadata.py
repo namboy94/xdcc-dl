@@ -127,7 +127,7 @@ class PypiVariables:  # pragma: no cover
     The list trove classifiers applicable to this project
     """
 
-    install_requires = ["raven", "irc", "bs4", "requests", "cfscrape"]
+    install_requires = ["raven", "irc", "bs4", "requests", "cfscrape", "urwid"]
     """
     Python Packaging Index dependencies
     """
