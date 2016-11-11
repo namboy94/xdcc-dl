@@ -43,6 +43,7 @@ class UnitTests(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
+        sys.argv = [sys.argv[0], "-platform", "minimal"]
         cls.app = QApplication(sys.argv)
 
     def setUp(self):
@@ -65,7 +66,9 @@ class UnitTests(unittest.TestCase):
         self.form.search_term_edit.setText("1_test.txt")
         self.assertEqual(self.form.search_term_edit.text(), "1_test.txt")
         self.form.search_engine_combo_box.setCurrentText("namibsun")
+        self.assertEqual(self.form.search_engine_combo_box.currentText(), "namibsun")
         QTest.mouseClick(self.form.search_button, Qt.LeftButton)
+        self.form.spinner_start_signal.emit("search")
 
         while self.form.searching:
             pass
@@ -114,6 +117,7 @@ class UnitTests(unittest.TestCase):
 
         self.assertEqual(self.form.destination_edit.text(), os.getcwd())
         QTest.mouseClick(self.form.download_button, Qt.LeftButton)
+        self.form.spinner_start_signal.emit("download")
 
         while self.form.downloading:
             pass
@@ -121,3 +125,27 @@ class UnitTests(unittest.TestCase):
         self.assertTrue(os.path.isfile("1_test.txt"))
         self.assertTrue(os.path.isfile("2_test.txt"))
         self.assertTrue(os.path.isfile("3_test.txt"))
+
+    def test_search_while_searching(self):
+
+        self.form.search_term_edit.setText("1_test.txt")
+        self.assertEqual(self.form.search_term_edit.text(), "1_test.txt")
+        self.form.search_engine_combo_box.setCurrentText("All")
+        self.assertEqual(self.form.search_engine_combo_box.currentText(), "All")
+
+        QTest.mouseClick(self.form.search_button, Qt.LeftButton)
+
+        self.form.search_term_edit.setText("2_test.txt")
+        self.assertEqual(self.form.search_term_edit.text(), "2_test.txt")
+        self.form.search_engine_combo_box.setCurrentText("namibsun")
+        self.assertEqual(self.form.search_engine_combo_box.currentText(), "namibsun")
+
+        while self.form.searching:
+            pass
+
+        self.form.refresh_search_results()
+        self.form.search_result_tree_widget.selectAll()
+
+        self.assertEqual(1, len(self.form.search_results))
+        self.assertEqual(self.form.search_results[0].get_bot(), "xdcc_servbot")
+        self.assertEqual(1, self.form.search_result_tree_widget.invisibleRootItem().childCount())
