@@ -25,6 +25,7 @@ LICENSE
 # imports
 import os
 import sys
+import time
 import unittest
 from PyQt5.QtCore import Qt
 from PyQt5.QtTest import QTest
@@ -45,11 +46,16 @@ class UnitTests(unittest.TestCase):
     def setUpClass(cls):
         sys.argv = [sys.argv[0], "-platform", "minimal"]
         cls.app = QApplication(sys.argv)
+        if sys.version_info[0] < 3:
+            raise unittest.SkipTest("Skipping on python 2")
 
     def setUp(self):
+        sys.argv = [sys.argv[0], "-platform", "minimal"]
         self.form = ExtendedXDCCDownloaderGui()
 
     def tearDown(self):
+        self.form.downloading = False
+        self.form.searching = False
         self.form.destroy()
         if os.path.isfile("1_test.txt"):
             os.remove("1_test.txt")
@@ -68,7 +74,6 @@ class UnitTests(unittest.TestCase):
         self.form.search_engine_combo_box.setCurrentText("namibsun")
         self.assertEqual(self.form.search_engine_combo_box.currentText(), "namibsun")
         QTest.mouseClick(self.form.search_button, Qt.LeftButton)
-        self.form.spinner_start_signal.emit("search")
 
         while self.form.searching:
             pass
@@ -117,7 +122,6 @@ class UnitTests(unittest.TestCase):
 
         self.assertEqual(self.form.destination_edit.text(), os.getcwd())
         QTest.mouseClick(self.form.download_button, Qt.LeftButton)
-        self.form.spinner_start_signal.emit("download")
 
         while self.form.downloading:
             pass
@@ -125,6 +129,27 @@ class UnitTests(unittest.TestCase):
         self.assertTrue(os.path.isfile("1_test.txt"))
         self.assertTrue(os.path.isfile("2_test.txt"))
         self.assertTrue(os.path.isfile("3_test.txt"))
+        self.form.show_download_complete_message_signal.emit("")
+
+    def test_download_while_downloading(self):
+        self.form.download_queue = [XDCCPack(IrcServer("irc.namibsun.net"), "xdcc_servbot", 1),
+                                    XDCCPack(IrcServer("irc.namibsun.net"), "xdcc_servbot", 3)]
+        self.form.refresh_download_queue()
+        QTest.mouseClick(self.form.download_button, Qt.LeftButton)
+
+        time.sleep(0.5)
+
+        self.form.download_queue = [XDCCPack(IrcServer("irc.namibsun.net"), "xdcc_servbot", 2)]
+        self.form.refresh_download_queue()
+        QTest.mouseClick(self.form.download_button, Qt.LeftButton)
+
+        while self.form.downloading:
+            pass
+
+        self.assertTrue(os.path.isfile("1_test.txt"))
+        self.assertFalse(os.path.isfile("2_test.txt"))
+        self.assertTrue(os.path.isfile("3_test.txt"))
+        self.form.show_download_complete_message_signal.emit("")
 
     def test_search_while_searching(self):
 
@@ -140,6 +165,8 @@ class UnitTests(unittest.TestCase):
         self.form.search_engine_combo_box.setCurrentText("namibsun")
         self.assertEqual(self.form.search_engine_combo_box.currentText(), "namibsun")
 
+        QTest.mouseClick(self.form.search_button, Qt.LeftButton)
+
         while self.form.searching:
             pass
 
@@ -149,3 +176,60 @@ class UnitTests(unittest.TestCase):
         self.assertEqual(1, len(self.form.search_results))
         self.assertEqual(self.form.search_results[0].get_bot(), "xdcc_servbot")
         self.assertEqual(1, self.form.search_result_tree_widget.invisibleRootItem().childCount())
+
+    def test_spinner(self):
+        self.form.downloading = True
+        self.form.spinner_start_signal.emit("download")
+        self.form.searching = True
+        self.form.spinner_start_signal.emit("search")
+        time.sleep(1)
+        self.form.downloading = False
+        self.form.searching = False
+        time.sleep(1)
+
+    def test_spin_update(self):
+        self.assertEqual(self.form.download_button.text(), "Download")
+        self.form.spinner_updater_signal.emit(self.form.download_button, "NotDownload")
+        self.assertEqual(self.form.download_button.text(), "NotDownload")
+
+    def test_invalid_download_directory(self):
+        self.form.destination_edit.setText("")
+        QTest.mouseClick(self.form.download_button, Qt.LeftButton)
+
+    def test_move_selection_up_or_down(self):
+        self.form.download_queue = [XDCCPack(IrcServer("irc.namibsun.net"), "xdcc_servbot", 1),
+                                    XDCCPack(IrcServer("irc.namibsun.net"), "xdcc_servbot", 2),
+                                    XDCCPack(IrcServer("irc.namibsun.net"), "xdcc_servbot", 3)]
+        self.form.refresh_download_queue()
+
+        self.form.download_queue_list_widget.selectAll()
+        QTest.mouseClick(self.form.up_arrow_button, Qt.LeftButton)
+
+        self.form.download_queue_list_widget.selectAll()
+        QTest.mouseClick(self.form.down_arrow_button, Qt.LeftButton)
+
+        self.assertEqual(self.form.download_queue_list_widget.count(), 3)
+
+    def test_progress_update(self):
+        self.assertEqual(self.form.single_progress_bar.value(), 0.0)
+        self.assertEqual(self.form.total_progress_bar.value(), 0.0)
+        self.form.progress_update_signal.emit(50.0, 75.0)
+        self.assertEqual(self.form.single_progress_bar.value(), 50.0)
+        self.assertEqual(self.form.total_progress_bar.value(), 75.0)
+
+    def test_removing_queue_items(self):
+        self.form.download_queue = [XDCCPack(IrcServer("irc.namibsun.net"), "xdcc_servbot", 1),
+                                    XDCCPack(IrcServer("irc.namibsun.net"), "xdcc_servbot", 2),
+                                    XDCCPack(IrcServer("irc.namibsun.net"), "xdcc_servbot", 3)]
+        self.form.refresh_download_queue()
+        self.form.download_queue_list_widget.selectAll()
+
+        self.assertEqual(self.form.download_queue_list_widget.count(), 3)
+        self.assertEqual(len(self.form.download_queue), 3)
+        self.assertEqual(len(self.form.download_queue_list_widget.selectedIndexes()), 3)
+
+        QTest.mouseClick(self.form.left_arrow_button, Qt.LeftButton)
+
+        self.assertEqual(self.form.download_queue_list_widget.count(), 0)
+        self.assertEqual(len(self.form.download_queue), 0)
+        self.assertEqual(len(self.form.download_queue_list_widget.selectedIndexes()), 0)

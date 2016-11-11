@@ -93,7 +93,7 @@ class XDCCDownloaderGui(QMainWindow, Ui_XDCCDownloaderWindow):
         message = self.message_edit.text()
         server = self.server_edit.text()
 
-        self.download_queue.append(xdcc_packs_from_xdcc_message(message, server=server)[0])
+        self.download_queue += xdcc_packs_from_xdcc_message(message, server=server)
         self.refresh_download_queue()
 
     def search(self) -> None:
@@ -191,15 +191,18 @@ class XDCCDownloaderGui(QMainWindow, Ui_XDCCDownloaderWindow):
 
         self.refresh_download_queue()
 
-    def remove_packs_from_queue(self):
+    def remove_packs_from_queue(self) -> None:
         """
-        Removes the currently selected Packs from the download queue
+        Removes all selected elements from the Download Queue
 
         :return: None
         """
+        rows_to_pop = []
+        for row in self.download_queue_list_widget.selectedIndexes():
+            rows_to_pop.append(row.row())
 
-        for item in self.download_queue_list_widget.selectedIndexes():
-            self.download_queue.pop(item.row())
+        for row in reversed(sorted(rows_to_pop)):
+            self.download_queue.pop(row)
 
         self.refresh_download_queue()
 
@@ -226,16 +229,6 @@ class XDCCDownloaderGui(QMainWindow, Ui_XDCCDownloaderWindow):
 
         self.refresh_download_queue()
 
-    def remove_from_queue(self) -> None:
-        """
-        Removes all selected elements from the Download Queue
-
-        :return: None
-        """
-        for row in reversed(self.download_queue_list_widget.selectedIndexes()):
-            self.download_queue.pop(row.row())
-        self.refresh_download_queue()
-
     def refresh_download_queue(self):
         """
         Reloads all elements currently in the download queue
@@ -258,8 +251,11 @@ class XDCCDownloaderGui(QMainWindow, Ui_XDCCDownloaderWindow):
 
             if not os.path.isdir(directory):
 
-                self.generate_message(QMessageBox.Warning,
-                                      "Invalid Directory", "The entered directory is not valid", directory).exec_()
+                msg = self.generate_message(QMessageBox.Warning, "Invalid Directory",
+                                            "The entered directory is not valid", directory)
+
+                if not sys.argv == [sys.argv[0], "-platform", "minimal"]:  # pragma: no cover
+                    msg.exec_()
 
             else:
 
@@ -326,14 +322,15 @@ class XDCCDownloaderGui(QMainWindow, Ui_XDCCDownloaderWindow):
         :param details: A formatted list of packs
         :return:        None
         """
-
         msg = self.generate_message(QMessageBox.Information, "Download Complete",
                                     "The download has been completed", "List of downloaded packs:")
         msg.setDetailedText(details.rstrip().lstrip())
-        msg.exec_()
+
+        if not sys.argv == [sys.argv[0], "-platform", "minimal"]:  # pragma: no cover
+            msg.exec_()
 
 
-def start():
+def start():  # pragma: no cover
     """
     Starts the Start Page GUI
 
