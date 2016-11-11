@@ -45,6 +45,7 @@ class XDCCDownloaderGui(QMainWindow, Ui_XDCCDownloaderWindow):  # pragma: no cov
     spinner_updater_signal = pyqtSignal(QPushButton, str, name="spinner_updater")
     refresh_search_results_signal = pyqtSignal(str, name="refresh_search_results")
     refresh_download_queue_signal = pyqtSignal(str, name="refresh_download_queue")
+    show_download_complete_message_signal = pyqtSignal(str, name="show_download_complete_message")
     progress_update_signal = pyqtSignal(float, float, name="progress_update")
 
     def __init__(self, parent: QMainWindow = None) -> None:
@@ -63,6 +64,7 @@ class XDCCDownloaderGui(QMainWindow, Ui_XDCCDownloaderWindow):  # pragma: no cov
         self.spinner_updater_signal.connect(lambda x, y: self.update_spinner(x, y))
         self.refresh_search_results_signal.connect(self.refresh_search_results)
         self.refresh_download_queue_signal.connect(self.refresh_download_queue)
+        self.show_download_complete_message_signal.connect(self.show_download_complete_message)
         self.progress_update_signal.connect(self.progress_update)
 
         self.searching = False
@@ -73,10 +75,13 @@ class XDCCDownloaderGui(QMainWindow, Ui_XDCCDownloaderWindow):  # pragma: no cov
 
         for searcher in ["All"] + PackSearcher.get_available_pack_searchers():
             self.search_engine_combo_box.addItem(searcher)
+        self.destination_edit.setText(os.getcwd())
 
         self.search_button.clicked.connect(self.search)
         self.download_button.clicked.connect(self.download)
         self.add_button.clicked.connect(self.add_pack)
+
+        self.search_term_edit.returnPressed.connect(self.search)
 
         self.up_arrow_button.clicked.connect(lambda: self.move_packs(up=True))
         self.down_arrow_button.clicked.connect(lambda: self.move_packs(down=True))
@@ -159,7 +164,7 @@ class XDCCDownloaderGui(QMainWindow, Ui_XDCCDownloaderWindow):  # pragma: no cov
             if search and not self.searching:
                 self.search_button.setText("Search")
             if download and not self.downloading:
-                self.search_button.setText("Download")
+                self.download_button.setText("Download")
 
         Thread(target=spin).start()
 
@@ -194,7 +199,7 @@ class XDCCDownloaderGui(QMainWindow, Ui_XDCCDownloaderWindow):  # pragma: no cov
         """
 
         for item in self.download_queue_list_widget.selectedIndexes():
-            self.download_queue_list_widget.pop(item.row())
+            self.download_queue.pop(item.row())
 
         self.refresh_download_queue()
 
@@ -271,11 +276,17 @@ class XDCCDownloaderGui(QMainWindow, Ui_XDCCDownloaderWindow):  # pragma: no cov
                                             sin, tot))
 
                     self.spinner_start_signal.emit("download")
-                    MultipleServerDownloader("random").download(self.download_queue, progress)
+                    results = MultipleServerDownloader("random").download(self.download_queue, progress)
                     self.download_queue = []
                     self.refresh_download_queue_signal.emit("")
                     self.progress_update_signal.emit(0.0, 0.0)
                     self.downloading = False
+
+                    list_of_downloaded_packs = ""
+                    for result in results:
+                        list_of_downloaded_packs += result.get_filepath() + "\n"
+
+                    self.show_download_complete_message_signal.emit(list_of_downloaded_packs)
 
                 Thread(target=do_download).start()
 
@@ -308,6 +319,19 @@ class XDCCDownloaderGui(QMainWindow, Ui_XDCCDownloaderWindow):  # pragma: no cov
         msg.setInformativeText(detailed_text)
         msg.setStandardButtons(QMessageBox.Ok)
         return msg
+
+    def show_download_complete_message(self, details: str) -> None:
+        """
+        Message shown when the download has finished
+
+        :param details: A formatted list of packs
+        :return:        None
+        """
+
+        msg = self.generate_message(QMessageBox.Information, "Download Complete",
+                                    "The download has been completed", "List of downloaded packs:")
+        msg.setDetailedText(details.rstrip().lstrip())
+        msg.exec_()
 
 
 def start():  # pragma: no cover
