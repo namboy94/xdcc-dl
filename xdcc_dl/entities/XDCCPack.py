@@ -24,6 +24,7 @@ LICENSE
 
 # imports
 import os
+import re
 from typing import List
 from xdcc_dl.entities.IrcServer import IrcServer
 
@@ -170,6 +171,9 @@ def xdcc_packs_from_xdcc_message(xdcc_message: str,
     :param server:                 the server to use, defaults to irc.rizon.net for simplicity's sake
     :return:                       The generated XDCC Packs in a list
     """
+    if not re.search(r"^/msg [^ ]+ xdcc send #[0-9]+(-[0-9]+(,[0-9]+)?)?$", xdcc_message):
+        return []
+
     bot = xdcc_message.split("/msg ")[1].split(" ")[0]
 
     try:
