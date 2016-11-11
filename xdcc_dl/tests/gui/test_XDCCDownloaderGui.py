@@ -23,15 +23,20 @@ LICENSE
 """
 
 # imports
+try:
+    from PyQt5.QtCore import Qt
+    from PyQt5.QtTest import QTest
+    from xdcc_dl.gui.XDCCDownloaderGui import XDCCDownloaderGui, QApplication
+except ImportError:
+    Qt = QTest = XDCCDownloaderGui = QApplication = None
+
+
 import os
 import sys
 import time
 import unittest
-from PyQt5.QtCore import Qt
-from PyQt5.QtTest import QTest
 from xdcc_dl.entities.XDCCPack import XDCCPack
 from xdcc_dl.entities.IrcServer import IrcServer
-from xdcc_dl.gui.XDCCDownloaderGui import XDCCDownloaderGui, QApplication
 
 
 class ExtendedXDCCDownloaderGui(XDCCDownloaderGui):
