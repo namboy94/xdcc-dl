@@ -146,13 +146,17 @@ class XDCCPack(object):
         """
         return self.packnumber
 
-    def get_request_message(self) -> str:
+    def get_request_message(self, full: bool = False) -> str:
         """
         Generates an xdcc send message to be sent to the bot to initiate the XDCC connection
 
-        :return: The generated message string
+        :param full: Returns the entire message string, including the bot's name, as seen on packlist sites
+        :return:     The generated message string
         """
-        return "xdcc send #" + str(self.packnumber)
+        if full:
+            return "/msg " + self.bot + " xdcc send #" + str(self.packnumber)
+        else:
+            return "xdcc send #" + str(self.packnumber)
 
 
 def xdcc_packs_from_xdcc_message(xdcc_message: str,
