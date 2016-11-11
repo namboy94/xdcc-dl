@@ -127,9 +127,14 @@ class PypiVariables:  # pragma: no cover
     The list trove classifiers applicable to this project
     """
 
-    install_requires = ["raven", "irc", "bs4", "requests", "cfscrape", "PyQt5"]
+    install_requires = ["raven", "irc", "bs4", "requests", "cfscrape"]
     """
     Python Packaging Index dependencies
+    """
+
+    extras_requires = ["PyQt5"]
+    """
+    Optional extra dependencies
     """
 
     name = "xdcc_dl"
