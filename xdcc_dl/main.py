@@ -70,7 +70,7 @@ def main() -> None:
             for result in results:
                 print(result.get_filepath().ljust(max_length) + " - " + results[result])
 
-        elif args.gui:
+        elif args.gui:  # pragma: no cover
             start_gui()
 
         else:
