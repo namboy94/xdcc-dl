@@ -132,11 +132,6 @@ class PypiVariables:  # pragma: no cover
     Python Packaging Index dependencies
     """
 
-    extras_requires = ["PyQt5"]
-    """
-    Optional extra dependencies
-    """
-
     name = "xdcc_dl"
     """
     The name of the project on Pypi

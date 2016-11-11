@@ -50,6 +50,12 @@ class UnitTests(unittest.TestCase):
 
     def tearDown(self):
         self.form.destroy()
+        if os.path.isfile("1_test.txt"):
+            os.remove("1_test.txt")
+        if os.path.isfile("2_test.txt"):
+            os.remove("2_test.txt")
+        if os.path.isfile("3_test.txt"):
+            os.remove("3_test.txt")
 
     def test_default_values(self):
         self.assertEqual(os.getcwd(), self.form.destination_edit.text())
@@ -99,3 +105,19 @@ class UnitTests(unittest.TestCase):
         self.form.refresh_download_queue()
         self.assertEqual(1, len(self.form.download_queue))
         self.assertEqual(1, self.form.download_queue_list_widget.count())
+
+    def test_download_packs(self):
+        self.form.download_queue = [XDCCPack(IrcServer("irc.namibsun.net"), "xdcc_servbot", 1),
+                                    XDCCPack(IrcServer("irc.namibsun.net"), "xdcc_servbot", 2),
+                                    XDCCPack(IrcServer("irc.namibsun.net"), "xdcc_servbot", 3)]
+        self.form.refresh_download_queue()
+
+        self.assertEqual(self.form.destination_edit.text(), os.getcwd())
+        QTest.mouseClick(self.form.download_button, Qt.LeftButton)
+
+        while self.form.downloading:
+            pass
+
+        self.assertTrue(os.path.isfile("1_test.txt"))
+        self.assertTrue(os.path.isfile("2_test.txt"))
+        self.assertTrue(os.path.isfile("3_test.txt"))
