@@ -32,7 +32,7 @@ from xdcc_dl.entities.XDCCPack import xdcc_packs_from_xdcc_message
 
 try:
     from xdcc_dl.gui.XDCCDownloaderGui import start as start_gui
-except ImportError:
+except ImportError:  # pragma: no cover
     start_gui = None
 
 
