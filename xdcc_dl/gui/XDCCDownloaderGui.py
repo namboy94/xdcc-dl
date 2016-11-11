@@ -36,7 +36,7 @@ from PyQt5.QtWidgets import QMainWindow, QApplication, QTreeWidgetItem, QPushBut
 from PyQt5.QtCore import pyqtSignal, Qt
 
 
-class XDCCDownloaderGui(QMainWindow, Ui_XDCCDownloaderWindow):  # pragma: no cover
+class XDCCDownloaderGui(QMainWindow, Ui_XDCCDownloaderWindow):
     """
     Class that models a QT GUI for the XDCC Downloader
     """
@@ -334,7 +334,7 @@ class XDCCDownloaderGui(QMainWindow, Ui_XDCCDownloaderWindow):  # pragma: no cov
         msg.exec_()
 
 
-def start():  # pragma: no cover
+def start():
     """
     Starts the Start Page GUI
 
@@ -346,7 +346,3 @@ def start():  # pragma: no cover
     app.exec_()
     form.searching = False
     form.downloading = False
-
-
-if __name__ == '__main__':
-    start()
