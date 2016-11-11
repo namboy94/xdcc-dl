@@ -252,7 +252,6 @@ class XDCCDownloaderGui(QMainWindow, Ui_XDCCDownloaderWindow):
 
         :return: None
         """
-
         if not self.downloading:
 
             directory = self.destination_edit.text()
