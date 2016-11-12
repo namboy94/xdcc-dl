@@ -55,7 +55,9 @@ class XDCCDownloaderTui(object):
         self.searching = False
 
         self.search_results = []
+        self.search_results_checks = []
         self.download_queue = []
+        self.download_queue_checks = []
 
         self.gpl_notice = urwid.Text("XDCC Downloader V " + General.version_number + "\n"
                                      "Copyright (C) 2016 Hermann Krumrey\n\n"
@@ -72,10 +74,14 @@ class XDCCDownloaderTui(object):
             urwid.RadioButton(self.search_engine_options, search_engine)
 
         self.search_term_edit = urwid.Edit(caption="Search Term: ", edit_text="")
+        self.search_button = urwid.Button("Search")
         self.search_results_label = urwid.Text("Search Results:")
+        self.add_search_result_button = urwid.Button("Add Selected Packs")
 
         self.download_queue_label = urwid.Text("Download_Queue")
+        self.remove_pack_button = urwid.Button("Remove Selected Packs")
 
+        self.destination_edit = urwid.Edit(caption="Destination Directory", edit_text=os.getcwd())
         self.download_button = urwid.Button("Download")
         self.single_progress_bar = urwid.ProgressBar("Progress", "Total")
         self.total_progress_bar = urwid.ProgressBar("Progress", "Total")
@@ -89,7 +95,11 @@ class XDCCDownloaderTui(object):
 
         :return: None
         """
-        pass
+        urwid.connect_signal(self.add_pack_button, 'click', self.add_pack_manually)
+        urwid.connect_signal(self.search_button, 'click', self.search)
+        urwid.connect_signal(self.add_search_result_button, 'click', self.add_selected_search_result_packs)
+        urwid.connect_signal(self.remove_pack_button, 'click', self.remove_selected_packs)
+        urwid.connect_signal(self.download_button, 'click', self.download)
 
     def lay_out(self) -> None:
         """
@@ -100,12 +110,13 @@ class XDCCDownloaderTui(object):
         div = urwid.Divider()
 
         self.upper_body = [self.gpl_notice, div, self.message_edit, self.server_edit, self.add_pack_button, div,
-                           self.search_engine_label] + self.search_engine_options + [div, self.search_term_edit,
-                                                                                     self.search_results_label]
+                           self.search_engine_label] + self.search_engine_options +\
+                          [div, self.search_term_edit, self.search_button, div, self.search_results_label]
         self.upper_middle_body = []
-        self.middle_body = [div, self.download_queue_label, div]
+        self.middle_body = [self.add_search_result_button, div, self.download_queue_label]
         self.lower_middle_body = []
-        self.lower_body = [div, self.download_button, div, self.single_progress_bar, self.total_progress_bar]
+        self.lower_body = [self.remove_pack_button,div, self.download_button, div, self.single_progress_bar,
+                           self.total_progress_bar]
 
         body = self.upper_body + self.upper_middle_body + self.middle_body + self.lower_middle_body + self.lower_body
 
@@ -125,4 +136,34 @@ class XDCCDownloaderTui(object):
         self.loop = urwid.MainLoop(self.top, palette=[('reversed', 'standout', '')])
         self.loop.run()
 
+    def refresh_ui(self) -> None:
+        """
+        Refreshed the UI
 
+        :return: None
+        """
+        self.download_queue_checks = []
+        self.search_results_checks = []
+
+        for result in self.search_results:
+            self.search_results_checks.append(urwid.CheckBox(result.get_filename()))
+        for item in self.download_queue:
+            self.download_queue_checks.append(urwid.CheckBox(item.get_filename()))
+
+        self.upper_middle_body = self.search_results_checks
+        self.lower_middle_body = self.download_queue_checks
+
+        body = self.upper_body + self.upper_middle_body + self.middle_body + self.lower_middle_body + self.lower_body
+
+        self.list_walker[:] = body
+        self.loop.draw_screen()
+
+    def search(self) -> None:
+        """
+        Starts searching with the configured options
+
+        :return: None
+        """
+        if not self.searching:
+
+            self.searching = True
