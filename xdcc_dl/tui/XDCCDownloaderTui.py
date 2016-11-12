@@ -29,9 +29,11 @@ from threading import Thread
 from xdcc_dl.metadata import General
 from xdcc_dl.entities.Progress import Progress
 from xdcc_dl.pack_searchers.PackSearcher import PackSearcher
+from xdcc_dl.entities.XDCCPack import xdcc_packs_from_xdcc_message
 from xdcc_dl.xdcc.MultipleServerDownloader import MultipleServerDownloader
 
 
+# noinspection PyUnusedLocal
 class XDCCDownloaderTui(object):
     """
     Class that models a urwid TUI for the XDCC Downloader
@@ -115,7 +117,7 @@ class XDCCDownloaderTui(object):
         self.upper_middle_body = []
         self.middle_body = [self.add_search_result_button, div, self.download_queue_label]
         self.lower_middle_body = []
-        self.lower_body = [self.remove_pack_button,div, self.download_button, div, self.single_progress_bar,
+        self.lower_body = [self.remove_pack_button, div, self.download_button, div, self.single_progress_bar,
                            self.total_progress_bar]
 
         body = self.upper_body + self.upper_middle_body + self.middle_body + self.lower_middle_body + self.lower_body
@@ -148,7 +150,7 @@ class XDCCDownloaderTui(object):
         for result in self.search_results:
             self.search_results_checks.append(urwid.CheckBox(result.get_filename()))
         for item in self.download_queue:
-            self.download_queue_checks.append(urwid.CheckBox(item.get_filename()))
+            self.download_queue_checks.append(urwid.CheckBox(item.get_request_message(full=True)))
 
         self.upper_middle_body = self.search_results_checks
         self.lower_middle_body = self.download_queue_checks
@@ -158,12 +160,74 @@ class XDCCDownloaderTui(object):
         self.list_walker[:] = body
         self.loop.draw_screen()
 
-    def search(self) -> None:
+    def add_pack_manually(self, button: urwid.Button) -> None:
+        """
+        Adds a manually defined XDCC pack to the download queue
+
+        :param button: The Button that called this method
+        :return:       None
+        """
+        message = self.message_edit.get_edit_text()
+        server = self.server_edit.get_edit_text()
+        self.download_queue += xdcc_packs_from_xdcc_message(message, server=server)
+        self.refresh_ui()
+
+    def add_selected_search_result_packs(self, button: urwid.Button) -> None:
+        """
+        Adds all selected packs in the search results to the download queue
+
+        :param button: The Button that called this method
+        :return:       None
+        """
+        for index, result in enumerate(self.search_results_checks):
+            if result.get_state():
+                self.download_queue.append(self.search_results[index])
+        self.refresh_ui()
+
+    def remove_selected_packs(self, button: urwid.Button) -> None:
+        """
+        Removes all selected packs from the download queue
+
+        :param button: The Button that called this method
+        :return:       None
+        """
+        pop_indexes = []
+        for index, pack in enumerate(self.download_queue_checks):
+            if pack.get_state():
+                pop_indexes.append(index)
+
+        for index in reversed(sorted(pop_indexes)):
+            self.download_queue.pop(index)
+
+        self.refresh_ui()
+
+    def search(self, button: urwid.Button) -> None:
         """
         Starts searching with the configured options
 
-        :return: None
+        :param button: The Button that called this method
+        :return:       None
         """
         if not self.searching:
 
             self.searching = True
+
+            search_engine = list(filter(lambda x: x.get_state(), self.search_engine_options))[0].get_label()
+            searcher = PackSearcher() if search_engine == "All" else PackSearcher([search_engine])
+            search_term = self.search_term_edit.get_edit_text()
+
+            def do_search():
+                self.search_results = searcher.search(search_term)
+                self.refresh_ui()
+                self.searching = False
+
+            Thread(target=do_search).start()
+
+    def download(self, button: urwid.Button) -> None:
+        """
+        Starts downloading all packs that are currently in the download queue
+
+        :param button: The Button that called this method
+        :return:       None
+        """
+        pass
