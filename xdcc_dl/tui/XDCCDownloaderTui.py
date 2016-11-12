@@ -43,6 +43,7 @@ class XDCCDownloaderTui(object):
         """
         self.upper_body = []
         self.upper_middle_body = []
+        self.middle_body = []
         self.lower_middle_body = []
         self.lower_body = []
 
@@ -56,10 +57,10 @@ class XDCCDownloaderTui(object):
         self.search_results = []
         self.download_queue = []
 
-        self.gpl_notice = urwid.Text("XDCC Downloader V" + General.version_number + "\n" \
-                                     "Copyright (C) 2016 Hermann Krumrey\n\n" \
-                                     "This program comes with ABSOLUTELY NO WARRANTY; for details type `show w'.\n" \
-                                     "This is free software, and you are welcome to redistribute it\n" \
+        self.gpl_notice = urwid.Text("XDCC Downloader V " + General.version_number + "\n"
+                                     "Copyright (C) 2016 Hermann Krumrey\n\n"
+                                     "This program comes with ABSOLUTELY NO WARRANTY; for details type `show w'.\n"
+                                     "This is free software, and you are welcome to redistribute it\n"
                                      "under certain conditions; type `show c' for details.")
         self.message_edit = urwid.Edit(caption="XDCC Message: ", edit_text="")
         self.server_edit = urwid.Edit(caption="Server: ", edit_text="irc.rizon.net")
@@ -73,7 +74,7 @@ class XDCCDownloaderTui(object):
         self.search_term_edit = urwid.Edit(caption="Search Term: ", edit_text="")
         self.search_results_label = urwid.Text("Search Results:")
 
-        self.download_queue_label = "Download_Queue"
+        self.download_queue_label = urwid.Text("Download_Queue")
 
         self.download_button = urwid.Button("Download")
         self.single_progress_bar = urwid.ProgressBar("Progress", "Total")
@@ -81,6 +82,14 @@ class XDCCDownloaderTui(object):
 
         self.connect_widgets()
         self.lay_out()
+
+    def connect_widgets(self) -> None:
+        """
+        Connects actions to the relevant widgets
+
+        :return: None
+        """
+        pass
 
     def lay_out(self) -> None:
         """
@@ -90,15 +99,15 @@ class XDCCDownloaderTui(object):
         """
         div = urwid.Divider()
 
-        self.upper_body = [self.title, div, self.target_directory_edit, self.series_name_edit, self.season_number_edit]
-        self.upper_body += [self.episode_number_edit, div] + self.renaming_schemes + [self.rename_check, div]
-        self.upper_body += self.iconizing_procedures + [self.iconize_check, div]
-        self.upper_body += [self.search_term_edit] + self.search_engines + [self.search_button, div]
-
+        self.upper_body = [self.gpl_notice, div, self.message_edit, self.server_edit, self.add_pack_button, div,
+                           self.search_engine_label] + self.search_engine_options + [div, self.search_term_edit,
+                                                                                     self.search_results_label]
+        self.upper_middle_body = []
+        self.middle_body = [div, self.download_queue_label, div]
+        self.lower_middle_body = []
         self.lower_body = [div, self.download_button, div, self.single_progress_bar, self.total_progress_bar]
-        self.lower_body += [self.current_speed, self.average_speed]
 
-        body = self.upper_body + self.middle_body + self.lower_body
+        body = self.upper_body + self.upper_middle_body + self.middle_body + self.lower_middle_body + self.lower_body
 
         self.list_walker = urwid.SimpleFocusListWalker(body)
         self.top = urwid.Overlay(urwid.Padding(urwid.ListBox(self.list_walker), left=2, right=2),
@@ -106,9 +115,6 @@ class XDCCDownloaderTui(object):
                                  align='center', width=('relative', 80),
                                  valign='middle', height=('relative', 70),
                                  min_width=20, min_height=10)
-
-
-
 
     def start(self) -> None:
         """
@@ -118,4 +124,5 @@ class XDCCDownloaderTui(object):
         """
         self.loop = urwid.MainLoop(self.top, palette=[('reversed', 'standout', '')])
         self.loop.run()
+
 
