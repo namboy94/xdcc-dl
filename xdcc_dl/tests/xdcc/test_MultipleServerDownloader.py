@@ -63,7 +63,7 @@ class UnitTests(unittest.TestCase):
 
         progress = Progress(2)
 
-        downloader = MultipleServerDownloader("random", 5)
+        downloader = MultipleServerDownloader("random")
 
         downloader.download([XDCCPack(IrcServer("irc.namibsun.net"), "xdcc_servbot", 2),
                              XDCCPack(IrcServer("namibsun.net"), "xdcc_servbot", 3)], progress)
