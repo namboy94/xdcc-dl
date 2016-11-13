@@ -47,6 +47,8 @@ class MultipleServerDownloader(object):
         """
         self.user = user
         self.logger = logger
+        self.current_downloader = None
+        self.quit_called = False
 
     def download(self, packs: List[XDCCPack], progress: Progress = None) -> Dict[XDCCPack, str]:
         """
@@ -72,10 +74,22 @@ class MultipleServerDownloader(object):
                 packservers[pack.get_server().get_address()] = [pack]
 
         for server in packservers:
-            downloader = XDCCDownloader(IrcServer(server), self.user, self.logger)
-            server_results = downloader.download(packservers[server], progress)
 
-            for result in server_results:
-                results[result] = server_results[result]
+            if not self.quit_called:
+                self.current_downloader = XDCCDownloader(IrcServer(server), self.user, self.logger)
+                server_results = self.current_downloader.download(packservers[server], progress)
+
+                for result in server_results:
+                    results[result] = server_results[result]
 
         return results
+
+    def quit(self) -> None:
+        """
+        Quits the current downloader and stops all downloads to come
+
+        :return: None
+        """
+        if self.current_downloader is not None:
+            self.current_downloader.quit()
+        self.quit_called = True
