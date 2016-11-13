@@ -57,6 +57,8 @@ class XDCCDownloaderTui(object):
         self.downloading = False
         self.searching = False
 
+        self.downloader = None
+
         self.search_results = []
         self.search_results_checks = []
         self.download_queue = []
@@ -137,7 +139,13 @@ class XDCCDownloaderTui(object):
         :return: None
         """
         self.loop = urwid.MainLoop(self.top, palette=[('reversed', 'standout', '')])
-        self.loop.run()
+
+        try:
+            self.loop.run()
+        except Exception as e:
+            if self.downloader is not None:
+                self.downloader.quit()
+            raise e
 
     def refresh_ui(self) -> None:
         """
@@ -251,10 +259,12 @@ class XDCCDownloaderTui(object):
                                     self.update_progress(single_percentage, total_percentage))
 
                 self.spin_buttons(download=True)
-                MultipleServerDownloader("random").download(self.download_queue, progress)
+                self.downloader = MultipleServerDownloader("random")
+                self.downloader.download(self.download_queue, progress)
                 self.download_queue = []
                 self.update_progress(0.0, 0.0)
                 self.refresh_ui()
+                self.downloader.quit()
                 self.downloading = False
 
             Thread(target=do_download).start()

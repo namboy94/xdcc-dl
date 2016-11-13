@@ -69,6 +69,7 @@ class XDCCDownloaderGui(QMainWindow, Ui_XDCCDownloaderWindow):
 
         self.searching = False
         self.downloading = False
+        self.downloader = None
 
         self.search_results = []
         self.download_queue = []
@@ -271,10 +272,12 @@ class XDCCDownloaderGui(QMainWindow, Ui_XDCCDownloaderWindow):
                                             sin, tot))
 
                     self.spinner_start_signal.emit("download")
-                    results = MultipleServerDownloader("random").download(self.download_queue, progress)
+                    self.downloader = MultipleServerDownloader("random")
+                    results = self.downloader.download(self.download_queue, progress)
                     self.download_queue = []
                     self.refresh_download_queue_signal.emit("")
                     self.progress_update_signal.emit(0.0, 0.0)
+                    self.downloader.quit()
                     self.downloading = False
 
                     list_of_downloaded_packs = ""
@@ -342,3 +345,5 @@ def start():  # pragma: no cover
     app.exec_()
     form.searching = False
     form.downloading = False
+    if form.downloader is not None:
+        form.downloader.quit()

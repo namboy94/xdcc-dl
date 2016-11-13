@@ -72,6 +72,7 @@ def main() -> None:
             packs = xdcc_packs_from_xdcc_message(args.message, destination, server)
             downloader = XDCCDownloader(server, user, verbosity)
             results = downloader.download(packs)
+            downloader.quit()
 
             max_length = max(map(lambda x: len(x.get_filepath()), results.keys()))
             for result in results:
