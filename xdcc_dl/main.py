@@ -83,7 +83,7 @@ def main() -> None:
             else:
                 print("Error: PyQt5 not installed")
 
-        elif args.tui:
+        elif args.tui:  # pragma: no cover
             XDCCDownloaderTui().start()
 
         else:

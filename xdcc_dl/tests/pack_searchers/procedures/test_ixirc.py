@@ -56,3 +56,6 @@ class UnitTests(unittest.TestCase):
 
     def test_non_result_query(self):
         self.assertEqual(0, len(find_ixirc_packs("sdgyfdhkdashsahdqhdsadlsajdhsaohdsausahoashdsahdlahdsah")))
+
+    def test_invalid_pack_handling(self):
+        self.assertLess(10, len(find_ixirc_packs("Star Wars Episode 7")))
