@@ -23,36 +23,16 @@ LICENSE
 """
 
 # imports
-import os
 import unittest
-from xdcc_dl.pack_searchers.procedures.ixirc import find_ixirc_packs
 
 
 class UnitTests(unittest.TestCase):
+
     def setUp(self):
         pass
 
     def tearDown(self):
         pass
 
-    def test_empty_query(self):
-        packs = find_ixirc_packs("")
-        self.assertEqual(len(packs), 0)
-
-    def test_gin_txt(self):
-        packs = find_ixirc_packs("Gin.txt")
-        self.assertEqual(len(packs), 1)
-
-        pack = packs[0]
-        self.assertEqual(pack.get_packnumber(), 1)
-        self.assertEqual(pack.get_server().get_address(), "irc.abjects.net")
-        self.assertEqual(pack.get_filepath(), os.path.join(os.getcwd(), pack.get_filename()))
-        self.assertEqual(pack.get_filename(), "Gin.txt")
-        self.assertEqual(pack.get_bot(), "Beast-Gin-Anime")
-
-    def test_larger_result(self):
-        packs = find_ixirc_packs("One Punch Man")
-        self.assertLess(10, len(packs))
-
-    def test_non_result_query(self):
-        self.assertEqual(0, len(find_ixirc_packs("sdgyfdhkdashsahdqhdsadlsajdhsaohdsausahoashdsahdlahdsah")))
+    def test(self):
+        pass
