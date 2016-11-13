@@ -84,7 +84,7 @@ class XDCCDownloaderTui(object):
         self.download_queue_label = urwid.Text("Download_Queue")
         self.remove_pack_button = urwid.Button("Remove Selected Packs")
 
-        self.destination_edit = urwid.Edit(caption="Destination Directory", edit_text=os.getcwd())
+        self.destination_edit = urwid.Edit(caption="Destination Directory: ", edit_text=os.getcwd())
         self.download_button = urwid.Button("Download")
         self.single_progress_bar = urwid.ProgressBar("Progress", "Total")
         self.total_progress_bar = urwid.ProgressBar("Progress", "Total")
@@ -238,7 +238,8 @@ class XDCCDownloaderTui(object):
             destination = self.destination_edit.get_edit_text()
             if not os.path.isdir(destination):
                 self.downloading = False
-                return  # TODO Let user know that the directory could not be used
+                self.show_message_popup("The entered directory does not exist.")
+                return
 
             for pack in self.download_queue:
                 pack.set_directory(destination)
@@ -301,3 +302,18 @@ class XDCCDownloaderTui(object):
             self.loop.draw_screen()
 
         Thread(target=spin_thread).start()
+
+    def show_message_popup(self, message: str) -> None:
+        """
+        Method that shows a message popup dialog while hiding the TUI
+
+        :param message: The message to display
+        :return:        None
+        """
+
+        text = urwid.Text(message)
+        button = urwid.Button("OK")
+        urwid.connect_signal(button, 'click', lambda x: self.refresh_ui())
+
+        self.list_walker[:] = [text, button]
+        self.loop.draw_screen()
