@@ -28,6 +28,7 @@ import sys
 import argparse
 from xdcc_dl.metadata import SentryLogger
 from xdcc_dl.xdcc.XDCCDownloader import XDCCDownloader
+from xdcc_dl.tui.XDCCDownloaderTui import XDCCDownloaderTui
 from xdcc_dl.entities.XDCCPack import xdcc_packs_from_xdcc_message
 
 try:
@@ -57,6 +58,8 @@ def main() -> None:
                             help="Specifies the verbosity of the output on a scale of 1-7. Default: 1")
         parser.add_argument("-g", "--gui", action="store_true",
                             help="Starts the XDCC Downloader GUI")
+        parser.add_argument("-t", "--tui", action="store_true",
+                            help="Starts the XDCC Downloader TUI")
         args = parser.parse_args()
 
         if args.message:
@@ -69,6 +72,7 @@ def main() -> None:
             packs = xdcc_packs_from_xdcc_message(args.message, destination, server)
             downloader = XDCCDownloader(server, user, verbosity)
             results = downloader.download(packs)
+            downloader.quit()
 
             max_length = max(map(lambda x: len(x.get_filepath()), results.keys()))
             for result in results:
@@ -79,6 +83,9 @@ def main() -> None:
                 start_gui()
             else:
                 print("Error: PyQt5 not installed")
+
+        elif args.tui:  # pragma: no cover
+            XDCCDownloaderTui().start()
 
         else:
             print("No arguments passed. See --help for more details")

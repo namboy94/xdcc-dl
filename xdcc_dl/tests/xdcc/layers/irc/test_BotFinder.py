@@ -1,24 +1,24 @@
 """
 LICENSE:
-Copyright 2015,2016 Hermann Krumrey
+Copyright 2016 Hermann Krumrey
 
-This file is part of toktokkie.
+This file is part of xdcc_dl.
 
-    toktokkie is a program that allows convenient managing of various
-    local media collections, mostly focused on video.
+    xdcc_dl is a program that allows downloading files via the XDCC
+    protocol via file serving bots on IRC networks.
 
-    toktokkie is free software: you can redistribute it and/or modify
+    xdcc_dl is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    toktokkie is distributed in the hope that it will be useful,
+    xdcc_dl is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with toktokkie.  If not, see <http://www.gnu.org/licenses/>.
+    along with xdcc_dl.  If not, see <http://www.gnu.org/licenses/>.
 LICENSE
 """
 
@@ -26,6 +26,7 @@ LICENSE
 import unittest
 from xdcc_dl.entities.XDCCPack import XDCCPack
 from xdcc_dl.entities.IrcServer import IrcServer
+from xdcc_dl.xdcc.layers.helpers.BotChannelMapper import BotChannelMapper
 from xdcc_dl.xdcc.layers.irc.BotFinder import BotFinder, BotNotFoundException
 
 
@@ -140,7 +141,8 @@ class UnitTests(unittest.TestCase):
             dummy_channel_joined = False
 
             def on_welcome(self, conn, event):
-                self.connection.whois("channelless_bot")
+                self.current_pack = XDCCPack(self.server, "channelless_bot", 1)
+                self.connection.whois(self.current_pack.get_bot())
 
             # noinspection PyUnusedLocal
             def on_nosuchnick(self, conn, event):
@@ -159,3 +161,31 @@ class UnitTests(unittest.TestCase):
             self.assertTrue(False)
         except TestException:
             self.assertTrue(self.client.dummy_channel_joined)
+
+    def test_mapped_channel(self):
+
+        class Tester(BotFinder):
+
+            correct_channel_joined = False
+
+            def on_welcome(self, conn, event):
+                self.current_pack = XDCCPack(self.server, "HelloKitty", 1)
+                self.connection.whois(self.current_pack.get_bot())
+
+            # noinspection PyUnusedLocal
+            def on_nosuchnick(self, conn, event):
+                self.on_endofwhois(conn, event)
+
+            # noinspection PyUnusedLocal
+            def on_join(self, conn, event):
+                if event.target.lower() == BotChannelMapper.map(self.current_pack.get_bot()).lower():
+                    self.correct_channel_joined = True
+                    raise TestException()
+
+        self.client = Tester("irc.rizon.net", "random")
+
+        try:
+            self.client.start()
+            self.assertTrue(False)
+        except TestException:
+            self.assertTrue(self.client.correct_channel_joined)

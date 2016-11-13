@@ -84,8 +84,14 @@ a graphical user interface is started. It offers searching for packs using vario
 web scrapers or adding packs manually like with the CLI, adding these packs
 to a download queue and then downloading these queued packs.
 
-![Screenshot](xdcc_dl/resources/screenshots/opm_example.png)
+![Screenshot](xdcc_dl/resources/screenshots/opm_gui_example.png)
     
+### CLI
+
+Similar to the GUI, a textual user interface can be used by calling the program
+in conjunction with the ```-t``` flag.
+
+![Screenshot](xdcc_dl/resources/screenshots/tui_basic_screenshot.png)
 
 ### As a library:
 

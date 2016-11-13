@@ -1,34 +1,36 @@
 """
 LICENSE:
-Copyright 2015,2016 Hermann Krumrey
+Copyright 2016 Hermann Krumrey
 
-This file is part of toktokkie.
+This file is part of xdcc_dl.
 
-    toktokkie is a program that allows convenient managing of various
-    local media collections, mostly focused on video.
+    xdcc_dl is a program that allows downloading files via the XDCC
+    protocol via file serving bots on IRC networks.
 
-    toktokkie is free software: you can redistribute it and/or modify
+    xdcc_dl is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    toktokkie is distributed in the hope that it will be useful,
+    xdcc_dl is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with toktokkie.  If not, see <http://www.gnu.org/licenses/>.
+    along with xdcc_dl.  If not, see <http://www.gnu.org/licenses/>.
 LICENSE
 """
 
 # imports
 import os
 import unittest
+from xdcc_dl.metadata import SentryLogger
 from xdcc_dl.entities.XDCCPack import XDCCPack
 from xdcc_dl.entities.Progress import Progress
 from xdcc_dl.entities.IrcServer import IrcServer
 from xdcc_dl.xdcc.XDCCDownloader import XDCCDownloader
+from xdcc_dl.xdcc.layers.helpers.BotChannelMapper import BotChannelMapper
 
 
 class UnitTests(unittest.TestCase):
@@ -103,3 +105,17 @@ class UnitTests(unittest.TestCase):
 
         self.assertEqual(results[packs_one], "OK")
         self.assertEqual(results[pack_two], "OTHERSERVER")
+
+    def test_invalid_whois_query(self):
+
+        class DummySentry(object):
+            # noinspection PyPep8Naming
+            def captureMessage(self, string):
+                pass
+
+        BotChannelMapper.bot_channel_map = {}
+        SentryLogger.sentry = DummySentry()
+
+        pack = XDCCPack(IrcServer("irc.rizon.net"), "HelloKitty", 1)
+        results = XDCCDownloader("irc.rizon.net", "random").download([pack])
+        self.assertEqual(results[pack], "CHANNELJOINFAIL")

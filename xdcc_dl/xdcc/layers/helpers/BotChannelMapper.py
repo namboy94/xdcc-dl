@@ -22,30 +22,30 @@ This file is part of xdcc_dl.
 LICENSE
 """
 
-# imports
-import os
-import unittest
-from xdcc_dl.xdcc.XDCCDownloader import XDCCDownloader
-from xdcc_dl.pack_searchers.PackSearcher import PackSearcher
 
+class BotChannelMapper(object):
+    """
+    Class that maps bots with non-standard whois responses to a channel
+    """
 
-class UnitTests(unittest.TestCase):
+    bot_channel_map = {"HelloKitty": "#horriblesubs"}
 
-    def setUp(self):
-        pass
+    @staticmethod
+    def has_mapping(botname: str) -> bool:
+        """
+        Checks if a bot is mapped to a channel in this class
 
-    def tearDown(self):
-        if os.path.isfile("1_test.txt"):
-            os.remove("1_test.txt")
-        if os.path.isfile("2_test.txt"):
-            os.remove("2_test.txt")
+        :param botname: The bot's name
+        :return:        True, if it has a mapping, false otherwise
+        """
+        return botname in BotChannelMapper.bot_channel_map.keys()
 
-    def test_search_and_download_namibsun(self):
+    @staticmethod
+    def map(botname: str) -> str:
+        """
+        Maps a bot to a channel name
 
-        searcher = PackSearcher(["namibsun"])
-        packs = searcher.search("1_test.txt") + searcher.search("2_test.txt")
-
-        XDCCDownloader(packs[0].get_server(), "random").download(packs)
-
-        self.assertTrue(os.path.isfile("1_test.txt"))
-        self.assertTrue(os.path.isfile("2_test.txt"))
+        :param botname: The bot's name
+        :return:        The mapped channel name
+        """
+        return BotChannelMapper.bot_channel_map[botname]

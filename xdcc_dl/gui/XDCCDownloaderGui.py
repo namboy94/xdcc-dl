@@ -1,24 +1,24 @@
 """
 LICENSE:
-Copyright 2015,2016 Hermann Krumrey
+Copyright 2016 Hermann Krumrey
 
-This file is part of toktokkie.
+This file is part of xdcc_dl.
 
-    toktokkie is a program that allows convenient managing of various
-    local media collections, mostly focused on video.
+    xdcc_dl is a program that allows downloading files via the XDCC
+    protocol via file serving bots on IRC networks.
 
-    toktokkie is free software: you can redistribute it and/or modify
+    xdcc_dl is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    toktokkie is distributed in the hope that it will be useful,
+    xdcc_dl is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with toktokkie.  If not, see <http://www.gnu.org/licenses/>.
+    along with xdcc_dl.  If not, see <http://www.gnu.org/licenses/>.
 LICENSE
 """
 
@@ -69,6 +69,7 @@ class XDCCDownloaderGui(QMainWindow, Ui_XDCCDownloaderWindow):
 
         self.searching = False
         self.downloading = False
+        self.downloader = None
 
         self.search_results = []
         self.download_queue = []
@@ -271,10 +272,12 @@ class XDCCDownloaderGui(QMainWindow, Ui_XDCCDownloaderWindow):
                                             sin, tot))
 
                     self.spinner_start_signal.emit("download")
-                    results = MultipleServerDownloader("random").download(self.download_queue, progress)
+                    self.downloader = MultipleServerDownloader("random")
+                    results = self.downloader.download(self.download_queue, progress)
                     self.download_queue = []
                     self.refresh_download_queue_signal.emit("")
                     self.progress_update_signal.emit(0.0, 0.0)
+                    self.downloader.quit()
                     self.downloading = False
 
                     list_of_downloaded_packs = ""
@@ -342,3 +345,5 @@ def start():  # pragma: no cover
     app.exec_()
     form.searching = False
     form.downloading = False
+    if form.downloader is not None:
+        form.downloader.quit()
