@@ -236,10 +236,7 @@ class XDCCDownloaderTui(object):
 
             destination = self.destination_edit.get_edit_text()
             if not os.path.isdir(destination):
-                if not os.path.isfile(destination):
-                    os.makedirs(destination)
-                else:
-                    return  # TODO Let user know that the directory could not be used
+                return  # TODO Let user know that the directory could not be used
 
             def do_download():
 
