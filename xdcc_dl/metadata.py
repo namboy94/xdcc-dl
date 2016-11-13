@@ -74,7 +74,7 @@ class General:  # pragma: no cover
     A short description of the project
     """
 
-    version_number = "0.5.0"
+    version_number = "1.0.0"
     """
     The current version of the program.
     """
