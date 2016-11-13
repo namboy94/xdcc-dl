@@ -28,7 +28,7 @@ class BotChannelMapper(object):
     Class that maps bots with non-standard whois responses to a channel
     """
 
-    bot_channel_map = {"HelloKitty": "#horriblesubs"}
+    bot_channel_map = {"HelloKittya": "#horriblesubs"}
 
     @staticmethod
     def has_mapping(botname: str) -> bool:

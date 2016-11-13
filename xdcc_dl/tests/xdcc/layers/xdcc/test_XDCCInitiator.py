@@ -54,3 +54,6 @@ class UnitTests(unittest.TestCase):
             self.assertTrue(False)
         except TestException:
             self.assertTrue(True)
+
+    def test_missing_whois(self):
+        pass

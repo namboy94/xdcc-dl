@@ -27,6 +27,7 @@ import os
 import shlex
 import irc.client
 from typing import List
+from xdcc_dl.metadata import SentryLogger
 # noinspection PyPep8Naming
 from xdcc_dl.logging.LoggingTypes import LoggingTypes as LOG
 from xdcc_dl.xdcc.layers.xdcc.MessageSender import MessageSender
@@ -37,6 +38,13 @@ class IncorrectFileSentException(Exception):
     Gets raised whenever the bot sends the incorrect, or at least not-predicted file
     """
     pass
+
+
+class NoValidWhoisQueryException(Exception):
+    """
+    Gets raised when a bot is encountered that requires the user to join a specific channel, but does not
+    provide the identity of that channel via whois
+    """
 
 
 # noinspection PyUnusedLocal
@@ -143,10 +151,12 @@ class XDCCInitiator(MessageSender):
     def on_privnotice(self, connection: irc.client.ServerConnection, event: irc.client.Event) -> None:
         """
         Checks if a private notice is sent by the sending bot that a pack was already requested.
-        If that is the case, another attempt will be made on the next ping
+        If that is the case, another attempt will be made on the next ping.
+        Also checks for channel-based XDCC denies
 
         :param connection: the IRC connection
         :param event:      the IRC event
+        :raises:           NoValidWhoisQuery, if the bot told us that no correct channel was joined
         :return:           None
         """
         try:
@@ -155,6 +165,9 @@ class XDCCInitiator(MessageSender):
                 self.already_requested = True
             elif "You will have to re-send that, to the bot that transferred the file." in event.arguments[0]:
                 connection.privmsg(self.current_pack.get_bot(), self.current_pack.get_request_message())
+            elif "** XDCC SEND denied, you must be on a known channel to request a pack" in event.arguments[0]:
+                SentryLogger.sentry.captureMessage("Did not join correct channel: Bot=" + self.current_pack.get_bot())
+                raise NoValidWhoisQueryException()
             else:
                 super().on_privnotice(connection, event)
         except IndexError:
