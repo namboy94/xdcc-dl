@@ -250,12 +250,17 @@ class XDCCDownloaderGui(QMainWindow, Ui_XDCCDownloaderWindow):
             directory = self.destination_edit.text()
 
             if not os.path.isdir(directory):
+                if not os.path.isfile(directory):
+                    os.makedirs(directory)
 
-                msg = self.generate_message(QMessageBox.Warning, "Invalid Directory",
-                                            "The entered directory is not valid", directory)
+                else:
 
-                if not sys.argv == [sys.argv[0], "-platform", "minimal"]:  # pragma: no cover
-                    msg.exec_()
+                    msg = self.generate_message(QMessageBox.Warning, "Invalid Directory",
+                                                "The entered directory is not valid", directory)
+
+                    if not sys.argv == [sys.argv[0], "-platform", "minimal"]:  # pragma: no cover
+                        msg.exec_()
+                    return
 
             else:
 

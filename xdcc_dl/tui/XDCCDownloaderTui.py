@@ -117,8 +117,8 @@ class XDCCDownloaderTui(object):
         self.upper_middle_body = []
         self.middle_body = [self.add_search_result_button, div, self.download_queue_label]
         self.lower_middle_body = []
-        self.lower_body = [self.remove_pack_button, div, self.download_button, div, self.single_progress_bar,
-                           self.total_progress_bar]
+        self.lower_body = [self.remove_pack_button, div, self.destination_edit, self.download_button, div,
+                           self.single_progress_bar, self.total_progress_bar]
 
         body = self.upper_body + self.upper_middle_body + self.middle_body + self.lower_middle_body + self.lower_body
 
@@ -217,6 +217,7 @@ class XDCCDownloaderTui(object):
             search_term = self.search_term_edit.get_edit_text()
 
             def do_search():
+                self.spin_buttons(search=True)
                 self.search_results = searcher.search(search_term)
                 self.refresh_ui()
                 self.searching = False
@@ -230,4 +231,71 @@ class XDCCDownloaderTui(object):
         :param button: The Button that called this method
         :return:       None
         """
-        pass
+        if not self.downloading:
+            self.downloading = True
+
+            destination = self.destination_edit.get_edit_text()
+            if not os.path.isdir(destination):
+                if not os.path.isfile(destination):
+                    os.makedirs(destination)
+                else:
+                    return  # TODO Let user know that the directory could not be used
+
+            def do_download():
+
+                progress = Progress(len(self.download_queue),
+                                    callback=lambda a, b, single_percentage, d, e, total_percentage, g, h:
+                                    self.update_progress(single_percentage, total_percentage))
+
+                self.spin_buttons(download=True)
+                MultipleServerDownloader("random").download(self.download_queue, progress)
+                self.download_queue = []
+                self.update_progress(0.0, 0.0)
+                self.refresh_ui()
+                self.downloading = False
+
+            Thread(target=do_download).start()
+
+    def update_progress(self, single_precentage: float, total_percentage: float) -> None:
+        """
+        Updates the progress bars
+
+        :param single_precentage: The single completion so far
+        :param total_percentage:  The total completion so far
+        :return:                  None
+        """
+        self.single_progress_bar.set_completion(single_precentage)
+        self.total_progress_bar.set_completion(total_percentage)
+        self.loop.draw_screen()
+
+    def spin_buttons(self, download: bool = False, search: bool = False) -> None:
+        """
+        Starts the button spin animations
+
+        :param download: If set, starts the spin animation for the download button
+        :param search:   If set, starts the spin animation for the search button
+        :return:         None
+        """
+
+        def spin_thread():
+
+            while self.downloading or self.searching:
+
+                if self.downloading and download:
+                    new_text = "Downloading" + (self.download_button.get_label().count(".") % 3 + 1) * "."
+                    self.download_button.set_label(new_text)
+
+                if self.searching and search:
+                    new_text = "Searching" + (self.search_button.get_label().count(".") % 3 + 1) * "."
+                    self.search_button.set_label(new_text)
+
+                self.loop.draw_screen()
+                time.sleep(0.3)
+
+            if download:
+                self.download_button.set_label("Download")
+            if search:
+                self.search_button.set_label("Search")
+            self.loop.draw_screen()
+
+        Thread(target=spin_thread).start()
