@@ -237,6 +237,7 @@ class XDCCDownloaderTui(object):
 
             destination = self.destination_edit.get_edit_text()
             if not os.path.isdir(destination):
+                self.downloading = False
                 return  # TODO Let user know that the directory could not be used
 
             for pack in self.download_queue:

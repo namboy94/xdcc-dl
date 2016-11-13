@@ -23,9 +23,11 @@ LICENSE
 """
 
 # imports
-import urwid
+import os
+import time
 import unittest
 from xdcc_dl.tui.XDCCDownloaderTui import XDCCDownloaderTui
+from xdcc_dl.entities.XDCCPack import xdcc_packs_from_xdcc_message
 
 
 class LoopDummy(object):
@@ -41,7 +43,12 @@ class UnitTests(unittest.TestCase):
         self.tui.loop = LoopDummy()
 
     def tearDown(self):
-        pass
+        if os.path.isfile("1_test.txt"):
+            os.remove("1_test.txt")
+        if os.path.isfile("2_test.txt"):
+            os.remove("2_test.txt")
+        if os.path.isfile("3_test.txt"):
+            os.remove("3_test.txt")
 
     def test_adding_pack(self):
         self.assertEqual(len(self.tui.download_queue), 0)
@@ -87,6 +94,67 @@ class UnitTests(unittest.TestCase):
         self.assertEqual(0, len(self.tui.download_queue))
         self.tui.add_selected_search_result_packs(None)
         self.assertEqual(1, len(self.tui.download_queue))
+
+    def test_removing_packs_from_queue(self):
+        self.tui.download_queue = xdcc_packs_from_xdcc_message("/msg xdcc_servbot xdcc send #1-3")
+        self.assertEqual(3, len(self.tui.download_queue))
+        self.tui.refresh_ui()
+        self.tui.download_queue_checks[0].set_state(True)
+        self.tui.remove_selected_packs(None)
+        self.assertEqual(2, len(self.tui.download_queue))
+
+    def test_download(self):
+        self.tui.download_queue = xdcc_packs_from_xdcc_message("/msg xdcc_servbot xdcc send #1-3",
+                                                               server="irc.namibsun.net")
+        self.tui.refresh_ui()
+        self.tui.download(None)
+
+        while self.tui.downloading:
+            pass
+
+        self.assertTrue(os.path.isfile("1_test.txt"))
+        self.assertTrue(os.path.isfile("2_test.txt"))
+        self.assertTrue(os.path.isfile("3_test.txt"))
+
+    def test_download_while_downloading(self):
+        self.tui.download_queue = xdcc_packs_from_xdcc_message("/msg xdcc_servbot xdcc send #1-3",
+                                                               server="irc.namibsun.net")
+        self.tui.refresh_ui()
+        self.tui.download(None)
+
+        time.sleep(0.5)
+
+        self.assertNotEqual(self.tui.download_button.get_label(), "Download")
+
+        self.tui.download_queue = xdcc_packs_from_xdcc_message("/msg Ginpachi-Sensei xdcc send #1")
+        self.tui.refresh_ui()
+        self.tui.download(None)
+
+        while self.tui.downloading:
+            pass
+
+        self.assertTrue(os.path.isfile("1_test.txt"))
+        self.assertTrue(os.path.isfile("2_test.txt"))
+        self.assertTrue(os.path.isfile("3_test.txt"))
+        self.assertFalse(os.path.isfile("Gin.txt"))
+
+    def test_download_wrong_directory(self):
+        self.tui.download_queue = xdcc_packs_from_xdcc_message("/msg xdcc_servbot xdcc send #1-3",
+                                                               server="irc.namibsun.net")
+
+        self.assertEqual(self.tui.destination_edit.get_edit_text(), os.getcwd())
+        self.tui.destination_edit.set_edit_text("NotADirectory")
+        self.assertEqual(self.tui.destination_edit.get_edit_text(), "NotADirectory")
+
+        self.tui.refresh_ui()
+        self.tui.download(None)
+
+        while self.tui.downloading:
+            pass
+
+        self.assertFalse(os.path.isfile("1_test.txt"))
+        self.assertFalse(os.path.isfile("2_test.txt"))
+        self.assertFalse(os.path.isfile("3_test.txt"))
 
     def select_search_engine(self, option):
         for engine in self.tui.search_engine_options:
