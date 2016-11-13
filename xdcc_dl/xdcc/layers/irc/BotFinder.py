@@ -27,6 +27,7 @@ import irc.client
 # noinspection PyPep8Naming
 from xdcc_dl.logging.LoggingTypes import LoggingTypes as LOG
 from xdcc_dl.xdcc.layers.irc.IrcEventPrinter import IrcEventPrinter
+from xdcc_dl.xdcc.layers.helpers.BotChannelMapper import BotChannelMapper
 
 
 class BotNotFoundException(Exception):
@@ -105,10 +106,15 @@ class BotFinder(IrcEventPrinter):
         """
         if not self.channel_join_required:
 
-            event.source = self.user.get_name()
-            # noinspection PyUnresolvedReferences
-            self.on_join(connection, event)  # Simulates a Channel Join if joining a channel is unnecessary
-                                             # -> on_join
+            if BotChannelMapper.has_mapping(self.current_pack.get_bot()):
+                event.arguments = [None, BotChannelMapper.map(self.current_pack.get_bot())]
+                self.on_whoischannels(connection, event)
+
+            else:
+                event.source = self.user.get_name()
+                # noinspection PyUnresolvedReferences
+                self.on_join(connection, event)  # Simulates a Channel Join if joining a channel is unnecessary
+                                                 # -> on_join
 
     def on_nosuchnick(self, connection: irc.client.ServerConnection, event: irc.client.Event) -> None:
         """
