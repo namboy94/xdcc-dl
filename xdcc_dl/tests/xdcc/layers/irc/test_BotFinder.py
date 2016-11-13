@@ -26,6 +26,7 @@ LICENSE
 import unittest
 from xdcc_dl.entities.XDCCPack import XDCCPack
 from xdcc_dl.entities.IrcServer import IrcServer
+from xdcc_dl.xdcc.layers.helpers.BotChannelMapper import BotChannelMapper
 from xdcc_dl.xdcc.layers.irc.BotFinder import BotFinder, BotNotFoundException
 
 
@@ -140,7 +141,8 @@ class UnitTests(unittest.TestCase):
             dummy_channel_joined = False
 
             def on_welcome(self, conn, event):
-                self.connection.whois("channelless_bot")
+                self.current_pack = XDCCPack(self.server, "channelless_bot", 1)
+                self.connection.whois(self.current_pack.get_bot())
 
             # noinspection PyUnusedLocal
             def on_nosuchnick(self, conn, event):
@@ -159,3 +161,31 @@ class UnitTests(unittest.TestCase):
             self.assertTrue(False)
         except TestException:
             self.assertTrue(self.client.dummy_channel_joined)
+
+    def test_mapped_channel(self):
+
+        class Tester(BotFinder):
+
+            correct_channel_joined = False
+
+            def on_welcome(self, conn, event):
+                self.current_pack = XDCCPack(self.server, "HelloKitty", 1)
+                self.connection.whois(self.current_pack.get_bot())
+
+            # noinspection PyUnusedLocal
+            def on_nosuchnick(self, conn, event):
+                self.on_endofwhois(conn, event)
+
+            # noinspection PyUnusedLocal
+            def on_join(self, conn, event):
+                if event.target.lower() == BotChannelMapper.map(self.current_pack.get_bot()).lower():
+                    self.correct_channel_joined = True
+                    raise TestException()
+
+        self.client = Tester("irc.rizon.net", "random")
+
+        try:
+            self.client.start()
+            self.assertTrue(False)
+        except TestException:
+            self.assertTrue(self.client.correct_channel_joined)
