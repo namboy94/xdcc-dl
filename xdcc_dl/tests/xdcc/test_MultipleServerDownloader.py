@@ -25,6 +25,7 @@ LICENSE
 # imports
 import os
 import unittest
+from threading import Thread
 from xdcc_dl.entities.XDCCPack import XDCCPack
 from xdcc_dl.entities.Progress import Progress
 from xdcc_dl.entities.IrcServer import IrcServer
@@ -73,3 +74,14 @@ class UnitTests(unittest.TestCase):
 
         self.assertEqual(progress.get_single_progress_percentage(), 100.0)
         self.assertEqual(progress.get_total_percentage(), 100.0)
+
+    def test_quitting(self):
+
+        packs = [XDCCPack(IrcServer("irc.namibsun.net"), "xdcc_servbot", 1)]
+
+        downloader = MultipleServerDownloader("random")
+        downloader.quit()
+        downloader.download(packs)
+        downloader.quit()
+
+        self.assertFalse(os.path.isfile("1_test.txt"))

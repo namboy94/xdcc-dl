@@ -323,7 +323,7 @@ class XDCCDownloaderTui(object):
 
         text = urwid.Text(message)
         button = urwid.Button("OK")
-        urwid.connect_signal(button, 'click', lambda x: self.refresh_ui())
+        urwid.connect_signal(button, 'click', lambda x: self.refresh_ui())  # pragma: no cover
 
         self.list_walker[:] = [text, button]
         self.loop.draw_screen()
