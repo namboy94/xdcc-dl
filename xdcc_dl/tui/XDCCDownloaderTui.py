@@ -245,14 +245,12 @@ class XDCCDownloaderTui(object):
 
             def do_download():
 
-                from xdcc_dl.logging.Logger import Logger
-                l = Logger(0, logfile="/home/hermann/Desktop/logfile", ignore_verbosity_in_logfile=True)
                 progress = Progress(len(self.download_queue),
                                     callback=lambda a, b, single_percentage, d, e, total_percentage, g, h:
                                     self.update_progress(single_percentage, total_percentage))
 
                 self.spin_buttons(download=True)
-                MultipleServerDownloader("random", l).download(self.download_queue, progress)
+                MultipleServerDownloader("random").download(self.download_queue, progress)
                 self.download_queue = []
                 self.update_progress(0.0, 0.0)
                 self.refresh_ui()
