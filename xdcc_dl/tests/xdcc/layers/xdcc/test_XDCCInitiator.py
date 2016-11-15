@@ -23,9 +23,12 @@ LICENSE
 """
 
 # imports
-import os
 import unittest
-from xdcc_dl.xdcc.layers.xdcc.XDCCInitiator import XDCCInitiator
+from xdcc_dl.metadata import SentryLogger
+from xdcc_dl.entities.XDCCPack import XDCCPack
+from xdcc_dl.entities.IrcServer import IrcServer
+from xdcc_dl.xdcc.layers.helpers.BotChannelMapper import BotChannelMapper
+from xdcc_dl.xdcc.layers.xdcc.XDCCInitiator import XDCCInitiator, NoValidWhoisQueryException
 
 
 class TestException(Exception):
@@ -53,4 +56,21 @@ class UnitTests(unittest.TestCase):
             Tester("irc.namibsun.net", "random").start()
             self.assertTrue(False)
         except TestException:
+            self.assertTrue(True)
+
+    def test_missing_whois(self):
+        class DummySentry(object):
+            # noinspection PyPep8Naming
+            def captureMessage(self, string):
+                pass
+
+        BotChannelMapper.bot_channel_map = {}
+        SentryLogger.sentry = DummySentry()
+
+        try:
+            initiator = XDCCInitiator("irc.rizon.net", "random")
+            initiator.current_pack = XDCCPack(IrcServer("irc.rizon.net"), "HelloKitty", 1)
+            initiator.start()
+            self.assertTrue(False)
+        except NoValidWhoisQueryException:
             self.assertTrue(True)

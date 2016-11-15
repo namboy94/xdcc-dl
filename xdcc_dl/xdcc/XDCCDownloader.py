@@ -29,8 +29,8 @@ from xdcc_dl.entities.XDCCPack import XDCCPack
 from xdcc_dl.entities.Progress import Progress
 from xdcc_dl.xdcc.layers.irc.BaseIrcClient import NetworkError
 from xdcc_dl.xdcc.layers.irc.BotFinder import BotNotFoundException
-from xdcc_dl.xdcc.layers.xdcc.XDCCInitiator import IncorrectFileSentException
 from xdcc_dl.xdcc.layers.xdcc.DownloadHandler import DownloadHandler, AlreadyDownloaded
+from xdcc_dl.xdcc.layers.xdcc.XDCCInitiator import IncorrectFileSentException, NoValidWhoisQueryException
 
 
 class XDCCDownloader(DownloadHandler):
@@ -47,12 +47,13 @@ class XDCCDownloader(DownloadHandler):
         :param packs:    The packs to download
         :param progress: Optional Progress object
         :return:         Dictionary of packs mapped to status codes:
-                         "OK":           Download was successful
-                         "BOTNOTFOUND":  Bot was not found
-                         "NETWORKERROR": Download failed due to network error
-                         "INCORRECT":    Sent file was not the correct file
-                         "EXISTED":      File already existed and was completely downloaded
-                         "OTHERSERVER":  If a pack was found that is hosted on a different server
+                         "OK":              Download was successful
+                         "BOTNOTFOUND":     Bot was not found
+                         "CHANNELJOINFAIL": Channel join failed, most likely due to missing whois information
+                         "NETWORKERROR":    Download failed due to network error
+                         "INCORRECT":       Sent file was not the correct file
+                         "EXISTED":         File already existed and was completely downloaded
+                         "OTHERSERVER":     If a pack was found that is hosted on a different server
         """
         self.progress = progress if progress is not None else Progress(len(packs))
         self.pack_queue = packs
@@ -72,6 +73,8 @@ class XDCCDownloader(DownloadHandler):
                 self.start()
             except BotNotFoundException:
                 status_code = "BOTNOTFOUND"
+            except NoValidWhoisQueryException:
+                status_code = "CHANNELJOINFAIL"
             except AlreadyDownloaded:
                 status_code = "EXISTED"
             except IncorrectFileSentException:

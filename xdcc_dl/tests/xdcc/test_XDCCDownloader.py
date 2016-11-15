@@ -25,10 +25,12 @@ LICENSE
 # imports
 import os
 import unittest
+from xdcc_dl.metadata import SentryLogger
 from xdcc_dl.entities.XDCCPack import XDCCPack
 from xdcc_dl.entities.Progress import Progress
 from xdcc_dl.entities.IrcServer import IrcServer
 from xdcc_dl.xdcc.XDCCDownloader import XDCCDownloader
+from xdcc_dl.xdcc.layers.helpers.BotChannelMapper import BotChannelMapper
 
 
 class UnitTests(unittest.TestCase):
@@ -103,3 +105,17 @@ class UnitTests(unittest.TestCase):
 
         self.assertEqual(results[packs_one], "OK")
         self.assertEqual(results[pack_two], "OTHERSERVER")
+
+    def test_invalid_whois_query(self):
+
+        class DummySentry(object):
+            # noinspection PyPep8Naming
+            def captureMessage(self, string):
+                pass
+
+        BotChannelMapper.bot_channel_map = {}
+        SentryLogger.sentry = DummySentry()
+
+        pack = XDCCPack(IrcServer("irc.rizon.net"), "HelloKitty", 1)
+        results = XDCCDownloader("irc.rizon.net", "random").download([pack])
+        self.assertEqual(results[pack], "CHANNELJOINFAIL")

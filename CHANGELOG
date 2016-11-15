@@ -1,3 +1,8 @@
+V 1.0.0:
+  - Implemented a TUI to offer a terminal-based alternative to the GUI
+  - Fixed an issue with channels not being found using whois queries with specific bots
+  - Added automatic logging of bots that don't provide complete whois information
+  - Made sure that connections are closed if the program exits
 V 0.5.0:
   - Implemented a GUI for searching and downloading XDCC Packs
 V 0.4.0:

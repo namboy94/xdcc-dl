@@ -54,7 +54,7 @@ def main() -> None:
                             help="Specifies the target download destination. Defaults to " + os.getcwd())
         parser.add_argument("-u", "--username",
                             help="Specifies the username")
-        parser.add_argument("-v", "--verbosity", type=int,
+        parser.add_argument("-v", "--verbosity", type=int, default=1,
                             help="Specifies the verbosity of the output on a scale of 1-7. Default: 1")
         parser.add_argument("-g", "--gui", action="store_true",
                             help="Starts the XDCC Downloader GUI")
@@ -67,11 +67,12 @@ def main() -> None:
             destination = os.getcwd() if not args.destination else args.destination
             server = "irc.rizon.net" if not args.server else args.server
             user = "random" if not args.username else args.username
-            verbosity = 1 if not args.verbosity else int(args.verbosity)
+            verbosity = args.verbosity
 
             packs = xdcc_packs_from_xdcc_message(args.message, destination, server)
             downloader = XDCCDownloader(server, user, verbosity)
             results = downloader.download(packs)
+            downloader.quit()
 
             max_length = max(map(lambda x: len(x.get_filepath()), results.keys()))
             for result in results:
