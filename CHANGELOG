@@ -1,3 +1,5 @@
+V 1.0.1:
+  - Added typing module to dependencies
 V 1.0.0:
   - Implemented a TUI to offer a terminal-based alternative to the GUI
   - Fixed an issue with channels not being found using whois queries with specific bots
