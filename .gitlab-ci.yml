@@ -20,12 +20,7 @@ clone_master:
   tags:
     - key_github
   script:
-    - git checkout master
-    - git pull origin master
-    - git push -u git@github.com:namboy94/xdcc-downloader.git master --force
-    - git checkout develop
-    - git pull origin develop
-    - git push -u git@github.com:namboy94/xdcc-downloader.git develop --force
+    - git push --mirror -f git@github.com:namboy94/xdcc-downloader.git
 
 run_unit_tests_python_2:
   stage: test
@@ -42,7 +37,8 @@ run_unit_tests_python_3_with_coverage:
     - linux
     - python
   script:
-    - python3 setup.py nosetests --with-coverage --cover-package=xdcc_dl --cover-branches --cover-erase --cover-html --cover-inclusive --nocapture -v
+    - python3 setup.py nosetests -v
+      --with-coverage --cover-package=xdcc_dl --cover-branches --cover-erase --cover-html --cover-inclusive --nocapture
     - rsync -av cover/ /var/www/coverage.namibsun.net/public_html/xdcc-downloader --delete-before
 
 run_unit_tests_windows:
@@ -84,11 +80,12 @@ pyinstaller_linux:
     - python
   script:
     - python3 setup.py install --user
-    - python3 builder.py build pyinstaller_linux
-    - pip3 uninstall xdcc_dl -y
+    - mkdir -p artifacts
+    - pyinstaller xdcc_dl/main.py --onefile
+    - mv xdcc_dl/dist/main artifacts/xdcc-downloader-linux
   artifacts:
     paths:
-      - build/gitlab_build_scripts/*
+      - artifacts/*
 
 pyinstaller_windows:
   stage: build
@@ -99,11 +96,12 @@ pyinstaller_windows:
     - python
   script:
     - python setup.py install
-    - python builder.py build pyinstaller_windows
-    - pip uninstall xdcc_dl -y
+    - mkdir artifacts
+    - pyinstaller xdcc_dl/main.py --onefile --windowed --icon=xdcc_dl/resources/logo/logo.ico
+    - move xdcc_dl/dist/main.exe artifacts/xdcc-downloader-windows.exe
   artifacts:
     paths:
-      - build/gitlab_build_scripts/*
+      - artifacts/*
 
 source_dist:
   stage: deploy
@@ -145,7 +143,11 @@ upload_release_to_github:
     - linux
     - python
   script:
-    - python3 builder.py github-release
+    - git clone https://gitlab.namibsun.net/namboy94/github-release-uploader.git
+    - git clone https://gitlab.namibsun.net/namboy94/changelog-reader.git
+    - python changelog-reader/changelog-reader.py CHANGELOG current_changelog
+    - python github-release-uploader/github-release-uploader.py namboy94 xdcc-downloader $GITHUB_OAUTH_TOKEN
+      $(python3 setup.py -V) current_changelog artifacts master
 
 upload_release_to_gitlab:
   stage: release
@@ -155,7 +157,11 @@ upload_release_to_gitlab:
     - linux
     - python
   script:
-    - python3 builder.py gitlab-release
+    - git clone https://gitlab.namibsun.net/namboy94/gitlab-release-uploader.git
+    - git clone https://gitlab.namibsun.net/namboy94/changelog-reader.git
+    - python changelog-reader/changelog-reader.py CHANGELOG current_changelog
+    - python gitlab-release-uploader/gitlab-release-uploader.py namboy94 xdcc-downloader $GITLAB_ACCESS_TOKEN
+      $(python3 setup.py -V) current_changelog artifacts master
 
 generate_sphinx_documentation:
   stage: docstats
@@ -170,8 +176,10 @@ generate_sphinx_documentation:
     - make buildsource
     - make latexpdf
     - make html
-    - rsync -av build/latex/xdcc-downloader.pdf /var/www/docs.namibsun.net/public_html/pdf_docs/xdcc_downloader.pdf --delete-before
-    - rsync -av build/html/ /var/www/docs.namibsun.net/public_html/html_docs/xdcc_downloader --delete-before
+    - rsync -av build/latex/xdcc-downloader.pdf
+      /var/www/docs.namibsun.net/public_html/pdf_docs/xdcc_downloader.pdf --delete-before
+    - rsync -av build/html/
+      /var/www/docs.namibsun.net/public_html/html_docs/xdcc_downloader --delete-before
     - cd ..
 
 gitstats:
@@ -183,9 +191,11 @@ gitstats:
     - linux
   script:
     - gitstats . gitstats
-    - rsync -av gitstats/ /var/www/gitstats.namibsun.net/public_html/gitstats/xdcc_downloader --delete-before
+    - rsync -av gitstats/
+      /var/www/gitstats.namibsun.net/public_html/gitstats/xdcc_downloader --delete-before
     - git_stats generate
-    - rsync -av git_stats/ /var/www/gitstats.namibsun.net/public_html/git_stats/xdcc_downloader --delete-before
+    - rsync -av git_stats/
+      /var/www/gitstats.namibsun.net/public_html/git_stats/xdcc_downloader --delete-before
 
 update_html_pages:
   stage: finalize
