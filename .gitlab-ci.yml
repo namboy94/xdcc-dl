@@ -6,6 +6,7 @@ stages:
   - deploy
   - release
   - docstats
+  - finalize
 
 variables:
   GITLAB_ACCESS_TOKEN: "$GITLAB_ACCESS_TOKEN"
@@ -43,7 +44,6 @@ run_unit_tests_python_3_with_coverage:
   script:
     - python3 setup.py nosetests --with-coverage --cover-package=xdcc_dl --cover-branches --cover-erase --cover-html --cover-inclusive --nocapture -v
     - rsync -av cover/ /var/www/coverage.namibsun.net/public_html/xdcc-downloader --delete-before
-    - python3 builder.py coverage-html /var/www/coverage.namibsun.net/public_html
 
 run_unit_tests_windows:
   stage: test
@@ -173,7 +173,6 @@ generate_sphinx_documentation:
     - rsync -av build/latex/xdcc-downloader.pdf /var/www/docs.namibsun.net/public_html/pdf_docs/xdcc_downloader.pdf --delete-before
     - rsync -av build/html/ /var/www/docs.namibsun.net/public_html/html_docs/xdcc_downloader --delete-before
     - cd ..
-    - python3 builder.py documentation-html /var/www/docs.namibsun.net/public_html
 
 gitstats:
   stage: docstats
@@ -187,4 +186,15 @@ gitstats:
     - rsync -av gitstats/ /var/www/gitstats.namibsun.net/public_html/gitstats/xdcc_downloader --delete-before
     - git_stats generate
     - rsync -av git_stats/ /var/www/gitstats.namibsun.net/public_html/git_stats/xdcc_downloader --delete-before
-    - python3 builder.py gitstats-html /var/www/gitstats.namibsun.net/public_html
+
+update_html_pages:
+  stage: finalize
+  when: always
+  script:
+    - git clone https://gitlab.namibsun.net/namboy94/html-index-generator.git
+    - python html-index-generator/html-index-generator.py /var/www/coverage.namibsun.net/public_html
+      /var/www/coverage.namibsun.net/public_html/index.html
+    - python html-index-generator/html-index-generator.py /var/www/docs.namibsun.net/public_html
+      /var/www/docs.namibsun.net/public_html/index.html
+    - python html-index-generator/html-index-generator.py /var/www/gitstats.namibsun.net/public_html
+      /var/www/gitstats.namibsun.net/public_html/index.html
