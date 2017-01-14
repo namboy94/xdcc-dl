@@ -109,6 +109,7 @@ pypi_dist:
     - python3 setup.py register sdist upload
     - python3 setup.py bdist_wheel upload
     - 3to2 . --write
+    - rm -rf dist
     - python2 setup.py bdist_wheel
     - twine upload dist/*
 
