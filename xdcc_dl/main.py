@@ -46,7 +46,7 @@ def main() -> None:
     try:
 
         parser = argparse.ArgumentParser()
-        parser.add_argument("-m", "--message",
+        parser.add_argument("message",
                             help="An XDCC Message. Supports ranges (1-100) and also ranges with steps (1-100,2)")
         parser.add_argument("-s", "--server",
                             help="Specifies the IRC Server. Defaults to irc.rizon.net")
