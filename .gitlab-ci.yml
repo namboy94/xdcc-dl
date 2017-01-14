@@ -24,7 +24,7 @@ stylecheck:
   tags:
     - buildserver_linux
   script:
-    - pep8 . --max-line-length 120
+    - pep8 . --exclude=xdcc_downloader.py,LoggingTypes.py --max-line-length 120
 
 run_unit_tests_python_2:
   stage: test

@@ -77,4 +77,3 @@ class UnitTests(unittest.TestCase):
 
         with open(self.logfile, 'r') as f:
             self.assertEqual(f.read(), "Testing Logger\nTest\n")
-

@@ -56,10 +56,11 @@ class BotFinder(IrcEventPrinter):
         # noinspection PyUnresolvedReferences
         super().on_welcome(connection, event)
         self.logger.log("Sending WHOIS command for " + self.current_pack.get_bot(), LOG.WHOIS_SEND)
-        connection.whois(self.current_pack.get_bot())  # -> Success: on_whoischannels or on_endofwhois
-                                                       # -> Failure: on_nosuchnick
-                                                       # Additional Effects:  ~> on_whoisuser
-                                                       #                      ~> on_whoisserver
+        connection.whois(self.current_pack.get_bot())
+        # -> Success: on_whoischannels or on_endofwhois
+        # -> Failure: on_nosuchnick
+        # Additional Effects:  ~> on_whoisuser
+        #                      ~> on_whoisserver
 
     def on_whoischannels(self, connection: irc.client.ServerConnection, event: irc.client.Event) -> None:
         """
@@ -71,8 +72,8 @@ class BotFinder(IrcEventPrinter):
         :return:           None
         """
         self.channel_join_required = True  # Some bots are not on any channel, and can be used
-                                           # without joining any channel. If a whoischannels message is
-                                           # received however, we need to join a channel
+        # without joining any channel. If a whoischannels message is
+        # received however, we need to join a channel
 
         self.logger.log("Received WHOIS information, bot resides in: " + event.arguments[1], LOG.WHOIS_SUCCESS)
         channels = event.arguments[1].split("#")
@@ -114,7 +115,7 @@ class BotFinder(IrcEventPrinter):
                 event.source = self.user.get_name()
                 # noinspection PyUnresolvedReferences
                 self.on_join(connection, event)  # Simulates a Channel Join if joining a channel is unnecessary
-                                                 # -> on_join
+                # -> on_join
 
     def on_nosuchnick(self, connection: irc.client.ServerConnection, event: irc.client.Event) -> None:
         """
