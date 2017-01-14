@@ -50,7 +50,6 @@ class UnitTests(unittest.TestCase):
 
     def test_single_download(self):
 
-        sys.argv.append("-m")
         sys.argv.append("/msg xdcc_servbot xdcc send #1")
         main()
 
@@ -61,13 +60,11 @@ class UnitTests(unittest.TestCase):
         sys.argv.pop()
         sys.argv.pop()
 
-        sys.argv.append("-m")
         sys.argv.append("/msg xdcc_servbot xdcc send #1")
         self.assertFalse(os.path.isfile("1_test.txt"))
 
     def test_repeated_download(self):
 
-        sys.argv.append("-m")
         sys.argv.append("/msg xdcc_servbot xdcc send #2")
 
         with open("2_test.txt", 'w') as testtwo:
@@ -85,7 +82,6 @@ class UnitTests(unittest.TestCase):
 
     def test_resume(self):
 
-        sys.argv.append("-m")
         sys.argv.append("/msg xdcc_servbot xdcc send #3")
 
         with open("3_test.txt", 'w') as testthree:
@@ -104,7 +100,6 @@ class UnitTests(unittest.TestCase):
 
     def test_range_downloading(self):
 
-        sys.argv.append("-m")
         sys.argv.append("/msg xdcc_servbot xdcc send #1-3")
         main()
 
@@ -114,7 +109,6 @@ class UnitTests(unittest.TestCase):
 
     def test_range_downloading_with_steps(self):
 
-        sys.argv.append("-m")
         sys.argv.append("/msg xdcc_servbot xdcc send #1-3,2")
         main()
 

@@ -33,4 +33,3 @@ class UnitTests(unittest.TestCase):
 
     def tearDown(self):
         pass
-
