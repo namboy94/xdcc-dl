@@ -93,7 +93,8 @@ pyinstaller_windows:
     - python setup.py install
     - mkdir artifacts
     - pyinstaller xdcc_dl/main.py --onefile --windowed --icon=xdcc_dl/resources/logo/logo.ico
-    - move dist/main.exe artifacts/xdcc-downloader-windows.exe
+    - dir
+    - move dist\main.exe artifacts\xdcc-downloader-windows.exe
   artifacts:
     paths:
       - artifacts/*
