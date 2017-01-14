@@ -122,7 +122,7 @@ upload_release_to_github:
   script:
     - git clone https://gitlab.namibsun.net/namboy94/github-release-uploader.git
     - git clone https://gitlab.namibsun.net/namboy94/changelog-reader.git
-    - python changelog-reader/changelog-reader.py CHANGELOG current_changelog
+    - python changelog-reader/changelog-reader.py -c CHANGELOG -d current_changelog
     - python github-release-uploader/github-release-uploader.py namboy94 xdcc-downloader $GITHUB_OAUTH_TOKEN
       $(python3 setup.py -V) current_changelog artifacts -b master
 
@@ -135,7 +135,7 @@ upload_release_to_gitlab:
   script:
     - git clone https://gitlab.namibsun.net/namboy94/gitlab-release-uploader.git
     - git clone https://gitlab.namibsun.net/namboy94/changelog-reader.git
-    - python changelog-reader/changelog-reader.py CHANGELOG current_changelog
+    - python changelog-reader/changelog-reader.py -c CHANGELOG -d current_changelog
     - python gitlab-release-uploader/gitlab-release-uploader.py namboy94 xdcc-downloader $GITLAB_ACCESS_TOKEN
       $(python3 setup.py -V) current_changelog artifacts -b master -u https"//gitlab.namibsun.net
 
