@@ -78,7 +78,7 @@ pyinstaller_linux:
     - python3 setup.py install --user
     - mkdir -p artifacts
     - pyinstaller xdcc_dl/main.py --onefile
-    - mv xdcc_dl/dist/main artifacts/xdcc-downloader-linux
+    - mv dist/main artifacts/xdcc-downloader-linux
   artifacts:
     paths:
       - artifacts/*
@@ -93,7 +93,7 @@ pyinstaller_windows:
     - python setup.py install
     - mkdir artifacts
     - pyinstaller xdcc_dl/main.py --onefile --windowed --icon=xdcc_dl/resources/logo/logo.ico
-    - move xdcc_dl/dist/main.exe artifacts/xdcc-downloader-windows.exe
+    - move dist/main.exe artifacts/xdcc-downloader-windows.exe
   artifacts:
     paths:
       - artifacts/*
