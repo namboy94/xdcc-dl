@@ -147,7 +147,7 @@ upload_release_to_github:
     - git clone https://gitlab.namibsun.net/namboy94/changelog-reader.git
     - python changelog-reader/changelog-reader.py CHANGELOG current_changelog
     - python github-release-uploader/github-release-uploader.py namboy94 xdcc-downloader $GITHUB_OAUTH_TOKEN
-      $(python3 setup.py -V) current_changelog artifacts master
+      $(python3 setup.py -V) current_changelog artifacts -b master
 
 upload_release_to_gitlab:
   stage: release
@@ -161,7 +161,7 @@ upload_release_to_gitlab:
     - git clone https://gitlab.namibsun.net/namboy94/changelog-reader.git
     - python changelog-reader/changelog-reader.py CHANGELOG current_changelog
     - python gitlab-release-uploader/gitlab-release-uploader.py namboy94 xdcc-downloader $GITLAB_ACCESS_TOKEN
-      $(python3 setup.py -V) current_changelog artifacts master
+      $(python3 setup.py -V) current_changelog artifacts -b master -u https"//gitlab.namibsun.net
 
 generate_sphinx_documentation:
   stage: docstats
