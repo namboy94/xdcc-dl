@@ -55,7 +55,7 @@ install_on_linux:
   only:
     - master
   tags:
-    - buildserver_windows
+    - buildserver_linux
   script:
     - python3 setup.py install --user
 
