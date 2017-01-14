@@ -45,37 +45,37 @@ XDCC Packlists usually list xdcc commands in the folowing form:
 
     /msg <BOTNAME> xdcc send #<PACKNUMBER>
     
-By supplying this message as the ```-m``` parameter, the pack can be downloaded.
+By supplying this message as a positional parameter, the pack can be downloaded.
 
 **Examples:**
 
     # This is the xdcc message:  '/msg the_bot xdcc send #1'
     
     # This command downloads pack 1 from the_bot
-    $ xdcc_dl -m "/msg the_bot xdcc send #1"
+    $ xdcc_dl "/msg the_bot xdcc send #1"
     
     # It's possible to download a range of packs (1-10 in this case):
-    $ xdcc_dl -m "/msg the_bot xdcc send #1-10"
+    $ xdcc_dl "/msg the_bot xdcc send #1-10"
     
     # Range stepping is also possible:
-    $ xdcc_dl -m "/msg the_bot xdcc send #1-10,10"
+    $ xdcc_dl "/msg the_bot xdcc send #1-10,10"
     # (This will download packs 1,3,5,7,9)
     
     # you can also specify the destination file or directory:
-    $ xdcc_dl -m "/msg the_bot xdcc send #1" -d /home/user/Downloads
+    $ xdcc_dl "/msg the_bot xdcc send #1" -d /home/user/Downloads
     # The destination defaults to your current working directory
     
     # if the bot is on a different server than irc.rizon.net, a server
     # has to be specified:
-    $ xdcc_dl -m "/msg the_bot xdcc send #1" --server irc.freenode.org
+    $ xdcc_dl "/msg the_bot xdcc send #1" --server irc.freenode.org
     
     # You can also specify an IRC username. If none was supplied, a
     # random string of numbers will be used instead
-    $ xdcc_dl -m "/msg the_bot xdcc send #1" --user Me
+    $ xdcc_dl "/msg the_bot xdcc send #1" --user Me
     
     # To specify how verbose the program is, you can pass the
     # verbosity parameter as a number between 0 and 6:
-    $ xdcc_dl -m "/msg the_bot xdcc send #1" --verbosity 3
+    $ xdcc_dl "/msg the_bot xdcc send #1" --verbosity 3
     
 ### GUI
 
@@ -86,7 +86,7 @@ to a download queue and then downloading these queued packs.
 
 ![Screenshot](xdcc_dl/resources/screenshots/opm_gui_example.png)
     
-### CLI
+### TUI
 
 Similar to the GUI, a textual user interface can be used by calling the program
 in conjunction with the ```-t``` flag.
