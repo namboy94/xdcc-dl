@@ -106,8 +106,11 @@ def get_page_results(page_content: BeautifulSoup) -> List[XDCCPack]:
     size = ""
 
     column_count = 0      # Keeps track of which column the parser is currently working on
-    ago_count = 0         # Counts how often the word "ago" was used, which is used to keep track of on which
-                          # pack we currently are. Each pack has two instances of 'ago' occurring.
+
+    # Counts how often the word "ago" was used, which is used to keep track of on which
+    # pack we currently are. Each pack has two instances of 'ago' occurring.
+    ago_count = 0
+
     aborted = False       # The process is aborted whenever an invalid pack is encountered
     next_element = False  # Flag that lets other parts of the loop know that we are moving on to the next pack
 

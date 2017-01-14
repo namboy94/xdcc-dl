@@ -58,7 +58,7 @@ class Progress(object):
         self.single_total = 0
         self.total_progress = 0
         self.total_total = file_amount
-        
+
         self.callback = callback
 
     def add_single_progress(self, new_bytes: int) -> int:
@@ -86,11 +86,11 @@ class Progress(object):
             if self.total_progress != self.total_total:
                 self.single_progress = 0
                 self.single_total = 0
-        
+
     def handle_callback(self) -> None:
         """
         Handles the callback method
-        
+
         :return: None
         """
         if self.callback is not None:
