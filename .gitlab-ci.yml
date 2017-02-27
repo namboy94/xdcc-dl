@@ -10,26 +10,31 @@ stages:
 
 variables:
   GITLAB_ACCESS_TOKEN: "$GITLAB_ACCESS_TOKEN"
-  GITHUB_OAUTH_TOKEN: "$GITHUB_OAUTH_TOKEN"
+  GITHUB_OAUTH_TOKEN: "$GITHUB_ACCESS_TOKEN"
 
-clone_master:
+github_mirror:
   stage: mirror
   tags:
-    - buildserver_linux
+    - linux-buildserver
   script:
-    - git push --mirror -f git@github.com:namboy94/xdcc-downloader.git
+    - git checkout master
+    - git pull
+    - git push git@github.com:namboy94/xdcc-downloader.git master -f
+    - git checkout develop
+    - git pull
+    - git push git@github.com:namboy94/xdcc-downloader.git develop -f
 
 stylecheck:
   stage: test
   tags:
-    - buildserver_linux
+    - linux-buildserver
   script:
     - pep8 . --exclude=xdcc_downloader.py,LoggingTypes.py --max-line-length 120
 
 run_unit_tests_python_2:
   stage: test
   tags:
-    - buildserver_linux
+    - linux-buildserver
   script:
     - 3to2 . --write
     - python2 setup.py test
@@ -37,10 +42,10 @@ run_unit_tests_python_2:
 run_unit_tests_python_3_with_coverage:
   stage: test
   tags:
-    - buildserver_linux
+    - linux-buildserver
   script:
-    - python3 setup.py nosetests -v
-      --with-coverage --cover-package=xdcc_dl --cover-branches --cover-erase --cover-html --cover-inclusive --nocapture
+    - python3 setup.py nosetests
+      --with-coverage --cover-package=xdcc-downloader --cover-branches --cover-erase --cover-html --cover-inclusive
     - rsync -av cover/ /var/www/coverage.namibsun.net/public_html/xdcc-downloader --delete-before
 
 run_unit_tests_windows:
@@ -55,7 +60,7 @@ install_on_linux:
   only:
     - master
   tags:
-    - buildserver_linux
+    - linux-buildserver
   script:
     - python3 setup.py install --user
 
@@ -73,7 +78,7 @@ pyinstaller_linux:
   only:
     - master
   tags:
-    - buildserver_linux
+    - linux-buildserver
   script:
     - python3 setup.py install --user
     - mkdir -p artifacts
@@ -104,7 +109,7 @@ pypi_dist:
   only:
     - master
   tags:
-    - buildserver_linux
+    - linux-buildserver
   script:
     - python3 setup.py register sdist upload
     - python3 setup.py bdist_wheel upload
@@ -118,12 +123,12 @@ upload_release_to_github:
   only:
     - master
   tags:
-    - buildserver_linux
+    - linux-buildserver
   script:
     - git clone https://gitlab.namibsun.net/namboy94/github-release-uploader.git
     - git clone https://gitlab.namibsun.net/namboy94/changelog-reader.git
     - python changelog-reader/changelog-reader.py -c CHANGELOG -d current_changelog
-    - python github-release-uploader/github-release-uploader.py namboy94 xdcc-downloader $GITHUB_OAUTH_TOKEN
+    - python github-release-uploader/github-release-uploader.py namboy94 xdcc-downloader $GITHUB_ACCESS_TOKEN
       $(python3 setup.py -V) current_changelog artifacts -b master
 
 upload_release_to_gitlab:
@@ -131,48 +136,49 @@ upload_release_to_gitlab:
   only:
     - master
   tags:
-    - buildserver_linux
+    - linux-buildserver
   script:
     - git clone https://gitlab.namibsun.net/namboy94/gitlab-release-uploader.git
     - git clone https://gitlab.namibsun.net/namboy94/changelog-reader.git
     - python changelog-reader/changelog-reader.py -c CHANGELOG -d  current_changelog
     - python gitlab-release-uploader/gitlab-release-uploader.py namboy94 xdcc-downloader $GITLAB_ACCESS_TOKEN
-      $(python3 setup.py -V) current_changelog artifacts -b master -u https//gitlab.namibsun.net
+      $(python3 setup.py -V) current_changelog artifacts -b master -u https://gitlab.namibsun.net
 
 generate_sphinx_documentation:
   stage: docstats
   only:
     - master
+    - develop
   tags:
-    - buildserver_linux
+    - linux-buildserver
   script:
     - cd doc
     - make buildsource
     - make latexpdf
     - make html
     - rsync -av build/latex/xdcc-downloader.pdf
-      /var/www/docs.namibsun.net/public_html/pdf_docs/xdcc_downloader.pdf --delete-before
-    - rsync -av build/html/
-      /var/www/docs.namibsun.net/public_html/html_docs/xdcc_downloader --delete-before
+      /var/www/docs.namibsun.net/public_html/pdf_docs/xdcc-downloader.pdf --delete-before
+    - rsync -av build/html/ /var/www/docs.namibsun.net/public_html/html_docs/xdcc-downloader --delete-before
     - cd ..
 
 gitstats:
   stage: docstats
+  only:
+    - master
+    - develop
   tags:
-    - buildserver_linux
+    - linux-buildserver
   script:
     - gitstats . gitstats
-    - rsync -av gitstats/
-      /var/www/gitstats.namibsun.net/public_html/gitstats/xdcc_downloader --delete-before
+    - rsync -av gitstats/ /var/www/gitstats.namibsun.net/public_html/gitstats/xdcc-downloader --delete-before
     - git_stats generate
-    - rsync -av git_stats/
-      /var/www/gitstats.namibsun.net/public_html/git_stats/xdcc_downloader --delete-before
+    - rsync -av git_stats/ /var/www/gitstats.namibsun.net/public_html/git_stats/xdcc-downloader --delete-before
 
 update_html_pages:
   stage: finalize
   when: always
   tags:
-    - production
+    - linux-buildserver
   script:
     - git clone https://gitlab.namibsun.net/namboy94/html-index-generator.git
     - python html-index-generator/html-index-generator.py /var/www/coverage.namibsun.net/public_html
