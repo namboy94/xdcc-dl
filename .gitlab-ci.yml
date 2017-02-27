@@ -55,7 +55,7 @@ install_on_linux:
   only:
     - master
   tags:
-    - buildserver_windows
+    - buildserver_linux
   script:
     - python3 setup.py install --user
 
@@ -78,7 +78,7 @@ pyinstaller_linux:
     - python3 setup.py install --user
     - mkdir -p artifacts
     - pyinstaller xdcc_dl/main.py --onefile
-    - mv xdcc_dl/dist/main artifacts/xdcc-downloader-linux
+    - mv dist/main artifacts/xdcc-downloader-linux
   artifacts:
     paths:
       - artifacts/*
@@ -93,7 +93,8 @@ pyinstaller_windows:
     - python setup.py install
     - mkdir artifacts
     - pyinstaller xdcc_dl/main.py --onefile --windowed --icon=xdcc_dl/resources/logo/logo.ico
-    - move xdcc_dl/dist/main.exe artifacts/xdcc-downloader-windows.exe
+    - dir
+    - move dist\main.exe artifacts\xdcc-downloader-windows.exe
   artifacts:
     paths:
       - artifacts/*
@@ -108,6 +109,7 @@ pypi_dist:
     - python3 setup.py register sdist upload
     - python3 setup.py bdist_wheel upload
     - 3to2 . --write
+    - rm -rf dist
     - python2 setup.py bdist_wheel
     - twine upload dist/*
 
@@ -120,7 +122,7 @@ upload_release_to_github:
   script:
     - git clone https://gitlab.namibsun.net/namboy94/github-release-uploader.git
     - git clone https://gitlab.namibsun.net/namboy94/changelog-reader.git
-    - python changelog-reader/changelog-reader.py CHANGELOG current_changelog
+    - python changelog-reader/changelog-reader.py -c CHANGELOG -d current_changelog
     - python github-release-uploader/github-release-uploader.py namboy94 xdcc-downloader $GITHUB_OAUTH_TOKEN
       $(python3 setup.py -V) current_changelog artifacts -b master
 
@@ -133,9 +135,9 @@ upload_release_to_gitlab:
   script:
     - git clone https://gitlab.namibsun.net/namboy94/gitlab-release-uploader.git
     - git clone https://gitlab.namibsun.net/namboy94/changelog-reader.git
-    - python changelog-reader/changelog-reader.py CHANGELOG current_changelog
+    - python changelog-reader/changelog-reader.py -c CHANGELOG -d  current_changelog
     - python gitlab-release-uploader/gitlab-release-uploader.py namboy94 xdcc-downloader $GITLAB_ACCESS_TOKEN
-      $(python3 setup.py -V) current_changelog artifacts -b master -u https"//gitlab.namibsun.net
+      $(python3 setup.py -V) current_changelog artifacts -b master -u https//gitlab.namibsun.net
 
 generate_sphinx_documentation:
   stage: docstats
