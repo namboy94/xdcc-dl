@@ -25,7 +25,6 @@ LICENSE
 # imports
 import os
 import unittest
-from threading import Thread
 from xdcc_dl.entities.XDCCPack import XDCCPack
 from xdcc_dl.entities.Progress import Progress
 from xdcc_dl.entities.IrcServer import IrcServer
@@ -67,7 +66,7 @@ class UnitTests(unittest.TestCase):
         downloader = MultipleServerDownloader("random")
 
         downloader.download([XDCCPack(IrcServer("irc.namibsun.net"), "xdcc_servbot", 2),
-                             XDCCPack(IrcServer("namibsun.net"), "xdcc_servbot", 3)], progress)
+                             XDCCPack(IrcServer("h2618595.stratoserver.net"), "xdcc_servbot", 3)], progress)
 
         self.assertTrue(os.path.isfile("2_test.txt"))
         self.assertTrue(os.path.isfile("3_test.txt"))
