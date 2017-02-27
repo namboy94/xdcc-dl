@@ -22,6 +22,8 @@ This file is part of xdcc_dl.
 LICENSE
 """
 
+from raven import Client
+
 """
 The metadata is stored here. It can be used by any other module in this project this way, most
 notably by the setup.py file
@@ -36,3 +38,12 @@ sentry_dsn = "https://3f4217fbc10a48bf8bb119c1782d8b03:58b2a299d71d4c36a277df9ad
 """
 The DSN used for Sentry Error Logging
 """
+
+
+class SentryLogger(object):
+    """
+    A pre-configured Sentry client for easy error logging
+
+    Can be overridden by unit tests to check behaviour
+    """
+    sentry = Client(dsn=sentry_dsn, release=version)

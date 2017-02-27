@@ -27,7 +27,7 @@ import os
 import time
 import urwid
 from threading import Thread
-from xdcc_dl.metadata import General
+from xdcc_dl.metadata import version
 from xdcc_dl.entities.Progress import Progress
 from xdcc_dl.pack_searchers.PackSearcher import PackSearcher
 from xdcc_dl.entities.XDCCPack import xdcc_packs_from_xdcc_message
@@ -64,7 +64,7 @@ class XDCCDownloaderTui(object):
         self.download_queue = []
         self.download_queue_checks = []
 
-        self.gpl_notice = urwid.Text("XDCC Downloader V " + General.version_number + "\n"
+        self.gpl_notice = urwid.Text("XDCC Downloader V " + version + "\n"
                                      "Copyright (C) 2016 Hermann Krumrey\n\n"
                                      "This program comes with ABSOLUTELY NO WARRANTY; for details type `show w'.\n"
                                      "This is free software, and you are welcome to redistribute it\n"
