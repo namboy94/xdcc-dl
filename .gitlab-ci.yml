@@ -181,9 +181,10 @@ update_html_pages:
     - linux-buildserver
   script:
     - git clone https://gitlab.namibsun.net/namboy94/html-index-generator.git
-    - python html-index-generator/html-index-generator.py /var/www/coverage.namibsun.net/public_html
+    - cd html-index-generator
+    - python html-index-generator.py /var/www/coverage.namibsun.net/public_html
       /var/www/coverage.namibsun.net/public_html/index.html
-    - python html-index-generator/html-index-generator.py /var/www/docs.namibsun.net/public_html
+    - python html-index-generator.py /var/www/docs.namibsun.net/public_html
       /var/www/docs.namibsun.net/public_html/index.html
-    - python html-index-generator/html-index-generator.py /var/www/gitstats.namibsun.net/public_html
+    - python html-index-generator.py /var/www/gitstats.namibsun.net/public_html
       /var/www/gitstats.namibsun.net/public_html/index.html
