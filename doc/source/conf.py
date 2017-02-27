@@ -7,9 +7,9 @@ import sphinx_rtd_theme
 # noinspection PyPackageRequirements
 from sphinx.ext.autodoc import between
 
-General = None
+version_number = ""
 sys.path.insert(0, os.path.abspath("../.."))
-exec("from xdcc_dl.metadata import General")
+exec("from xdcc_dl.metadata import version as version_number")
 
 extensions = [
     'sphinx.ext.autodoc',
@@ -24,8 +24,8 @@ copyright = '2016, Hermann Krumrey'
 author = 'Hermann Krumrey'
 project = 'xdcc-downloader'
 
-version = General.version_number
-release = General.version_number
+version = version_number
+release = version_number
 
 language = None
 exclude_patterns = []

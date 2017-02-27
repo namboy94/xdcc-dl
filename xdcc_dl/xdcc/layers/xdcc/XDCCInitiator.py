@@ -27,7 +27,8 @@ import os
 import shlex
 import irc.client
 from typing import List
-from xdcc_dl.metadata import SentryLogger
+from raven import Client
+from xdcc_dl.metadata import sentry_dsn, version
 # noinspection PyPep8Naming
 from xdcc_dl.logging.LoggingTypes import LoggingTypes as LOG
 from xdcc_dl.xdcc.layers.xdcc.MessageSender import MessageSender
@@ -166,7 +167,9 @@ class XDCCInitiator(MessageSender):
             elif "You will have to re-send that, to the bot that transferred the file." in event.arguments[0]:
                 connection.privmsg(self.current_pack.get_bot(), self.current_pack.get_request_message())
             elif "** XDCC SEND denied, you must be on a known channel to request a pack" in event.arguments[0]:
-                SentryLogger.sentry.captureMessage("Did not join correct channel: Bot=" + self.current_pack.get_bot())
+                Client(dsn=sentry_dsn, release=version).captureMessage(
+                    "Did not join correct channel: Bot=" + self.current_pack.get_bot()
+                )
                 raise NoValidWhoisQueryException()
             else:
                 super().on_privnotice(connection, event)

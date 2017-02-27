@@ -26,7 +26,8 @@ LICENSE
 import os
 import sys
 import argparse
-from xdcc_dl.metadata import SentryLogger
+from raven import Client
+from xdcc_dl.metadata import sentry_dsn, version
 from xdcc_dl.xdcc.XDCCDownloader import XDCCDownloader
 from xdcc_dl.tui.XDCCDownloaderTui import XDCCDownloaderTui
 from xdcc_dl.entities.XDCCPack import xdcc_packs_from_xdcc_message
@@ -94,7 +95,7 @@ def main() -> None:
     except KeyboardInterrupt:
         print("Thanks for using xdcc-downloader!")
     except Exception as e:  # pragma: no cover
-        SentryLogger.sentry.captureException()
+        Client(dsn=sentry_dsn, release=version).captureException()
         raise e
 
 
