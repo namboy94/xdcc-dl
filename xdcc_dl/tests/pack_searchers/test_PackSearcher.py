@@ -38,7 +38,7 @@ class UnitTests(unittest.TestCase):
     def test_all_searchers(self):
 
         results = PackSearcher().search("Gin.txt")
-        self.assertEqual(len(results), 4)
+        self.assertEqual(len(results), 5)
 
     def test_getting_searchers(self):
 
