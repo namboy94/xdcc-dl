@@ -1,5 +1,10 @@
 # XDCC Downloader
 
+|master|develop|
+|:---:|:---:|
+|[![build status](https://gitlab.namibsun.net/namboy94/manga-downloader/badges/master/build.svg)](https://gitlab.namibsun.net/namboy94/manga-downloader/commits/master)|[![build status](https://gitlab.namibsun.net/namboy94/manga-downloader/badges/master/build.svg)](https://gitlab.namibsun.net/namboy94/manga-downloader/commits/develop)
+
+
 ![Logo](xdcc_dl/resources/logo/logo_256.png)
 
 An XDCC File downloader based on the [irclib](https://github.com/jaraco/irc) framework.

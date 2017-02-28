@@ -79,7 +79,7 @@ classifiers = [
 
 setup(name="xdcc_dl",
       version=version,
-      description="An XDCC Downloader",
+      description="An XDCC File Downloader based on the irclib framework",
       long_description=readme(),
       classifiers=classifiers,
       url="https://gitlab.namibsun.net/namboy94/xdcc-downloader",
