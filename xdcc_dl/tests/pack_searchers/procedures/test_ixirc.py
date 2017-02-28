@@ -51,7 +51,7 @@ class UnitTests(unittest.TestCase):
         self.assertEqual(pack.get_bot(), "Beast-Gin-Anime")
 
     def test_larger_result(self):
-        packs = find_ixirc_packs("One Punch Man")
+        packs = find_ixirc_packs("game of thrones")
         self.assertLess(10, len(packs))
 
     def test_non_result_query(self):
