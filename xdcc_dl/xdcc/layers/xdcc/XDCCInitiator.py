@@ -166,7 +166,9 @@ class XDCCInitiator(MessageSender):
             elif "You will have to re-send that, to the bot that transferred the file." in event.arguments[0]:
                 connection.privmsg(self.current_pack.get_bot(), self.current_pack.get_request_message())
             elif "** XDCC SEND denied, you must be on a known channel to request a pack" in event.arguments[0]:
-                SentryLogger.sentry.captureMessage("Did not join correct channel: Bot=" + self.current_pack.get_bot())
+                SentryLogger.sentry.captureMessage(
+                    "Did not join correct channel: Bot=" + self.current_pack.get_bot()
+                )
                 raise NoValidWhoisQueryException()
             else:
                 super().on_privnotice(connection, event)

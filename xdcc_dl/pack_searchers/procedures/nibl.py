@@ -28,6 +28,8 @@ from typing import List
 from bs4 import BeautifulSoup
 from xdcc_dl.entities.XDCCPack import XDCCPack
 from xdcc_dl.entities.IrcServer import IrcServer
+from requests.packages.urllib3 import disable_warnings
+from requests.packages.urllib3.exceptions import InsecureRequestWarning
 
 
 def find_nibl_packs(search_phrase: str) -> List[XDCCPack]:
@@ -47,8 +49,16 @@ def find_nibl_packs(search_phrase: str) -> List[XDCCPack]:
         i += 1
 
     # Get the data from the website
+
     url = "http://nibl.co.uk/bots.php?search=" + prepared_search_term
-    content = BeautifulSoup(requests.get(url).text, "html.parser")
+
+    # Since nibl.com has some sort of issue with their SSL certificate, we get the
+    # HTML content without verifying the SSL cert. Additionally, the warning that
+    # gets printed by default if you do that is suppressed
+    disable_warnings(InsecureRequestWarning)
+    html = requests.get(url, verify=False).text
+
+    content = BeautifulSoup(html, "html.parser")
     file_names = content.select(".filename")
     pack_numbers = content.select(".packnumber")
     bot_names = content.select(".botname")

@@ -22,33 +22,15 @@ This file is part of xdcc_dl.
 LICENSE
 """
 
-# pragma: no cover
-from raven import Client
-
-"""
-The metadata is stored here. It can be used by any other module in this project this way, most
-notably by the setup.py file
-"""
-
-# pragma: no cover
-version = "2.0.0"
-"""
-The current version of the program
-"""
-
-# pragma: no cover
-sentry_dsn = "https://3f4217fbc10a48bf8bb119c1782d8b03:58b2a299d71d4c36a277df9add7b38c3@sentry.io/110685"
-"""
-The DSN used for Sentry Error Logging
-"""
+import unittest
+import xdcc_dl.metadata
 
 
-# pragma: no cover
-class SentryLogger(object):
-    """
-    A pre-configured Sentry client for easy error logging
+class UnitTests(unittest.TestCase):
 
-    Can be overridden by unit tests to check behaviour
-    """
-    # pragma: no cover
-    sentry = Client(dsn=sentry_dsn, release=version)
+    # noinspection PyMethodMayBeStatic
+    def test(self):
+        self.assertIsInstance(xdcc_dl.metadata.version, str)
+        self.assertIsInstance(xdcc_dl.metadata.sentry_dsn, str)
+        self.assertNotEqual(xdcc_dl.metadata.Client, None)
+        self.assertNotEqual(xdcc_dl.metadata.SentryLogger.sentry, None)

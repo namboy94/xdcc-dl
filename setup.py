@@ -24,7 +24,7 @@ LICENSE
 
 # imports
 import os
-from xdcc_dl.metadata import PypiVariables
+from xdcc_dl.metadata import version
 from setuptools import setup, find_packages
 
 
@@ -64,18 +64,31 @@ def find_scripts():
     except OSError:
         return []
 
-setup(name=PypiVariables.name,
-      version=PypiVariables.version,
-      description=PypiVariables.description,
+classifiers = [
+    "Environment :: Console",
+    "Natural Language :: English",
+    "Intended Audience :: Developers",
+    "Development Status :: 1 - Planning",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 2",
+    "Topic :: Communications :: File Sharing",
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)"
+]
+
+
+setup(name="xdcc_dl",
+      version=version,
+      description="An XDCC File Downloader based on the irclib framework",
       long_description=readme(),
-      classifiers=PypiVariables.classifiers,
-      url=PypiVariables.url,
-      download_url=PypiVariables.download_url,
-      author=PypiVariables.author,
-      author_email=PypiVariables.author_email,
-      license=PypiVariables.license,
+      classifiers=classifiers,
+      url="https://gitlab.namibsun.net/namboy94/xdcc-downloader",
+      download_url="https://gitlab.namibsun.net/namboy94/xdcc-downloader/repository/archive.zip?ref=master",
+      author="Hermann Krumrey",
+      author_email="hermann@krumreyh.com",
+      license="GNU GPL3",
       packages=find_packages(),
-      install_requires=PypiVariables.install_requires,
+      install_requires=["raven", "irc", "bs4", "requests", "cfscrape", "urwid", "typing"],
       test_suite='nose.collector',
       tests_require=['nose'],
       scripts=find_scripts(),
