@@ -2,7 +2,7 @@
 
 |master|develop|
 |:---:|:---:|
-|[![build status](https://gitlab.namibsun.net/namboy94/xdcc-downloader/badges/master/build.svg)](https://gitlab.namibsun.net/namboy94/xdcc-downloader/commits/master)|[![build status](https://gitlab.namibsun.net/namboy94/xdcc-downloader/badges/master/build.svg)](https://gitlab.namibsun.net/namboy94/xdcc-downloader/commits/develop)|
+|[![build status](https://gitlab.namibsun.net/namboy94/xdcc-downloader/badges/master/build.svg)](https://gitlab.namibsun.net/namboy94/xdcc-downloader/commits/master)|[![build status](https://gitlab.namibsun.net/namboy94/xdcc-downloader/badges/develop/build.svg)](https://gitlab.namibsun.net/namboy94/xdcc-downloader/commits/develop)|
 
 ![Logo](xdcc_dl/resources/logo/logo_256.png)
 

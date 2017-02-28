@@ -24,7 +24,6 @@ LICENSE
 
 import unittest
 import xdcc_dl.metadata
-from raven import Client
 
 
 class UnitTests(unittest.TestCase):
@@ -33,5 +32,5 @@ class UnitTests(unittest.TestCase):
     def test(self):
         self.assertIsInstance(xdcc_dl.metadata.version, str)
         self.assertIsInstance(xdcc_dl.metadata.sentry_dsn, str)
-        self.assertEqual(xdcc_dl.metadata.Client, Client)
-        self.assertIsInstance(xdcc_dl.metadata.SentryLogger.sentry, Client)
+        self.assertNotEqual(xdcc_dl.metadata.Client, None)
+        self.assertNotEqual(xdcc_dl.metadata.SentryLogger.sentry, None)

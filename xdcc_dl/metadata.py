@@ -31,7 +31,7 @@ notably by the setup.py file
 """
 
 # pragma: no cover
-version = "1.1.3"
+version = "2.0.0"
 """
 The current version of the program
 """
