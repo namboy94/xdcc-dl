@@ -1,7 +1,5 @@
 stages:
   - mirror
-  - docstats
-  - finalize
 
 github_mirror:
   stage: mirror
@@ -11,31 +9,3 @@ github_mirror:
     - git checkout master
     - git pull
     - git push git@github.com:namboy94/hexchat-downloader.git master -f
-
-gitstats:
-  stage: docstats
-  only:
-    - master
-    - develop
-  tags:
-    - gitstats
-  script:
-    - gitstats . gitstats
-    - rsync -av gitstats/ /var/www/gitstats.namibsun.net/public_html/gitstats/hexchat-downloader --delete-before
-    - git_stats generate
-    - rsync -av git_stats/ /var/www/gitstats.namibsun.net/public_html/git_stats/hexchat-downloader --delete-before
-
-update_html_pages:
-  stage: finalize
-  when: always
-  tags:
-    - gitstats
-  script:
-    - git clone https://gitlab.namibsun.net/namboy94/html-index-generator.git
-    - cd html-index-generator
-    - python html-index-generator.py /var/www/coverage.namibsun.net/public_html
-      /var/www/coverage.namibsun.net/public_html/index.html
-    - python html-index-generator.py /var/www/docs.namibsun.net/public_html
-      /var/www/docs.namibsun.net/public_html/index.html
-    - python html-index-generator.py /var/www/gitstats.namibsun.net/public_html
-      /var/www/gitstats.namibsun.net/public_html/index.html
