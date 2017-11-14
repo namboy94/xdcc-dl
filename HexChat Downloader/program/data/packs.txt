@@ -1,2 +1,0 @@
-###packs come here
-/msg Ginpachi-Sensei xdcc send #1
