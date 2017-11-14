@@ -43,6 +43,11 @@ Showing server list on startup is also discouraged.
 You need to have hexchat installed on your system,
 as well as the python plugin module for hexchat.
 
+## C++ Version
+
+A version of the program was also written in C++. The content of that project
+can be found [here](c)
+
 ## Further Information
 
 * [Changelog](https://gitlab.namibsun.net/namboy94/hexchat-downloader/raw/master/CHANGELOG)
