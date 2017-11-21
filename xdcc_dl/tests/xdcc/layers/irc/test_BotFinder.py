@@ -1,25 +1,20 @@
 """
-LICENSE:
-Copyright 2016 Hermann Krumrey
+Copyright 2016-2017 Hermann Krumrey
 
-This file is part of xdcc_dl.
+This file is part of xdcc-dl.
 
-    xdcc_dl is a program that allows downloading files via the XDCC
-    protocol via file serving bots on IRC networks.
+xdcc-dl is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-    xdcc_dl is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+xdcc-dl is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-    xdcc_dl is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with xdcc_dl.  If not, see <http://www.gnu.org/licenses/>.
-LICENSE
+You should have received a copy of the GNU General Public License
+along with xdcc-dl.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 # imports
@@ -55,7 +50,8 @@ class UnitTests(unittest.TestCase):
             # noinspection PyUnusedLocal
             def on_join(self, conn, event):
                 if event.source.startswith(self.user.get_name()):
-                    self.joined_correct_channel = event.target.lower() == "#bots"
+                    self.joined_correct_channel = \
+                        event.target.lower() == "#bots"
 
                     if self.all_whois_counter == 3:
                         raise TestException()
@@ -91,7 +87,9 @@ class UnitTests(unittest.TestCase):
             incorrect_nick_detected = False
 
             def on_welcome(self, conn, event):
-                self.current_pack = XDCCPack(IrcServer("irc.namibsun.net"), "notexistingbot", 1)
+                self.current_pack = XDCCPack(
+                    IrcServer("irc.namibsun.net"), "notexistingbot", 1
+                )
                 self.connection.whois("notexistingbot")
 
             # noinspection PyUnusedLocal
@@ -117,7 +115,8 @@ class UnitTests(unittest.TestCase):
             stray_whois_detected = False
 
             def on_welcome(self, conn, event):
-                self.current_pack = XDCCPack(IrcServer("irc.namibsun.net"), "xdcc_servbot", 1)
+                self.current_pack = \
+                    XDCCPack(IrcServer("irc.namibsun.net"), "xdcc_servbot", 1)
                 self.connection.whois("notexistingbot")
 
             # noinspection PyUnusedLocal
@@ -178,7 +177,8 @@ class UnitTests(unittest.TestCase):
 
             # noinspection PyUnusedLocal
             def on_join(self, conn, event):
-                if event.target.lower() == BotChannelMapper.map(self.current_pack.get_bot()).lower():
+                if event.target.lower() == BotChannelMapper.map(
+                        self.current_pack.get_bot()).lower():
                     self.correct_channel_joined = True
                     raise TestException()
 

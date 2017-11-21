@@ -1,25 +1,20 @@
 """
-LICENSE:
-Copyright 2016 Hermann Krumrey
+Copyright 2016-2017 Hermann Krumrey
 
-This file is part of xdcc_dl.
+This file is part of xdcc-dl.
 
-    xdcc_dl is a program that allows downloading files via the XDCC
-    protocol via file serving bots on IRC networks.
+xdcc-dl is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-    xdcc_dl is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+xdcc-dl is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-    xdcc_dl is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with xdcc_dl.  If not, see <http://www.gnu.org/licenses/>.
-LICENSE
+You should have received a copy of the GNU General Public License
+along with xdcc-dl.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 # imports
@@ -60,8 +55,11 @@ class UnitTests(unittest.TestCase):
 
     def test_callback_handler(self):
 
-        def callback_tester(single_progress, single_total, single_progress_percentage,
-                            total_progress, total_total, total_percentage, current_speed, average_speed):
+        def callback_tester(
+                single_progress, single_total, single_progress_percentage,
+                total_progress, total_total, total_percentage, current_speed,
+                average_speed
+        ):
 
             self.callback_called = True
             self.assertEqual(single_progress, 300)
@@ -91,7 +89,8 @@ class UnitTests(unittest.TestCase):
         self.progress.add_single_progress(50)
         time.sleep(0.75)
 
-        self.assertAlmostEqual(self.progress.calculate_current_download_speed(), 100, delta=5)
+        self.assertAlmostEqual(
+            self.progress.calculate_current_download_speed(), 100, delta=5)
 
     def test_for_zero_division_errors(self):
 
@@ -110,7 +109,8 @@ class UnitTests(unittest.TestCase):
         self.assertEqual(self.progress.get_total_percentage(), 100.0)
         self.assertEqual(self.progress.get_single_progress_percentage(), 100.0)
         self.assertEqual(self.progress.get_single_progress(), 100)
-        self.assertEqual(self.progress.get_single_progress(), self.progress.get_single_progress_total())
+        self.assertEqual(self.progress.get_single_progress(),
+                         self.progress.get_single_progress_total())
 
     def test_going_past_total_limit(self):
 

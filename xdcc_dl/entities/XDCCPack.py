@@ -1,25 +1,20 @@
 """
-LICENSE:
-Copyright 2016 Hermann Krumrey
+Copyright 2016-2017 Hermann Krumrey
 
-This file is part of xdcc_dl.
+This file is part of xdcc-dl.
 
-    xdcc_dl is a program that allows downloading files via the XDCC
-    protocol via file serving bots on IRC networks.
+xdcc-dl is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-    xdcc_dl is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+xdcc-dl is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-    xdcc_dl is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with xdcc_dl.  If not, see <http://www.gnu.org/licenses/>.
-LICENSE
+You should have received a copy of the GNU General Public License
+along with xdcc-dl.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 # imports
@@ -34,12 +29,15 @@ class XDCCPack(object):
     Class that models an XDCC Pack
     """
 
-    def __init__(self, server: IrcServer, bot: str, packnumber: int) -> None:
+    def __init__(self, server: IrcServer, bot: str, packnumber: int):
         """
-        Initializes an XDCC object. It contains all the necessary information for joining the correct
-        IRC server and channel and sending the download request to the correct bot, then storing the
-        received file in the predetermined location. If the destination is a directory, the file will be stored
-        in the directory with the default file name, if not the file will be saved at the destination exactly.
+        Initializes an XDCC object. It contains all the necessary information
+        for joining the correct IRC server and channel and sending the
+        download request to the correct bot, then storing the
+        received file in the predetermined location.
+        If the destination is a directory, the file will be stored
+        in the directory with the default file name,
+        if not the file will be saved at the destination exactly.
         The file extension will stay as in the original filename
 
         :param server:       The Sever to be used by the XDCC Bot
@@ -57,16 +55,21 @@ class XDCCPack(object):
 
     def is_filename_valid(self, filename: str) -> bool:
         """
-        Checks if a filename is the same as the original filename, if one was set previously.
-        This is used internally by the IRC Bot to check if a file that was offered to the bot actually matches
-        the file we want to download.
+        Checks if a filename is the same as the original filename,
+        if one was set previously.
+        This is used internally by the IRC Bot to check if a file that
+        was offered to the bot actually matches the file we want to download.
 
         :param filename: The file name to check
-        :return:         True, if the names match, or no original filename was set, otherwise False
+        :return:         True, if the names match, or no original filename was
+                         set, otherwise False
         """
-        return filename == self.original_filename if self.original_filename != "" else True
+        if self.original_filename != "":
+            return filename == self.original_filename
+        else:
+            return True
 
-    def set_filename(self, filename: str, override: bool = False) -> None:
+    def set_filename(self, filename: str, override: bool = False):
         """
         Sets the filename (or only the file extension) of the target file
 
@@ -82,18 +85,19 @@ class XDCCPack(object):
         if not self.filename or override:
             self.filename = filename
 
-    def set_original_filename(self, filename: str) -> None:
+    def set_original_filename(self, filename: str):
         """
-        Sets the 'original' filename, a.k.a the name of the actual file to download.
-        This is a method that should only be used by the pack searchers to add filename checks
-        during the download.
+        Sets the 'original' filename,
+        a.k.a the name of the actual file to download.
+        This is a method that should only be used by the pack searchers
+        to add filename checks during the download.
 
         :param filename: The original filename as found by the PackSearcher
         :return:         None
         """
         self.original_filename = filename
 
-    def set_directory(self, directory: str) -> None:
+    def set_directory(self, directory: str):
         """
         Sets the target directory of the XDCC PAck
 
@@ -102,7 +106,7 @@ class XDCCPack(object):
         """
         self.directory = directory
 
-    def set_size(self, size: int) -> None:
+    def set_size(self, size: int):
         """
         Sets the file size of the XDCC pack
 
@@ -149,10 +153,12 @@ class XDCCPack(object):
 
     def get_request_message(self, full: bool = False) -> str:
         """
-        Generates an xdcc send message to be sent to the bot to initiate the XDCC connection
+        Generates an xdcc send message to be sent to the bot to initiate
+        the XDCC connection
 
-        :param full: Returns the entire message string, including the bot's name, as seen on packlist sites
-        :return:     The generated message string
+        :param full: Returns the entire message string,
+                     including the bot's name, as seen on packlist sites
+        :return: The generated message string
         """
         if full:
             return "/msg " + self.bot + " xdcc send #" + str(self.packnumber)
@@ -162,16 +168,22 @@ class XDCCPack(object):
 
 def xdcc_packs_from_xdcc_message(xdcc_message: str,
                                  destination_directory: str = os.getcwd(),
-                                 server: str = "irc.rizon.net") -> List[XDCCPack]:
+                                 server: str = "irc.rizon.net") \
+        -> List[XDCCPack]:
     """
-    Generates XDCC Packs from an xdcc message of the form "/msg <bot> xdcc send #<packnumber>[-<packnumber>]"
+    Generates XDCC Packs from an xdcc message of the form
+    "/msg <bot> xdcc send #<packnumber>[-<packnumber>]"
 
-    :param xdcc_message:           the XDCC message to parse
-    :param destination_directory:  the destination directory of the file
-    :param server:                 the server to use, defaults to irc.rizon.net for simplicity's sake
-    :return:                       The generated XDCC Packs in a list
+    :param xdcc_message: the XDCC message to parse
+    :param destination_directory: the destination directory of the file
+    :param server: the server to use, defaults to irc.rizon.net for
+                   simplicity's sake
+    :return: The generated XDCC Packs in a list
     """
-    if not re.search(r"^/msg [^ ]+ xdcc send #[0-9]+(-[0-9]+(,[0-9]+)?)?$", xdcc_message):
+    if not re.search(
+            r"^/msg [^ ]+ xdcc send #[0-9]+(-[0-9]+(,[0-9]+)?)?$",
+            xdcc_message
+    ):
         return []
 
     bot = xdcc_message.split("/msg ")[1].split(" ")[0]

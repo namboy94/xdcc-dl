@@ -2,9 +2,9 @@
 
 |master|develop|
 |:---:|:---:|
-|[![build status](https://gitlab.namibsun.net/namboy94/xdcc-downloader/badges/master/build.svg)](https://gitlab.namibsun.net/namboy94/xdcc-downloader/commits/master)|[![build status](https://gitlab.namibsun.net/namboy94/xdcc-downloader/badges/develop/build.svg)](https://gitlab.namibsun.net/namboy94/xdcc-downloader/commits/develop)|
+|[![build status](https://gitlab.namibsun.net/namboy94/xdcc-dl/badges/master/build.svg)](https://gitlab.namibsun.net/namboy94/xdcc-dl/commits/master)|[![build status](https://gitlab.namibsun.net/namboy94/xdcc-dl/badges/develop/build.svg)](https://gitlab.namibsun.net/namboy94/xdcc-dl/commits/develop)|
 
-![Logo](xdcc_dl/resources/logo/logo_256.png)
+![Logo](resources/logo/logo-readme.png)
 
 An XDCC File downloader based on the [irclib](https://github.com/jaraco/irc) framework.
 
@@ -37,7 +37,7 @@ An XDCC File downloader based on the [irclib](https://github.com/jaraco/irc) fra
     
 ### Binaries
 
-The supplied binaries at the [Github Releases](https://github.com/namboy94/xdcc-downloader/releases) page
+The supplied binaries at the [Github Releases](https://github.com/namboy94/xdcc-dl/releases) page
 do not require installation nor any dependencies. They can simply be executed.
 
 
@@ -88,18 +88,18 @@ a graphical user interface is started. It offers searching for packs using vario
 web scrapers or adding packs manually like with the CLI, adding these packs
 to a download queue and then downloading these queued packs.
 
-![Screenshot](xdcc_dl/resources/screenshots/opm_gui_example.png)
+![Screenshot](resources/screenshots/opm_gui_example.png)
     
 ### TUI
 
 Similar to the GUI, a textual user interface can be used by calling the program
 in conjunction with the ```-t``` flag.
 
-![Screenshot](xdcc_dl/resources/screenshots/tui_basic_screenshot.png)
+![Screenshot](resources/screenshots/tui_basic_screenshot.png)
 
 ### As a library:
 
-xdcc-downloader is built to be used as a library for use in other projects.
+xdcc-dl is built to be used as a library for use in other projects.
 To make use of the XDCC downloader in your application, you will first need to
 create a list of [XDCCPack](xdcc_dl/entitites/XDCCPack.py) objects, either by hand
 or by using the [PackSearcher](xdcc_dl/pack_searchers/PackSearcher.py). 
@@ -129,18 +129,18 @@ A second optional Parameter is the progress. This parameter is an instance of th
 [Progress](xdcc_dl/entitites/Progress.py) class and can be used to see the progress of
 the downloads from a different point in the application
     
-## Projects using xdcc-downloader
+## Projects using xdcc-dl
 
 * [toktokkie](https://gitlab.namibsun.net/namboy94/toktokkie)
    
 ## Further Information
 
-* [Changelog](https://gitlab.namibsun.net/namboy94/xdcc-downloader/raw/master/CHANGELOG)
-* [Gitlab](https://gitlab.namibsun.net/namboy94/xdcc-downloader)
-* [Github](https://github.com/namboy94/xdcc-downloader)
+* [Changelog](https://gitlab.namibsun.net/namboy94/xdcc-dl/raw/master/CHANGELOG)
+* [Gitlab](https://gitlab.namibsun.net/namboy94/xdcc-dl)
+* [Github](https://github.com/namboy94/xdcc-dl)
 * [Python Package Index Site](https://pypi.python.org/pypi/xdcc_dl)
 * [Documentation(HTML)](https://docs.namibsun.net/html_docs/xdcc_downloader/index.html)
 * [Documentation(PDF)](https://docs.namibsun.net/pdf_docs/xdcc_downloader.pdf)
 * [Git Statistics (gitstats)](https://gitstats.namibsun.net/gitstats/xdcc_downloader/index.html)
 * [Git Statistics (git_stats)](https://gitstats.namibsun.net/git_stats/xdcc_downloader/index.html)
-* [Test Coverage](https://coverage.namibsun.net/xdcc-downloader/index.html)
+* [Test Coverage](https://coverage.namibsun.net/xdcc-dl/index.html)

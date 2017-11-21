@@ -1,25 +1,20 @@
 """
-LICENSE:
-Copyright 2016 Hermann Krumrey
+Copyright 2016-2017 Hermann Krumrey
 
-This file is part of xdcc_dl.
+This file is part of xdcc-dl.
 
-    xdcc_dl is a program that allows downloading files via the XDCC
-    protocol via file serving bots on IRC networks.
+xdcc-dl is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-    xdcc_dl is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+xdcc-dl is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-    xdcc_dl is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with xdcc_dl.  If not, see <http://www.gnu.org/licenses/>.
-LICENSE
+You should have received a copy of the GNU General Public License
+along with xdcc-dl.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 # imports
@@ -96,7 +91,8 @@ class UnitTests(unittest.TestCase):
         self.assertEqual(1, len(self.tui.download_queue))
 
     def test_removing_packs_from_queue(self):
-        self.tui.download_queue = xdcc_packs_from_xdcc_message("/msg xdcc_servbot xdcc send #1-3")
+        self.tui.download_queue = xdcc_packs_from_xdcc_message(
+            "/msg xdcc_servbot xdcc send #1-3")
         self.assertEqual(3, len(self.tui.download_queue))
         self.tui.refresh_ui()
         self.tui.download_queue_checks[0].set_state(True)
@@ -104,8 +100,8 @@ class UnitTests(unittest.TestCase):
         self.assertEqual(2, len(self.tui.download_queue))
 
     def test_download(self):
-        self.tui.download_queue = xdcc_packs_from_xdcc_message("/msg xdcc_servbot xdcc send #1-3",
-                                                               server="irc.namibsun.net")
+        self.tui.download_queue = xdcc_packs_from_xdcc_message(
+            "/msg xdcc_servbot xdcc send #1-3", server="irc.namibsun.net")
         self.tui.refresh_ui()
         self.tui.download(None)
 
@@ -117,8 +113,8 @@ class UnitTests(unittest.TestCase):
         self.assertTrue(os.path.isfile("3_test.txt"))
 
     def test_download_while_downloading(self):
-        self.tui.download_queue = xdcc_packs_from_xdcc_message("/msg xdcc_servbot xdcc send #1-3",
-                                                               server="irc.namibsun.net")
+        self.tui.download_queue = xdcc_packs_from_xdcc_message(
+            "/msg xdcc_servbot xdcc send #1-3", server="irc.namibsun.net")
         self.tui.refresh_ui()
         self.tui.download(None)
 
@@ -126,7 +122,8 @@ class UnitTests(unittest.TestCase):
 
         self.assertNotEqual(self.tui.download_button.get_label(), "Download")
 
-        self.tui.download_queue = xdcc_packs_from_xdcc_message("/msg Ginpachi-Sensei xdcc send #1")
+        self.tui.download_queue = xdcc_packs_from_xdcc_message(
+            "/msg Ginpachi-Sensei xdcc send #1")
         self.tui.refresh_ui()
         self.tui.download(None)
 
@@ -139,12 +136,14 @@ class UnitTests(unittest.TestCase):
         self.assertFalse(os.path.isfile("Gin.txt"))
 
     def test_download_wrong_directory(self):
-        self.tui.download_queue = xdcc_packs_from_xdcc_message("/msg xdcc_servbot xdcc send #1-3",
-                                                               server="irc.namibsun.net")
+        self.tui.download_queue = xdcc_packs_from_xdcc_message(
+            "/msg xdcc_servbot xdcc send #1-3", server="irc.namibsun.net")
 
-        self.assertEqual(self.tui.destination_edit.get_edit_text(), os.getcwd())
+        self.assertEqual(
+            self.tui.destination_edit.get_edit_text(), os.getcwd())
         self.tui.destination_edit.set_edit_text("NotADirectory")
-        self.assertEqual(self.tui.destination_edit.get_edit_text(), "NotADirectory")
+        self.assertEqual(self.tui.destination_edit.get_edit_text(),
+                         "NotADirectory")
 
         self.tui.refresh_ui()
         self.tui.download(None)

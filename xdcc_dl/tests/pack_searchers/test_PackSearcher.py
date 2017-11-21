@@ -1,25 +1,20 @@
 """
-LICENSE:
-Copyright 2016 Hermann Krumrey
+Copyright 2016-2017 Hermann Krumrey
 
-This file is part of xdcc_dl.
+This file is part of xdcc-dl.
 
-    xdcc_dl is a program that allows downloading files via the XDCC
-    protocol via file serving bots on IRC networks.
+xdcc-dl is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-    xdcc_dl is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+xdcc-dl is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-    xdcc_dl is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with xdcc_dl.  If not, see <http://www.gnu.org/licenses/>.
-LICENSE
+You should have received a copy of the GNU General Public License
+along with xdcc-dl.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 # imports
@@ -46,7 +41,8 @@ class UnitTests(unittest.TestCase):
         searcher = PackSearcher()
 
         for procedure in procedures:
-            self.assertTrue(PackSearcher.procedure_map[procedure] in searcher.procedures)
+            self.assertTrue(PackSearcher.procedure_map[procedure]
+                            in searcher.procedures)
 
     def test_selected_searchers(self):
 
@@ -56,4 +52,5 @@ class UnitTests(unittest.TestCase):
         for procedure in PackSearcher.get_available_pack_searchers():
 
             if procedure not in ["nibl", "namibsun"]:
-                self.assertFalse(PackSearcher.procedure_map[procedure] in searcher.procedures)
+                self.assertFalse(PackSearcher.procedure_map[procedure]
+                                 in searcher.procedures)

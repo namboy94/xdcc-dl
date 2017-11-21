@@ -1,25 +1,20 @@
 """
-LICENSE:
-Copyright 2016 Hermann Krumrey
+Copyright 2016-2017 Hermann Krumrey
 
-This file is part of xdcc_dl.
+This file is part of xdcc-dl.
 
-    xdcc_dl is a program that allows downloading files via the XDCC
-    protocol via file serving bots on IRC networks.
+xdcc-dl is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-    xdcc_dl is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+xdcc-dl is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-    xdcc_dl is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with xdcc_dl.  If not, see <http://www.gnu.org/licenses/>.
-LICENSE
+You should have received a copy of the GNU General Public License
+along with xdcc-dl.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 # imports
@@ -28,13 +23,16 @@ from xdcc_dl.entities.XDCCPack import XDCCPack
 from xdcc_dl.pack_searchers.procedures.nibl import find_nibl_packs
 from xdcc_dl.pack_searchers.procedures.ixirc import find_ixirc_packs
 from xdcc_dl.pack_searchers.procedures.namibsun import find_namibsun_packs
-from xdcc_dl.pack_searchers.procedures.horriblesubs import find_horriblesubs_packs
-from xdcc_dl.pack_searchers.procedures.intel_haruhichan import find_intel_haruhichan_packs
+from xdcc_dl.pack_searchers.procedures.horriblesubs import \
+    find_horriblesubs_packs
+from xdcc_dl.pack_searchers.procedures.intel_haruhichan import \
+    find_intel_haruhichan_packs
 
 
 class PackSearcher(object):
     """
-    Class that offers various methods to search different XDCC Packlists for XDCC Packs
+    Class that offers various methods to search
+    different XDCC Packlists for XDCC Packs
     """
 
     procedure_map = {"nibl": find_nibl_packs,
@@ -52,7 +50,7 @@ class PackSearcher(object):
         """
         return list(PackSearcher.procedure_map.keys())
 
-    def __init__(self, procedures: List[str] = list(procedure_map.keys())) -> None:
+    def __init__(self, procedures: List[str] = list(procedure_map.keys())):
         """
         Initializes the Packsearcher with a list of procedures to consider
         All procedures are used by default
@@ -68,7 +66,8 @@ class PackSearcher(object):
         """
         Conducts the actual search for the XDCC packs
 
-        :param search_phrase: The search phrase to use while conducting the search
+        :param search_phrase: The search phrase to use while
+                              conducting the search
         :return:              A list of search results as XDCCPack objects
         """
         results = []

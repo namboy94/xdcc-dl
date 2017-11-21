@@ -1,40 +1,34 @@
 stages:
   - mirror
   - test
-  - install
-  - build
   - deploy
   - release
-  - docstats
-  - finalize
-
-variables:
-  GITLAB_ACCESS_TOKEN: "$GITLAB_ACCESS_TOKEN"
-  GITHUB_OAUTH_TOKEN: "$GITHUB_ACCESS_TOKEN"
+  - docs
 
 github_mirror:
   stage: mirror
   tags:
-    - linux-buildserver
+    - github_namboy94_push
   script:
     - git checkout master
     - git pull
-    - git push git@github.com:namboy94/xdcc-downloader.git master -f
+    - git push git@github.com:namboy94/xdcc-dl.git master -f
     - git checkout develop
     - git pull
-    - git push git@github.com:namboy94/xdcc-downloader.git develop -f
+    - git push git@github.com:namboy94/xdcc-dl.git develop -f
 
 stylecheck:
   stage: test
   tags:
-    - linux-buildserver
+    - pycodestyle
   script:
-    - pep8 . --exclude=xdcc_downloader.py,LoggingTypes.py --max-line-length 120
+    - pycodestyle . --exclude=LoggingTypes.py,xdcc_downloader.py
 
 run_unit_tests_python_2:
   stage: test
   tags:
-    - linux-buildserver
+    - python2
+    - 3to2
   script:
     - 3to2 . --write
     - python2 setup.py test
@@ -42,74 +36,20 @@ run_unit_tests_python_2:
 run_unit_tests_python_3_with_coverage:
   stage: test
   tags:
-    - linux-buildserver
+    - python3
   script:
     - python3 setup.py nosetests
       --with-coverage --cover-package=xdcc_dl --cover-branches --cover-erase --cover-html --cover-inclusive
-    - rsync -av cover/ /var/www/coverage.namibsun.net/public_html/xdcc-downloader --delete-before
-
-run_unit_tests_windows:
-  stage: test
-  tags:
-    - buildserver_windows
-  script:
-    - python setup.py test
-
-install_on_linux:
-  stage: install
-  only:
-    - master
-  tags:
-    - linux-buildserver
-  script:
-    - python3 setup.py install --user
-
-install_on_windows:
-  stage: install
-  only:
-    - master
-  tags:
-    - buildserver_windows
-  script:
-    - python setup.py install
-
-pyinstaller_linux:
-  stage: build
-  only:
-    - master
-  tags:
-    - linux-buildserver
-  script:
-    - python3 setup.py install --user
-    - mkdir -p artifacts
-    - pyinstaller xdcc_dl/main.py --onefile
-    - mv dist/main artifacts/xdcc-downloader-linux
-  artifacts:
-    paths:
-      - artifacts/*
-
-pyinstaller_windows:
-  stage: build
-  only:
-    - master
-  tags:
-    - buildserver_windows
-  script:
-    - python setup.py install
-    - mkdir artifacts
-    - pyinstaller xdcc_dl/main.py --onefile --windowed --icon=xdcc_dl/resources/logo/logo.ico
-    - dir
-    - move dist\main.exe artifacts\xdcc-downloader-windows.exe
-  artifacts:
-    paths:
-      - artifacts/*
+    - rsync -av cover/ /var/www/coverage.namibsun.net/public_html/xdcc-dl --delete-before
 
 pypi_dist:
   stage: deploy
   only:
     - master
   tags:
-    - linux-buildserver
+    - python2
+    - python3
+    - pypi
   script:
     - python3 setup.py register sdist upload
     - python3 setup.py bdist_wheel upload
@@ -123,12 +63,12 @@ upload_release_to_github:
   only:
     - master
   tags:
-    - linux-buildserver
+    - python
   script:
-    - git clone https://gitlab.namibsun.net/namboy94/github-release-uploader.git
-    - git clone https://gitlab.namibsun.net/namboy94/changelog-reader.git
-    - python changelog-reader/changelog-reader.py -c CHANGELOG -d current_changelog
-    - python github-release-uploader/github-release-uploader.py namboy94 xdcc-downloader $GITHUB_ACCESS_TOKEN
+    - mkdir -p artifacts
+    - git clone https://gitlab.namibsun.net/namboy94/ci-scripts.git
+    - python ci-scripts/src/changelog-reader/changelog-reader.py -c CHANGELOG -d current_changelog
+    - python ci-scripts/src/github-release-uploader/github-release-uploader.py namboy94 xdcc-dl $GITHUB_ACCESS_TOKEN
       $(python3 setup.py -V) current_changelog artifacts -b master
 
 upload_release_to_gitlab:
@@ -136,55 +76,29 @@ upload_release_to_gitlab:
   only:
     - master
   tags:
-    - linux-buildserver
+    - python
   script:
-    - git clone https://gitlab.namibsun.net/namboy94/gitlab-release-uploader.git
-    - git clone https://gitlab.namibsun.net/namboy94/changelog-reader.git
-    - python changelog-reader/changelog-reader.py -c CHANGELOG -d  current_changelog
-    - python gitlab-release-uploader/gitlab-release-uploader.py namboy94 xdcc-downloader $GITLAB_ACCESS_TOKEN
+    - mkdir -p artifacts
+    - git clone https://gitlab.namibsun.net/namboy94/ci-scripts.git
+    - python ci-scripts/src/changelog-reader/changelog-reader.py -c CHANGELOG -d  current_changelog
+    - python ci-scripts/src/gitlab-release-uploader/gitlab-release-uploader.py namboy94 xdcc-dl $GITLAB_ACCESS_TOKEN
       $(python3 setup.py -V) current_changelog artifacts -b master -u https://gitlab.namibsun.net
 
 generate_sphinx_documentation:
-  stage: docstats
+  stage: docs
   only:
     - master
     - develop
   tags:
-    - linux-buildserver
+    - sphinx
+    - latex
+    - docs
   script:
     - cd doc
     - make buildsource
     - make latexpdf
     - make html
-    - rsync -av build/latex/xdcc-downloader.pdf
-      /var/www/docs.namibsun.net/public_html/pdf_docs/xdcc-downloader.pdf --delete-before
-    - rsync -av build/html/ /var/www/docs.namibsun.net/public_html/html_docs/xdcc-downloader --delete-before
+    - rsync -av build/latex/xdcc-dl.pdf
+      /var/www/docs.namibsun.net/public_html/pdf_docs/xdcc-dl.pdf --delete-before
+    - rsync -av build/html/ /var/www/docs.namibsun.net/public_html/html_docs/xdcc-dl --delete-before
     - cd ..
-
-gitstats:
-  stage: docstats
-  only:
-    - master
-    - develop
-  tags:
-    - linux-buildserver
-  script:
-    - gitstats . gitstats
-    - rsync -av gitstats/ /var/www/gitstats.namibsun.net/public_html/gitstats/xdcc-downloader --delete-before
-    - git_stats generate
-    - rsync -av git_stats/ /var/www/gitstats.namibsun.net/public_html/git_stats/xdcc-downloader --delete-before
-
-update_html_pages:
-  stage: finalize
-  when: always
-  tags:
-    - linux-buildserver
-  script:
-    - git clone https://gitlab.namibsun.net/namboy94/html-index-generator.git
-    - cd html-index-generator
-    - python html-index-generator.py /var/www/coverage.namibsun.net/public_html
-      /var/www/coverage.namibsun.net/public_html/index.html
-    - python html-index-generator.py /var/www/docs.namibsun.net/public_html
-      /var/www/docs.namibsun.net/public_html/index.html
-    - python html-index-generator.py /var/www/gitstats.namibsun.net/public_html
-      /var/www/gitstats.namibsun.net/public_html/index.html

@@ -1,25 +1,20 @@
 """
-LICENSE:
-Copyright 2016 Hermann Krumrey
+Copyright 2016-2017 Hermann Krumrey
 
-This file is part of xdcc_dl.
+This file is part of xdcc-dl.
 
-    xdcc_dl is a program that allows downloading files via the XDCC
-    protocol via file serving bots on IRC networks.
+xdcc-dl is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-    xdcc_dl is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+xdcc-dl is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-    xdcc_dl is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with xdcc_dl.  If not, see <http://www.gnu.org/licenses/>.
-LICENSE
+You should have received a copy of the GNU General Public License
+along with xdcc-dl.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 
@@ -75,8 +70,10 @@ class LoggingTypes:
     """
     The different logging types.
 
-    Each logging type is assigned a background and foreground colour and a priority. The priority
-    determines if the type of logging element is shown at all. In General, the logging levels mean:
+    Each logging type is assigned a background and foreground colour and a
+    priority.
+    The priority determines if the type of logging element is shown at all.
+    In General, the logging levels mean:
 
         0: Must be shown under all circumstances except pure GUI output
         1: Will definitely be shown in a CLI environment
@@ -92,7 +89,9 @@ class LoggingTypes:
         CYAN BG:                               WHOIS
         GREEN BG:                              CHANNELS
         BLUE BG:                               Messages
-        DEFAULT BG + GREY/L_GREY/WHITE FG:     Welcome Messages, Message of the day, CTCP Version
+        DEFAULT BG + GREY/L_GREY/WHITE FG:     Welcome Messages,
+                                               Message of the day,
+                                               CTCP Version
         DEFAULT BG + DEFAULT/L_GREEN/L_RED FG: Connection
         DEFAULT BG + BLUE/L_BLUE FG:           Private Message/Notice
         DEFAULT BG + YELLOW/L_YELLOW FG:       Public Message/Notice

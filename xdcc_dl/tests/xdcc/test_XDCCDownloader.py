@@ -1,31 +1,25 @@
 """
-LICENSE:
-Copyright 2016 Hermann Krumrey
+Copyright 2016-2017 Hermann Krumrey
 
-This file is part of xdcc_dl.
+This file is part of xdcc-dl.
 
-    xdcc_dl is a program that allows downloading files via the XDCC
-    protocol via file serving bots on IRC networks.
+xdcc-dl is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-    xdcc_dl is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+xdcc-dl is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-    xdcc_dl is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with xdcc_dl.  If not, see <http://www.gnu.org/licenses/>.
-LICENSE
+You should have received a copy of the GNU General Public License
+along with xdcc-dl.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 # imports
 import os
 import unittest
-from xdcc_dl.metadata import SentryLogger
 from xdcc_dl.entities.XDCCPack import XDCCPack
 from xdcc_dl.entities.Progress import Progress
 from xdcc_dl.entities.IrcServer import IrcServer
@@ -93,7 +87,8 @@ class UnitTests(unittest.TestCase):
     def test_network_error(self):
 
         pack = XDCCPack(IrcServer("gitlab.namibsun.net"), "xdcc_servbot", 2)
-        results = XDCCDownloader("gitlab.namibsun.net", "random").download([pack])
+        results = XDCCDownloader("gitlab.namibsun.net", "random").\
+            download([pack])
         self.assertEqual(results[pack], "NETWORKERROR")
 
     def test_different_servers(self):
@@ -108,13 +103,7 @@ class UnitTests(unittest.TestCase):
 
     def test_invalid_whois_query(self):
 
-        class DummySentry(object):
-            # noinspection PyPep8Naming
-            def captureMessage(self, string):
-                pass
-
         BotChannelMapper.bot_channel_map = {}
-        SentryLogger.sentry = DummySentry()
 
         pack = XDCCPack(IrcServer("irc.rizon.net"), "HelloKitty", 1)
         results = XDCCDownloader("irc.rizon.net", "random").download([pack])
