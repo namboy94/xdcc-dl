@@ -136,6 +136,7 @@ the downloads from a different point in the application
 ## Further Information
 
 * [Changelog](https://gitlab.namibsun.net/namboy94/xdcc-dl/raw/master/CHANGELOG)
+* [License (GPLv3)](https://gitlab.namibsun.net/namboy94/xdcc-dl/raw/master/LICENSE)
 * [Gitlab](https://gitlab.namibsun.net/namboy94/xdcc-dl)
 * [Github](https://github.com/namboy94/xdcc-dl)
 * [Python Package Index Site](https://pypi.python.org/pypi/xdcc_dl)

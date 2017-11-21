@@ -35,7 +35,7 @@ class UnitTests(unittest.TestCase):
         self.assertEqual(len(packs), 0)
 
     def test_gin_txt(self):
-        packs = find_ixirc_packs("Gin.txt")
+        packs = find_ixirc_packs("AHQ Official Dragon Ball Z Releases.txt")
         self.assertEqual(len(packs), 2)
 
         pack = packs[0]
@@ -43,8 +43,9 @@ class UnitTests(unittest.TestCase):
         self.assertEqual(pack.get_server().get_address(), "irc.abjects.net")
         self.assertEqual(pack.get_filepath(),
                          os.path.join(os.getcwd(), pack.get_filename()))
-        self.assertEqual(pack.get_filename(), "Gin.txt")
-        self.assertEqual(pack.get_bot(), "Beast-Gin-Anime")
+        self.assertEqual(pack.get_filename(),
+                         "AHQ Official Dragon Ball Z Releases.txt")
+        self.assertEqual(pack.get_bot(), "Arutha|DragonBall")
 
     def test_larger_result(self):
         packs = find_ixirc_packs("game of thrones")
