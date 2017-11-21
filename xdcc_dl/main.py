@@ -82,8 +82,9 @@ def main():
                 lambda x: len(x.get_filepath()), results.keys()
             ))
             for result in results:
-                print(result.get_filepath().ljust(max_length) + " - " +
-                      results[result])
+                print_result = result.get_filepath().ljust(max_length) + " - "
+                print_result += results[result]
+                print(print_result)
 
         elif args.gui:  # pragma: no cover
             if start_gui is not None:
