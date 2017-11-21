@@ -32,9 +32,15 @@ class UnitTests(unittest.TestCase):
 
     def test_all_searchers(self):
 
-        results = PackSearcher().search(
-            "AHQ Official Dragon Ball Z Releases.txt")
-        self.assertEqual(len(results), 5)
+        # Subject to change when real-world stuff changes
+        for term, amount in {
+            "AHQ Official Dragon Ball Z Releases.txt": 2,
+            "Gin.txt": 1,
+            "mashiro.txt": 1,
+            "1_test.txt": 1
+        }.items():
+            results = PackSearcher().search(term)
+            self.assertEqual(len(results), amount)
 
     def test_getting_searchers(self):
 

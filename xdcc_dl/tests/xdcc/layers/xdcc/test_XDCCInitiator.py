@@ -19,11 +19,7 @@ along with xdcc-dl.  If not, see <http://www.gnu.org/licenses/>.
 
 # imports
 import unittest
-from xdcc_dl.entities.XDCCPack import XDCCPack
-from xdcc_dl.entities.IrcServer import IrcServer
-from xdcc_dl.xdcc.layers.helpers.BotChannelMapper import BotChannelMapper
-from xdcc_dl.xdcc.layers.xdcc.XDCCInitiator import XDCCInitiator,\
-    NoValidWhoisQueryException
+from xdcc_dl.xdcc.layers.xdcc.XDCCInitiator import XDCCInitiator
 
 
 class TestException(Exception):
@@ -53,14 +49,15 @@ class UnitTests(unittest.TestCase):
         except TestException:
             self.assertTrue(True)
 
-    def test_missing_whois(self):
-        BotChannelMapper.bot_channel_map = {}
-
-        try:
-            initiator = XDCCInitiator("irc.rizon.net", "random")
-            initiator.current_pack = \
-                XDCCPack(IrcServer("irc.rizon.net"), "HelloKitty", 1)
-            initiator.start()
-            self.assertTrue(False)
-        except NoValidWhoisQueryException:
-            self.assertTrue(True)
+    # HelloKitty no longer exists
+    # def test_missing_whois(self):
+    #    BotChannelMapper.bot_channel_map = {}
+    #
+    #    try:
+    #        initiator = XDCCInitiator("irc.rizon.net", "random")
+    #        initiator.current_pack = \
+    #            XDCCPack(IrcServer("irc.rizon.net"), "HelloKitty", 1)
+    #        initiator.start()
+    #        self.assertTrue(False)
+    #    except NoValidWhoisQueryException:
+    #        self.assertTrue(True)

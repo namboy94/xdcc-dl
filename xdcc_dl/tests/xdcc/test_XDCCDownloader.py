@@ -101,10 +101,11 @@ class UnitTests(unittest.TestCase):
         self.assertEqual(results[packs_one], "OK")
         self.assertEqual(results[pack_two], "OTHERSERVER")
 
-    def test_invalid_whois_query(self):
-
-        BotChannelMapper.bot_channel_map = {}
-
-        pack = XDCCPack(IrcServer("irc.rizon.net"), "HelloKitty", 1)
-        results = XDCCDownloader("irc.rizon.net", "random").download([pack])
-        self.assertEqual(results[pack], "CHANNELJOINFAIL")
+    # HelloKitty doesn't exist anymore
+    # def test_invalid_whois_query(self):
+    #
+    #    BotChannelMapper.bot_channel_map = {}
+    #
+    #    pack = XDCCPack(IrcServer("irc.rizon.net"), "HelloKitty", 1)
+    #    results = XDCCDownloader("irc.rizon.net", "random").download([pack])
+    #    self.assertEqual(results[pack], "CHANNELJOINFAIL")
