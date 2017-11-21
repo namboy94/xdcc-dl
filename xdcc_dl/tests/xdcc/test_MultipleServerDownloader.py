@@ -45,8 +45,10 @@ class UnitTests(unittest.TestCase):
 
         downloader = MultipleServerDownloader("random")
 
-        downloader.download([XDCCPack(IrcServer("irc.namibsun.net"), "xdcc_servbot", 1),
-                             XDCCPack(IrcServer("irc.namibsun.net"), "xdcc_servbot", 3)], progress)
+        downloader.download([
+            XDCCPack(IrcServer("irc.namibsun.net"), "xdcc_servbot", 1),
+            XDCCPack(IrcServer("irc.namibsun.net"), "xdcc_servbot", 3)
+        ], progress)
 
         self.assertTrue(os.path.isfile("1_test.txt"))
         self.assertTrue(os.path.isfile("3_test.txt"))
@@ -60,8 +62,10 @@ class UnitTests(unittest.TestCase):
 
         downloader = MultipleServerDownloader("random")
 
-        downloader.download([XDCCPack(IrcServer("irc.namibsun.net"), "xdcc_servbot", 2),
-                             XDCCPack(IrcServer("h2618595.stratoserver.net"), "xdcc_servbot", 3)], progress)
+        downloader.download([
+            XDCCPack(IrcServer("irc.namibsun.net"), "xdcc_servbot", 2),
+            XDCCPack(IrcServer("h2618595.stratoserver.net"), "xdcc_servbot", 3)
+        ], progress)
 
         self.assertTrue(os.path.isfile("2_test.txt"))
         self.assertTrue(os.path.isfile("3_test.txt"))

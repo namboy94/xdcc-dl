@@ -26,21 +26,24 @@ class Progress(object):
     Class that keeps track of a download progress
     """
 
-    def __init__(self, file_amount: int, callback: callable = None) -> None:
+    def __init__(self, file_amount: int, callback: callable = None):
         """
         Creates a new Progress Object with a set amount of files
 
         :param file_amount: the files to download
-        :param callback:    A callback method called whenever the progress' state is changed.
-                            The callback will be given 8 parameters:
-                                1: the single progress
-                                2: the single progress size
-                                3: the single progress completion percentage
-                                4: the total progress completion percentage
-                                5: the total progress
-                                6: the total progress size
-                                7: the current download speed in byte/s (Based on last 0.5 seconds)
-                                8: the average download speed over the entire downloading process
+        :param callback: A callback method called whenever the progress'
+                         state is changed.
+                         The callback will be given 8 parameters:
+                            1: the single progress
+                            2: the single progress size
+                            3: the single progress completion percentage
+                            4: the total progress completion percentage
+                            5: the total progress
+                            6: the total progress size
+                            7: the current download speed in byte/s
+                               (Based on last 0.5 seconds)
+                            8: the average download speed over the
+                               entire downloading process
         """
         self.start_time = time.time()
         self.speed_counter = time.time()
@@ -69,7 +72,7 @@ class Progress(object):
         self.handle_callback()
         return self.single_progress
 
-    def next_file(self) -> None:
+    def next_file(self):
         """
         Switches to the next file to download
 
@@ -82,20 +85,28 @@ class Progress(object):
                 self.single_progress = 0
                 self.single_total = 0
 
-    def handle_callback(self) -> None:
+    def handle_callback(self):
         """
         Handles the callback method
 
         :return: None
         """
         if self.callback is not None:
-            self.callback(self.single_progress, self.single_total, self.get_single_progress_percentage(),
-                          self.total_progress, self.total_total, self.get_total_percentage(),
-                          self.calculate_current_download_speed(), self.calculate_average_download_speed())
+            self.callback(
+                self.single_progress,
+                self.single_total,
+                self.get_single_progress_percentage(),
+                self.total_progress,
+                self.total_total,
+                self.get_total_percentage(),
+                self.calculate_current_download_speed(),
+                self.calculate_average_download_speed()
+            )
 
     def calculate_current_download_speed(self) -> int:
         """
-        Calculates the current download speed based on the data downloaded every 0.5 seconds
+        Calculates the current download speed based on the
+        data downloaded every 0.5 seconds
 
         :return: The speed in byte/s
         """
@@ -105,20 +116,23 @@ class Progress(object):
             bytes_downloaded = self.total_bytes - self.speed_byte_counter
             self.speed_byte_counter = self.total_bytes
 
-            self.previous_speed = int(bytes_downloaded / (time.time() - self.speed_counter))
+            self.previous_speed = int(
+                bytes_downloaded / (time.time() - self.speed_counter)
+            )
             self.speed_counter = time.time()
 
             return self.previous_speed
 
     def calculate_average_download_speed(self) -> int:
         """
-        Calculates the average download speed during the entire run of the progress object
+        Calculates the average download speed during the entire
+        run of the progress object
 
         :return: The average speed in byte/s
         """
         return int(self.total_bytes / (time.time() - self.start_time))
 
-    def set_single_progress_total(self, total: int) -> None:
+    def set_single_progress_total(self, total: int):
         """
         Sets the total amount of bytes of the single progress
 
@@ -127,7 +141,7 @@ class Progress(object):
         """
         self.single_total = total
 
-    def set_single_progress(self, progress: int) -> None:
+    def set_single_progress(self, progress: int):
         """
         Sets the single progress with the new file size
 
@@ -152,13 +166,15 @@ class Progress(object):
         """
         :return: The percentage of total progress
         """
-        if self.total_progress == self.total_total and self.total_progress != 0:
+        if self.total_progress == self.total_total \
+                and self.total_progress != 0:
             return 100.0
 
         try:
             total_percentage = self.total_progress / self.total_total
             single_percentage = (self.get_single_progress_percentage() / 100)
-            single_proportional_percentage = single_percentage * (1 / self.total_total)
+            single_proportional_percentage = \
+                single_percentage * (1 / self.total_total)
 
             total_percentage += single_proportional_percentage
             return total_percentage * 100

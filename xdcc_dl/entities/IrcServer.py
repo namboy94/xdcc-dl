@@ -23,7 +23,7 @@ class IrcServer(object):
     Class that models an IRC server
     """
 
-    def __init__(self, server_address: str, server_port: int = 6667) -> None:
+    def __init__(self, server_address: str, server_port: int = 6667):
         """
         Initializes the Server's information
 

@@ -22,7 +22,7 @@ import os
 import time
 import urwid
 from threading import Thread
-from xdcc_dl.metadata import version
+from xdcc_dl import version
 from xdcc_dl.entities.Progress import Progress
 from xdcc_dl.pack_searchers.PackSearcher import PackSearcher
 from xdcc_dl.entities.XDCCPack import xdcc_packs_from_xdcc_message
@@ -35,7 +35,7 @@ class XDCCDownloaderTui(object):
     Class that models a urwid TUI for the XDCC Downloader
     """
 
-    def __init__(self) -> None:
+    def __init__(self):
         """
         Initializes the TUI's various widgets
         """
@@ -59,21 +59,25 @@ class XDCCDownloaderTui(object):
         self.download_queue = []
         self.download_queue_checks = []
 
-        self.gpl_notice = urwid.Text("XDCC Downloader V " + version + "\n"
-                                     "Copyright (C) 2016 Hermann Krumrey\n\n"
-                                     "This program comes with ABSOLUTELY NO WARRANTY; for details type `show w'.\n"
-                                     "This is free software, and you are welcome to redistribute it\n"
-                                     "under certain conditions; type `show c' for details.")
+        self.gpl_notice = urwid.Text(
+            "XDCC Downloader V " + version + "\n"
+            "Copyright (C) 2016-2017 Hermann Krumrey\n\n"
+            "This program comes with ABSOLUTELY NO WARRANTY.\n"
+            "This is free software, and you are welcome to redistribute it\n"
+            "under certain conditions.")
         self.message_edit = urwid.Edit(caption="XDCC Message: ", edit_text="")
-        self.server_edit = urwid.Edit(caption="Server: ", edit_text="irc.rizon.net")
+        self.server_edit = urwid.Edit(
+            caption="Server: ", edit_text="irc.rizon.net")
         self.add_pack_button = urwid.Button("Add Pack")
 
         self.search_engine_label = urwid.Text("Search Engines")
         self.search_engine_options = []
-        for search_engine in ["All"] + PackSearcher.get_available_pack_searchers():
+        for search_engine in ["All"] + \
+                PackSearcher.get_available_pack_searchers():
             urwid.RadioButton(self.search_engine_options, search_engine)
 
-        self.search_term_edit = urwid.Edit(caption="Search Term: ", edit_text="")
+        self.search_term_edit = urwid.Edit(
+            caption="Search Term: ", edit_text="")
         self.search_button = urwid.Button("Search")
         self.search_results_label = urwid.Text("Search Results:")
         self.add_search_result_button = urwid.Button("Add Selected Packs")
@@ -81,7 +85,8 @@ class XDCCDownloaderTui(object):
         self.download_queue_label = urwid.Text("Download_Queue")
         self.remove_pack_button = urwid.Button("Remove Selected Packs")
 
-        self.destination_edit = urwid.Edit(caption="Destination Directory: ", edit_text=os.getcwd())
+        self.destination_edit = urwid.Edit(
+            caption="Destination Directory: ", edit_text=os.getcwd())
         self.download_button = urwid.Button("Download")
         self.single_progress_bar = urwid.ProgressBar("Progress", "Total")
         self.total_progress_bar = urwid.ProgressBar("Progress", "Total")
@@ -89,19 +94,24 @@ class XDCCDownloaderTui(object):
         self.connect_widgets()
         self.lay_out()
 
-    def connect_widgets(self) -> None:
+    def connect_widgets(self):
         """
         Connects actions to the relevant widgets
 
         :return: None
         """
-        urwid.connect_signal(self.add_pack_button, 'click', self.add_pack_manually)
+        urwid.connect_signal(
+            self.add_pack_button, 'click', self.add_pack_manually)
         urwid.connect_signal(self.search_button, 'click', self.search)
-        urwid.connect_signal(self.add_search_result_button, 'click', self.add_selected_search_result_packs)
-        urwid.connect_signal(self.remove_pack_button, 'click', self.remove_selected_packs)
+        urwid.connect_signal(
+            self.add_search_result_button, 'click',
+            self.add_selected_search_result_packs
+        )
+        urwid.connect_signal(
+            self.remove_pack_button, 'click', self.remove_selected_packs)
         urwid.connect_signal(self.download_button, 'click', self.download)
 
-    def lay_out(self) -> None:
+    def lay_out(self):
         """
         Handles the layout of the TUI elements
 
@@ -109,31 +119,57 @@ class XDCCDownloaderTui(object):
         """
         div = urwid.Divider()
 
-        self.upper_body = [self.gpl_notice, div, self.message_edit, self.server_edit, self.add_pack_button, div,
-                           self.search_engine_label] + self.search_engine_options +\
-                          [div, self.search_term_edit, self.search_button, div, self.search_results_label]
+        self.upper_body = [self.gpl_notice,
+                           div,
+                           self.message_edit,
+                           self.server_edit,
+                           self.add_pack_button,
+                           div,
+                           self.search_engine_label
+                           ] + self.search_engine_options +\
+                          [div,
+                           self.search_term_edit,
+                           self.search_button, div,
+                           self.search_results_label
+                           ]
         self.upper_middle_body = []
-        self.middle_body = [self.add_search_result_button, div, self.download_queue_label]
+        self.middle_body = [
+            self.add_search_result_button,
+            div,
+            self.download_queue_label
+        ]
         self.lower_middle_body = []
-        self.lower_body = [self.remove_pack_button, div, self.destination_edit, self.download_button, div,
-                           self.single_progress_bar, self.total_progress_bar]
+        self.lower_body = [
+            self.remove_pack_button,
+            div,
+            self.destination_edit,
+            self.download_button,
+            div,
+            self.single_progress_bar,
+            self.total_progress_bar
+        ]
 
-        body = self.upper_body + self.upper_middle_body + self.middle_body + self.lower_middle_body + self.lower_body
+        body = self.upper_body + self.upper_middle_body + self.middle_body + \
+            self.lower_middle_body + self.lower_body
 
         self.list_walker = urwid.SimpleFocusListWalker(body)
-        self.top = urwid.Overlay(urwid.Padding(urwid.ListBox(self.list_walker), left=2, right=2),
-                                 urwid.SolidFill(u'\N{MEDIUM SHADE}'),
-                                 align='center', width=('relative', 80),
-                                 valign='middle', height=('relative', 70),
-                                 min_width=20, min_height=10)
+        self.top = urwid.Overlay(urwid.Padding(
+            urwid.ListBox(self.list_walker), left=2, right=2),
+            urwid.SolidFill(u'\N{MEDIUM SHADE}'),
+            align='center', width=('relative', 80),
+            valign='middle', height=('relative', 70),
+            min_width=20, min_height=10
+        )
 
-    def start(self) -> None:  # pragma: no cover
+    def start(self):  # pragma: no cover
         """
         Starts the TUI
 
         :return: None
         """
-        self.loop = urwid.MainLoop(self.top, palette=[('reversed', 'standout', '')])
+        self.loop = urwid.MainLoop(
+            self.top, palette=[('reversed', 'standout', '')]
+        )
 
         try:
             self.loop.run()
@@ -142,7 +178,7 @@ class XDCCDownloaderTui(object):
                 self.downloader.quit()
             raise e
 
-    def refresh_ui(self) -> None:
+    def refresh_ui(self):
         """
         Refreshed the UI
 
@@ -152,19 +188,22 @@ class XDCCDownloaderTui(object):
         self.search_results_checks = []
 
         for result in self.search_results:
-            self.search_results_checks.append(urwid.CheckBox(result.get_filename()))
+            self.search_results_checks.append(
+                urwid.CheckBox(result.get_filename()))
         for item in self.download_queue:
-            self.download_queue_checks.append(urwid.CheckBox(item.get_request_message(full=True)))
+            self.download_queue_checks.append(
+                urwid.CheckBox(item.get_request_message(full=True)))
 
         self.upper_middle_body = self.search_results_checks
         self.lower_middle_body = self.download_queue_checks
 
-        body = self.upper_body + self.upper_middle_body + self.middle_body + self.lower_middle_body + self.lower_body
+        body = self.upper_body + self.upper_middle_body + self.middle_body + \
+            self.lower_middle_body + self.lower_body
 
         self.list_walker[:] = body
         self.loop.draw_screen()
 
-    def add_pack_manually(self, button: urwid.Button) -> None:
+    def add_pack_manually(self, button: urwid.Button):
         """
         Adds a manually defined XDCC pack to the download queue
 
@@ -173,10 +212,11 @@ class XDCCDownloaderTui(object):
         """
         message = self.message_edit.get_edit_text()
         server = self.server_edit.get_edit_text()
-        self.download_queue += xdcc_packs_from_xdcc_message(message, server=server)
+        self.download_queue += \
+            xdcc_packs_from_xdcc_message(message, server=server)
         self.refresh_ui()
 
-    def add_selected_search_result_packs(self, button: urwid.Button) -> None:
+    def add_selected_search_result_packs(self, button: urwid.Button):
         """
         Adds all selected packs in the search results to the download queue
 
@@ -188,7 +228,7 @@ class XDCCDownloaderTui(object):
                 self.download_queue.append(self.search_results[index])
         self.refresh_ui()
 
-    def remove_selected_packs(self, button: urwid.Button) -> None:
+    def remove_selected_packs(self, button: urwid.Button):
         """
         Removes all selected packs from the download queue
 
@@ -205,7 +245,7 @@ class XDCCDownloaderTui(object):
 
         self.refresh_ui()
 
-    def search(self, button: urwid.Button) -> None:
+    def search(self, button: urwid.Button):
         """
         Starts searching with the configured options
 
@@ -216,8 +256,12 @@ class XDCCDownloaderTui(object):
 
             self.searching = True
 
-            search_engine = list(filter(lambda x: x.get_state(), self.search_engine_options))[0].get_label()
-            searcher = PackSearcher() if search_engine == "All" else PackSearcher([search_engine])
+            search_engine = list(filter(
+                lambda x: x.get_state(),
+                self.search_engine_options
+            ))[0].get_label()
+            searcher = PackSearcher() if search_engine == "All" \
+                else PackSearcher([search_engine])
             search_term = self.search_term_edit.get_edit_text()
 
             def do_search():
@@ -228,7 +272,7 @@ class XDCCDownloaderTui(object):
 
             Thread(target=do_search).start()
 
-    def download(self, button: urwid.Button) -> None:
+    def download(self, button: urwid.Button):
         """
         Starts downloading all packs that are currently in the download queue
 
@@ -241,7 +285,9 @@ class XDCCDownloaderTui(object):
             destination = self.destination_edit.get_edit_text()
             if not os.path.isdir(destination):
                 self.downloading = False
-                self.show_message_popup("The entered directory does not exist.")
+                self.show_message_popup(
+                    "The entered directory does not exist."
+                )
                 return
 
             for pack in self.download_queue:
@@ -249,9 +295,11 @@ class XDCCDownloaderTui(object):
 
             def do_download():
 
-                progress = Progress(len(self.download_queue),
-                                    callback=lambda a, b, single_percentage, d, e, total_percentage, g, h:
-                                    self.update_progress(single_percentage, total_percentage))
+                progress = Progress(
+                    len(self.download_queue),
+                    callback=lambda a, b, single_percentage, d, e,
+                    total_percentage, g, h:
+                    self.update_progress(single_percentage, total_percentage))
 
                 self.spin_buttons(download=True)
                 self.downloader = MultipleServerDownloader("random")
@@ -264,7 +312,8 @@ class XDCCDownloaderTui(object):
 
             Thread(target=do_download).start()
 
-    def update_progress(self, single_precentage: float, total_percentage: float) -> None:
+    def update_progress(self, single_precentage: float,
+                        total_percentage: float):
         """
         Updates the progress bars
 
@@ -276,13 +325,14 @@ class XDCCDownloaderTui(object):
         self.total_progress_bar.set_completion(total_percentage)
         self.loop.draw_screen()
 
-    def spin_buttons(self, download: bool = False, search: bool = False) -> None:
+    def spin_buttons(self, download: bool = False, search: bool = False):
         """
         Starts the button spin animations
 
-        :param download: If set, starts the spin animation for the download button
-        :param search:   If set, starts the spin animation for the search button
-        :return:         None
+        :param download: If set, starts the spin animation for the
+                         download button
+        :param search: If set, starts the spin animation for the search button
+        :return: None
         """
 
         def spin_thread():
@@ -290,11 +340,15 @@ class XDCCDownloaderTui(object):
             while self.downloading or self.searching:
 
                 if self.downloading and download:
-                    new_text = "Downloading" + (self.download_button.get_label().count(".") % 3 + 1) * "."
+                    new_text = "Downloading"
+                    new_text += (self.download_button.get_label().
+                                 count(".") % 3 + 1) * "."
                     self.download_button.set_label(new_text)
 
                 if self.searching and search:
-                    new_text = "Searching" + (self.search_button.get_label().count(".") % 3 + 1) * "."
+                    new_text = "Searching"
+                    new_text += (self.search_button.get_label()
+                                 .count(".") % 3 + 1) * "."
                     self.search_button.set_label(new_text)
 
                 self.loop.draw_screen()
@@ -308,7 +362,7 @@ class XDCCDownloaderTui(object):
 
         Thread(target=spin_thread).start()
 
-    def show_message_popup(self, message: str) -> None:
+    def show_message_popup(self, message: str):
         """
         Method that shows a message popup dialog while hiding the TUI
 
@@ -318,7 +372,8 @@ class XDCCDownloaderTui(object):
 
         text = urwid.Text(message)
         button = urwid.Button("OK")
-        urwid.connect_signal(button, 'click', lambda x: self.refresh_ui())  # pragma: no cover
+        # pragma: no cover
+        urwid.connect_signal(button, 'click', lambda x: self.refresh_ui())
 
         self.list_walker[:] = [text, button]
         self.loop.draw_screen()

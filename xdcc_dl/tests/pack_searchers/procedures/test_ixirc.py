@@ -41,7 +41,8 @@ class UnitTests(unittest.TestCase):
         pack = packs[0]
         self.assertEqual(pack.get_packnumber(), 1)
         self.assertEqual(pack.get_server().get_address(), "irc.abjects.net")
-        self.assertEqual(pack.get_filepath(), os.path.join(os.getcwd(), pack.get_filename()))
+        self.assertEqual(pack.get_filepath(),
+                         os.path.join(os.getcwd(), pack.get_filename()))
         self.assertEqual(pack.get_filename(), "Gin.txt")
         self.assertEqual(pack.get_bot(), "Beast-Gin-Anime")
 
@@ -50,7 +51,12 @@ class UnitTests(unittest.TestCase):
         self.assertLess(10, len(packs))
 
     def test_non_result_query(self):
-        self.assertEqual(0, len(find_ixirc_packs("sdgyfdhkdashsahdqhdsadlsajdhsaohdsausahoashdsahdlahdsah")))
+        self.assertEqual(
+            0,
+            len(find_ixirc_packs(
+                "sdgyfdhkdashsahdqhdsadlsajdhsaohdsausahoashdsahdlahdsah"
+            ))
+        )
 
     def test_invalid_pack_handling(self):
         self.assertLess(10, len(find_ixirc_packs("Star Wars Episode 7")))

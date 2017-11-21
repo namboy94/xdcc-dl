@@ -47,8 +47,9 @@ def find_nibl_packs(search_phrase: str) -> List[XDCCPack]:
 
     url = "http://nibl.co.uk/bots.php?search=" + prepared_search_term
 
-    # Since nibl.com has some sort of issue with their SSL certificate, we get the
-    # HTML content without verifying the SSL cert. Additionally, the warning that
+    # Since nibl.com has some sort of issue with their SSL certificate,
+    # we get the HTML content without verifying the SSL cert.
+    # Additionally, the warning that
     # gets printed by default if you do that is suppressed
     disable_warnings(InsecureRequestWarning)
     html = requests.get(url, verify=False).text

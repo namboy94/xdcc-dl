@@ -50,7 +50,8 @@ class UnitTests(unittest.TestCase):
             # noinspection PyUnusedLocal
             def on_join(self, conn, event):
                 if event.source.startswith(self.user.get_name()):
-                    self.joined_correct_channel = event.target.lower() == "#bots"
+                    self.joined_correct_channel = \
+                        event.target.lower() == "#bots"
 
                     if self.all_whois_counter == 3:
                         raise TestException()
@@ -86,7 +87,9 @@ class UnitTests(unittest.TestCase):
             incorrect_nick_detected = False
 
             def on_welcome(self, conn, event):
-                self.current_pack = XDCCPack(IrcServer("irc.namibsun.net"), "notexistingbot", 1)
+                self.current_pack = XDCCPack(
+                    IrcServer("irc.namibsun.net"), "notexistingbot", 1
+                )
                 self.connection.whois("notexistingbot")
 
             # noinspection PyUnusedLocal
@@ -112,7 +115,8 @@ class UnitTests(unittest.TestCase):
             stray_whois_detected = False
 
             def on_welcome(self, conn, event):
-                self.current_pack = XDCCPack(IrcServer("irc.namibsun.net"), "xdcc_servbot", 1)
+                self.current_pack = \
+                    XDCCPack(IrcServer("irc.namibsun.net"), "xdcc_servbot", 1)
                 self.connection.whois("notexistingbot")
 
             # noinspection PyUnusedLocal
@@ -173,7 +177,8 @@ class UnitTests(unittest.TestCase):
 
             # noinspection PyUnusedLocal
             def on_join(self, conn, event):
-                if event.target.lower() == BotChannelMapper.map(self.current_pack.get_bot()).lower():
+                if event.target.lower() == BotChannelMapper.map(
+                        self.current_pack.get_bot()).lower():
                     self.correct_channel_joined = True
                     raise TestException()
 

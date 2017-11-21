@@ -27,37 +27,51 @@ from xdcc_dl.logging.LoggingTypes import LoggingTypes as LOG
 # noinspection PyUnusedLocal
 class MessageSender(BotFinder):
     """
-    Class that handles initiating the XDCC Connection by sending the appropriate message to the bot
+    Class that handles initiating the XDCC Connection by sending the
+    appropriate message to the bot.
     Layer 3 of the XDCC Bot
     """
 
-    def on_join(self, connection: irc.client.ServerConnection, event: irc.client.Event) -> None:
+    def on_join(self, connection: irc.client.ServerConnection,
+                event: irc.client.Event):
         """
-        Method called when a channel was joined. The first channel that was joined triggers sending a message
+        Method called when a channel was joined.
+        The first channel that was joined triggers sending a message
         to the bot to initiate the XDCC handshake
 
         :param connection: the IRC Connection
         :param event:      the IRC Event
         :return:           None
         """
-        if event.source.startswith(self.user.get_name()):   # Check if we were the ones joining
-            if not self.user.get_name() == event.target and self.channel_join_required:
+        # Check if we were the ones joining
+        if event.source.startswith(self.user.get_name()):
+            if not self.user.get_name() == event.target and \
+                    self.channel_join_required:
                 # Check if we didn't ask a channelless bot
-                self.logger.log("Joined Channel " + event.target, LOG.CHANNEL_JOIN_SUCCESS)
+                self.logger.log("Joined Channel " + event.target,
+                                LOG.CHANNEL_JOIN_SUCCESS)
 
-            if not self.channel_joined:  # Only send the XDCC message when the first channel was joined
-                self.channel_joined = True  # Let other on_joins know that message was already sent
+            # Only send the XDCC message when the first channel was joined
+            if not self.channel_joined:
 
-                log_message = "Sending XDCC Request to " + self.current_pack.get_bot()
-                log_message += " for pack " + str(self.current_pack.get_packnumber())
+                # Let other on_joins know that message was already sent
+                self.channel_joined = True
+
+                log_message = \
+                    "Sending XDCC Request to " + self.current_pack.get_bot()
+                log_message += \
+                    " for pack " + str(self.current_pack.get_packnumber())
                 self.logger.log(log_message, LOG.MESSAGE_SEND)
 
-                connection.privmsg(self.current_pack.get_bot(), self.current_pack.get_request_message())
+                connection.privmsg(self.current_pack.get_bot(),
+                                   self.current_pack.get_request_message())
                 # -> on_ctcp
 
-    def on_namreply(self, connection: irc.client.ServerConnection, event: irc.client.Event) -> None:
+    def on_namreply(self, connection: irc.client.ServerConnection,
+                    event: irc.client.Event):
         """
-        Event when a channel sends the existing users on the channel after joining
+        Event when a channel sends the existing users
+        on the channel after joining
 
         :param connection: the IRC Connection
         :param event:      the IRC Event
@@ -69,7 +83,8 @@ class MessageSender(BotFinder):
             message += user + ";"
         self.logger.log(message, LOG.CHANNEL_USERS)
 
-    def on_endofnames(self, connection: irc.client.ServerConnection, event: irc.client.Event) -> None:
+    def on_endofnames(self, connection: irc.client.ServerConnection,
+                      event: irc.client.Event):
         """
         Marks the End of a series of namreplys
 
@@ -79,7 +94,8 @@ class MessageSender(BotFinder):
         """
         self.logger.log("End Of joined users list", LOG.CHANNEL_USERS)
 
-    def on_currenttopic(self, connection: irc.client.ServerConnection, event: irc.client.Event) -> None:
+    def on_currenttopic(self, connection: irc.client.ServerConnection,
+                        event: irc.client.Event):
         """
         Receives the current topic of the newly joined channel
 
@@ -89,7 +105,8 @@ class MessageSender(BotFinder):
         """
         self.logger.log("Topic " + str(event.arguments), LOG.CHANNEL_TOPIC)
 
-    def on_topicinfo(self, connection: irc.client.ServerConnection, event: irc.client.Event) -> None:
+    def on_topicinfo(self, connection: irc.client.ServerConnection,
+                     event: irc.client.Event):
         """
         Receives the current topic information of the newly joined Channel
 
@@ -97,9 +114,11 @@ class MessageSender(BotFinder):
         :param event:      the IRC Event
         :return:           None
         """
-        self.logger.log("Topic Info: " + str(event.arguments), LOG.CHANNEL_TOPIC)
+        self.logger.log("Topic Info: " + str(event.arguments),
+                        LOG.CHANNEL_TOPIC)
 
-    def on_quit(self, connection: irc.client.ServerConnection, event: irc.client.Event) -> None:
+    def on_quit(self, connection: irc.client.ServerConnection,
+                event: irc.client.Event):
         """
         Logs that a user left a channel
 
@@ -109,7 +128,8 @@ class MessageSender(BotFinder):
         """
         self.logger.log(event.arguments[0] + " quit.", LOG.CHANNEL_QUIT)
 
-    def on_part(self, connection: irc.client.ServerConnection, event: irc.client.Event) -> None:
+    def on_part(self, connection: irc.client.ServerConnection,
+                event: irc.client.Event):
         """
         Logs that a user left a channel using part
 
@@ -119,7 +139,8 @@ class MessageSender(BotFinder):
         """
         self.logger.log(event.source + " left.", LOG.CHANNEL_PART)
 
-    def on_kick(self, connection: irc.client.ServerConnection, event: irc.client.Event) -> None:
+    def on_kick(self, connection: irc.client.ServerConnection,
+                event: irc.client.Event):
         """
         Logs that a user was kicked from the channel
 
@@ -129,7 +150,8 @@ class MessageSender(BotFinder):
         """
         self.logger.log(event.arguments[0] + " was kicked.", LOG.CHANNEL_KICK)
 
-    def on_mode(self, connection: irc.client.ServerConnection, event: irc.client.Event) -> None:
+    def on_mode(self, connection: irc.client.ServerConnection,
+                event: irc.client.Event):
         """
         Called whenever the mode of a user changes
 
@@ -137,9 +159,11 @@ class MessageSender(BotFinder):
         :param event:      the IRC Event
         :return:           None
         """
-        self.logger.log(event.arguments[0] + " mode changed", LOG.CHANNEL_MODE_CHANGE)
+        self.logger.log(event.arguments[0] + " mode changed",
+                        LOG.CHANNEL_MODE_CHANGE)
 
-    def on_action(self, connection: irc.client.ServerConnection, event: irc.client.Event) -> None:
+    def on_action(self, connection: irc.client.ServerConnection,
+                  event: irc.client.Event):
         """
         Called whenever an action on the channel occurs
 
@@ -147,9 +171,11 @@ class MessageSender(BotFinder):
         :param event:      the IRC Event
         :return:           None
         """
-        self.logger.log(event.arguments[0] + " mode changed", LOG.CHANNEL_ACTION)
+        self.logger.log(event.arguments[0] + " mode changed",
+                        LOG.CHANNEL_ACTION)
 
-    def on_nick(self, connection: irc.client.ServerConnection, event: irc.client.Event) -> None:
+    def on_nick(self, connection: irc.client.ServerConnection,
+                event: irc.client.Event):
         """
         Called whenever a user changes his nick
 
@@ -157,4 +183,5 @@ class MessageSender(BotFinder):
         :param event:      the IRC Event
         :return:           None
         """
-        self.logger.log(event.source + " nick changed", LOG.CHANNEL_NICK_CHANGED)
+        self.logger.log(event.source + " nick changed",
+                        LOG.CHANNEL_NICK_CHANGED)

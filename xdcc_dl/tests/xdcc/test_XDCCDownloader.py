@@ -20,7 +20,6 @@ along with xdcc-dl.  If not, see <http://www.gnu.org/licenses/>.
 # imports
 import os
 import unittest
-from xdcc_dl.metadata import SentryLogger
 from xdcc_dl.entities.XDCCPack import XDCCPack
 from xdcc_dl.entities.Progress import Progress
 from xdcc_dl.entities.IrcServer import IrcServer
@@ -88,7 +87,8 @@ class UnitTests(unittest.TestCase):
     def test_network_error(self):
 
         pack = XDCCPack(IrcServer("gitlab.namibsun.net"), "xdcc_servbot", 2)
-        results = XDCCDownloader("gitlab.namibsun.net", "random").download([pack])
+        results = XDCCDownloader("gitlab.namibsun.net", "random").\
+            download([pack])
         self.assertEqual(results[pack], "NETWORKERROR")
 
     def test_different_servers(self):
@@ -103,13 +103,7 @@ class UnitTests(unittest.TestCase):
 
     def test_invalid_whois_query(self):
 
-        class DummySentry(object):
-            # noinspection PyPep8Naming
-            def captureMessage(self, string):
-                pass
-
         BotChannelMapper.bot_channel_map = {}
-        SentryLogger.sentry = DummySentry()
 
         pack = XDCCPack(IrcServer("irc.rizon.net"), "HelloKitty", 1)
         results = XDCCDownloader("irc.rizon.net", "random").download([pack])

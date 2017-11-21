@@ -47,20 +47,25 @@ def find_ixirc_packs(search_phrase: str) -> List[XDCCPack]:
     base_url = "https://ixirc.com/?q=" + prepared_search_term
     content = BeautifulSoup(requests.get(base_url).text, "html.parser")
     page_analysis = content.select("h3")
-    page_contents = [content]  # This will be parsed for XDCC Packs later, along with the other pages
+    page_contents = [content]
+    # This will be parsed for XDCC Packs later, along with the other pages
 
-    # IxIRC only displays 30 results per page. Which is why we need to check how many pages there are in total.
-    # If 'Over' is used in the h3 section of the page, it means that this is not the last
-    # page with search results. It displays "Over X episodes" on all pages except the last, where
+    # IxIRC only displays 30 results per page.
+    # Which is why we need to check how many pages there are in total.
+    # If 'Over' is used in the h3 section of the page,
+    # it means that this is not the last page with search results.
+    # It displays "Over X episodes" on all pages except the last, where
     # the exact amount of results is mentioned and the word 'Over' is omitted
     number_of_pages = 2 if "Over" in page_analysis[0].text else 1
 
-    # Check for more pages and add their content to the page_contents list, only if more than one page exists
+    # Check for more pages and add their content to the page_contents list,
+    # only if more than one page exists
     analysing = (number_of_pages == 2)
     while analysing:
 
         # The new URL specifies a page number using &pn=
-        url = "https://ixirc.com/?q=" + prepared_search_term + "&pn=" + str(number_of_pages - 1)
+        url = "https://ixirc.com/?q=" + prepared_search_term + "&pn=" + \
+              str(number_of_pages - 1)
         content = BeautifulSoup(requests.get(url).text, "html.parser")
         page_contents.append(content)
 
@@ -100,21 +105,28 @@ def get_page_results(page_content: BeautifulSoup) -> List[XDCCPack]:
     pack_number = 0
     size = ""
 
-    column_count = 0      # Keeps track of which column the parser is currently working on
+    # Keeps track of which column the parser is currently working on
+    column_count = 0
 
-    # Counts how often the word "ago" was used, which is used to keep track of on which
+    # Counts how often the word "ago" was used,
+    # which is used to keep track of on which
     # pack we currently are. Each pack has two instances of 'ago' occurring.
     ago_count = 0
 
-    aborted = False       # The process is aborted whenever an invalid pack is encountered
-    next_element = False  # Flag that lets other parts of the loop know that we are moving on to the next pack
+    # The process is aborted whenever an invalid pack is encountered
+    aborted = False
 
-    # line_part is a x,y section of the rows and columns of the website. we go through it in the order
-    # Left->Right, Top->Bottom
+    # Flag that lets other parts of the loop know that
+    # we are moving on to the next pack
+    next_element = False
+
+    # line_part is a x,y section of the rows and columns of the website.
+    # We go through it in the order Left->Right, Top->Bottom
     for line_part in packs:
 
         if next_element and line_part.text == "":
-            # Jumps to the next not-empty element if we are currently jumping to the next pack
+            # Jumps to the next not-empty element
+            # if we are currently jumping to the next pack
             continue
 
         elif next_element and not line_part.text == "":
@@ -127,31 +139,43 @@ def get_page_results(page_content: BeautifulSoup) -> List[XDCCPack]:
             aborted = True
 
         elif "ago" in line_part.text and column_count > 6:
-            # Counts the number of times 'ago' is seen by the parser. The last two elements of a pack both end
-            # with 'ago', which makes it ideal to use as a marker for when a single pack element ends.
-            # This only starts counting once we got all relevant information from the pack itself (column_count > 6)
-            # to avoid conflicts when the substring 'ago' is contained inside the file name
+            # Counts the number of times 'ago' is seen by the parser.
+            # The last two elements of a pack both end
+            # with 'ago', which makes it ideal to use as a marker
+            # for when a single pack element ends.
+            # This only starts counting once we got all relevant information
+            # from the pack itself (column_count > 6)
+            # to avoid conflicts when the substring 'ago'
+            # is contained inside the file name
             ago_count += 1
 
-        # This gets the information from the pack and stores them into variables
+        # This gets the information from the pack and stores
+        # them into variables.
         # This gets skipped if it has been established that the pack is invalid
         if not aborted:
             if column_count == 0:
-                file_name = line_part.text                         # File Name
+                # File Name
+                file_name = line_part.text
             elif column_count == 1:
-                server = "irc." + line_part.text.lower() + ".net"  # Server Address
+                # Server Address
+                server = "irc." + line_part.text.lower() + ".net"
             elif column_count == 2:
-                pass  # Channel Information, not needed due to /whois IRC queries
+                # Channel Information, not needed due to /whois IRC queries
+                pass
             elif column_count == 3:
-                bot = line_part.text                               # Bot Name
+                # Bot Name
+                bot = line_part.text
             elif column_count == 4:
-                pack_number = int(line_part.text)                  # Pack Number
+                # Pack Number
+                pack_number = int(line_part.text)
             elif column_count == 5:
                 pass  # This is the 'gets' section, we don't need that
             elif column_count == 6:
-                size = line_part.text                              # File Size
+                # File Size
+                size = line_part.text
 
-        # Resets state after a pack was successfully parsed, and adds xdcc pack to results
+        # Resets state after a pack was successfully parsed,
+        # and adds xdcc pack to results
         if not aborted and ago_count == 2:
             ago_count = 0
             column_count = 0
@@ -171,7 +195,8 @@ def get_page_results(page_content: BeautifulSoup) -> List[XDCCPack]:
             next_element = True
 
         if not next_element:
-            # Only increment column_count in the middle of a pack, not when we jump to the next pack element
+            # Only increment column_count in the middle of a pack,
+            # not when we jump to the next pack element
             column_count += 1
 
     return results

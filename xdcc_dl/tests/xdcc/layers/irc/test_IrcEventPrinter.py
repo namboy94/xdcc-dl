@@ -65,7 +65,9 @@ class UnitTests(unittest.TestCase):
             def on_welcome(self, conn, event):
 
                 for event in irc.events.all:
-                    self.assertions_true = self.assertions_true and callable(getattr(self, "on_" + event))
+                    self.assertions_true = \
+                        self.assertions_true and \
+                        callable(getattr(self, "on_" + event))
                 raise TestException()
 
         self.client = Tester("irc.namibsun.net", "random")

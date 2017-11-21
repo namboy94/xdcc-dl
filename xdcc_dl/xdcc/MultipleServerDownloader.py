@@ -35,7 +35,7 @@ class MultipleServerDownloader(object):
 
     def __init__(self, user: User or str, logger: Logger or int = 0):
         """
-        Creates a new multiple server downloader, without specifying the server.
+        Creates a new multiple server downloader, without specifying the server
 
         :param user:    The user with which to log in
         :param logger:  The logger to use
@@ -45,18 +45,21 @@ class MultipleServerDownloader(object):
         self.current_downloader = None
         self.quit_called = False
 
-    def download(self, packs: List[XDCCPack], progress: Progress = None) -> Dict[XDCCPack, str]:
+    def download(self, packs: List[XDCCPack], progress: Progress = None)\
+            -> Dict[XDCCPack, str]:
         """
-        Downloads all XDCC packs specified. Optionally shares state with other threads using a Progress object
+        Downloads all XDCC packs specified. Optionally shares state with other
+        threads using a Progress object
 
-        :param packs:    The packs to download
+        :param packs: The packs to download
         :param progress: Optional Progress object
-        :return:         Dictionary of packs mapped to status codes:
-                         "OK":           Download was successful
-                         "BOTNOTFOUND":  Bot was not found
-                         "NETWORKERROR": Download failed due to network error
-                         "INCOMPLETE":   Download was incomplete
-                         "EXISTED":      File already existed and was completely downloaded
+        :return: Dictionary of packs mapped to status codes:
+                   "OK":           Download was successful
+                   "BOTNOTFOUND":  Bot was not found
+                   "NETWORKERROR": Download failed due to network error
+                   "INCOMPLETE":   Download was incomplete
+                   "EXISTED":      File already existed and
+                                   was completely downloaded
         """
         results = {}
 
@@ -71,15 +74,19 @@ class MultipleServerDownloader(object):
         for server in packservers:
 
             if not self.quit_called:
-                self.current_downloader = XDCCDownloader(IrcServer(server), self.user, self.logger)
-                server_results = self.current_downloader.download(packservers[server], progress)
+                self.current_downloader = \
+                    XDCCDownloader(IrcServer(server), self.user, self.logger)
+                server_results = \
+                    self.current_downloader.download(
+                        packservers[server], progress
+                    )
 
                 for result in server_results:
                     results[result] = server_results[result]
 
         return results
 
-    def quit(self) -> None:
+    def quit(self):
         """
         Quits the current downloader and stops all downloads to come
 

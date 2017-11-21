@@ -22,7 +22,7 @@ stylecheck:
   tags:
     - pycodestyle
   script:
-    - pycodestyle . --exclude=LoggingTypes.py
+    - pycodestyle . --exclude=LoggingTypes.py,xdcc_downloader.py
 
 run_unit_tests_python_2:
   stage: test

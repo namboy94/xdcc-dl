@@ -55,8 +55,11 @@ class UnitTests(unittest.TestCase):
 
     def test_callback_handler(self):
 
-        def callback_tester(single_progress, single_total, single_progress_percentage,
-                            total_progress, total_total, total_percentage, current_speed, average_speed):
+        def callback_tester(
+                single_progress, single_total, single_progress_percentage,
+                total_progress, total_total, total_percentage, current_speed,
+                average_speed
+        ):
 
             self.callback_called = True
             self.assertEqual(single_progress, 300)
@@ -86,7 +89,8 @@ class UnitTests(unittest.TestCase):
         self.progress.add_single_progress(50)
         time.sleep(0.75)
 
-        self.assertAlmostEqual(self.progress.calculate_current_download_speed(), 100, delta=5)
+        self.assertAlmostEqual(
+            self.progress.calculate_current_download_speed(), 100, delta=5)
 
     def test_for_zero_division_errors(self):
 
@@ -105,7 +109,8 @@ class UnitTests(unittest.TestCase):
         self.assertEqual(self.progress.get_total_percentage(), 100.0)
         self.assertEqual(self.progress.get_single_progress_percentage(), 100.0)
         self.assertEqual(self.progress.get_single_progress(), 100)
-        self.assertEqual(self.progress.get_single_progress(), self.progress.get_single_progress_total())
+        self.assertEqual(self.progress.get_single_progress(),
+                         self.progress.get_single_progress_total())
 
     def test_going_past_total_limit(self):
 

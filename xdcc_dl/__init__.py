@@ -23,7 +23,7 @@ this way, most notably by the setup.py file
 """
 
 # pragma: no cover
-version = "2.0.0"
+version = "2.1.0"
 """
 The current version of the program
 """

@@ -9,7 +9,7 @@ from sphinx.ext.autodoc import between
 
 version_number = ""
 sys.path.insert(0, os.path.abspath("../.."))
-exec("from xdcc_dl.metadata import version as version_number")
+exec("from xdcc_dl import version as version_number")
 
 extensions = [
     'sphinx.ext.autodoc',
@@ -69,13 +69,16 @@ epub_exclude_files = ['search.html']
 intersphinx_mapping = {'https://docs.python.org/': None}
 
 
-def setup(app) -> None:
+def setup(app):
     """
     Registers an autodoc between listener to igore License texts
 
     :param app: The sphinx app
     :return:    None
     """
-    app.connect('autodoc-process-docstring', between('^.*LICENSE.*$', exclude=True))
-    app.connect("autodoc-skip-member", lambda a, b, name, d, skipper, f: False if name == "__init__" else skipper)
+    app.connect('autodoc-process-docstring',
+                between('^.*LICENSE.*$', exclude=True))
+    app.connect("autodoc-skip-member",
+                lambda a, b, name, d, skipper, f:
+                False if name == "__init__" else skipper)
     return app

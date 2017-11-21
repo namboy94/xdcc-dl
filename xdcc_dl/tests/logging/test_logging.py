@@ -28,13 +28,15 @@ class UnitTests(unittest.TestCase):
 
     def setUp(self):
         self.logfile = os.path.join(os.getcwd(), "logging_log")
-        self.messages = [("Invisible", LoggingTypes.INVISIBLE),
-                         ("Default", LoggingTypes.DEFAULT),
-                         ("WHOIS_SEND", LoggingTypes.WHOIS_SEND),
-                         ("PRIVATE_NOTICE", LoggingTypes.PRIVATE_NOTICE),
-                         ("MESSAGE_OF_THE_DAY", LoggingTypes.MESSAGE_OF_THE_DAY),
-                         ("EVENT", LoggingTypes.EVENT),
-                         ("CHANNEL_KICK", LoggingTypes.CHANNEL_KICK)]
+        self.messages = [
+            ("Invisible", LoggingTypes.INVISIBLE),
+            ("Default", LoggingTypes.DEFAULT),
+            ("WHOIS_SEND", LoggingTypes.WHOIS_SEND),
+            ("PRIVATE_NOTICE", LoggingTypes.PRIVATE_NOTICE),
+            ("MESSAGE_OF_THE_DAY", LoggingTypes.MESSAGE_OF_THE_DAY),
+            ("EVENT", LoggingTypes.EVENT),
+            ("CHANNEL_KICK", LoggingTypes.CHANNEL_KICK)
+        ]
 
     def tearDown(self):
         if os.path.isfile(self.logfile):
@@ -49,8 +51,8 @@ class UnitTests(unittest.TestCase):
             for message in self.messages:
                 logger.log(message[0], message[1])
 
-            with open(self.logfile, 'r') as l:
-                log = l.read().rstrip().lstrip()
+            with open(self.logfile, 'r') as f:
+                log = f.read().rstrip().lstrip()
 
             if ignore_verbosity:
                 self.assertEqual(len(log.split("\n")), 7)

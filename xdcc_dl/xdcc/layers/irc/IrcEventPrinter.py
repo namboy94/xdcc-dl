@@ -25,18 +25,22 @@ from xdcc_dl.logging.LoggingTypes import LoggingTypes as LOG
 from xdcc_dl.xdcc.layers.irc.BaseIrcClient import BaseIrclient
 
 
-def create_event_printer(event: str, formatting: str, show_tag: bool = False) -> str:
+def create_event_printer(event: str, formatting: str, show_tag: bool = False) \
+        -> str:
     """
-    Creates a new method definition for an on_event method that can then be integrated using exec
+    Creates a new method definition for an on_event method
+    that can then be integrated using exec
 
     :param event:      The name of the event on which this method is called
     :param formatting: The formatting from LOG, but as a string
-    :param show_tag:   Determines if an 'on_event" string should be printed beforehand
+    :param show_tag:   Determines if an 'on_event" string should be
+                       printed beforehand
     :return:           The method as an executable string
     """
     method_definition = "def on_" + event + "(self, connection, event):\n"
     if show_tag:
-        method_definition += "    self.logger.log(\"on_" + event + "\", LOG.EVENT)\n"
+        method_definition += "    self.logger.log(\"on_" + event + \
+                             "\", LOG.EVENT)\n"
     method_definition += "    print_args = \"\"\n"
     method_definition += "    for arg in event.arguments:\n"
     method_definition += "        print_args += arg + \" \"\n"
@@ -48,11 +52,13 @@ def create_event_printer(event: str, formatting: str, show_tag: bool = False) ->
 # noinspection PyMethodMayBeStatic,PyUnusedLocal
 class IrcEventPrinter(BaseIrclient):
     """
-    Class that prints output to the console for every type of IRC event defined by the irc library
+    Class that prints output to the console for every type of IRC event
+    defined by the irc library.
     Layer 1 of the XDCC Bot
     """
 
-    # This assigns a method to all event types that are supported by the IRC library.
+    # This assigns a method to all event types that
+    # are supported by the IRC library.
     # They print the type of event and its parameters
     for event in irc.events.all:
         if event != "disconnect":
@@ -62,8 +68,21 @@ class IrcEventPrinter(BaseIrclient):
     # Here are some more specialized ones
 
     # Prints the server greeting
-    for event in ["welcome", "yourhost", "created", "myinfo", "featurelist", "luserclient", "luserop",
-                  "luserunknown", "luserchannels", "luserme", "n_local", "n_global", "modstart"]:
+    for event in [
+        "welcome",
+        "yourhost",
+        "created",
+        "myinfo",
+        "featurelist",
+        "luserclient",
+        "luserop",
+        "luserunknown",
+        "luserchannels",
+        "luserme",
+        "n_local",
+        "n_global",
+        "modstart"
+    ]:
         exec(create_event_printer(event, "LOG.WELCOME", False))
 
     # Message of the Day
@@ -72,7 +91,8 @@ class IrcEventPrinter(BaseIrclient):
 
     # Here we manually define the more interesting methods:
 
-    def on_privnotice(self, connection: irc.client.ServerConnection, event: irc.client.Event) -> None:
+    def on_privnotice(self, connection: irc.client.ServerConnection,
+                      event: irc.client.Event):
         """
         Prints Private Notices
 
@@ -82,7 +102,8 @@ class IrcEventPrinter(BaseIrclient):
         """
         self.logger.log(event.arguments[0], LOG.PRIVATE_NOTICE)
 
-    def on_privmsg(self, connection: irc.client.ServerConnection, event: irc.client.Event) -> None:
+    def on_privmsg(self, connection: irc.client.ServerConnection,
+                   event: irc.client.Event):
         """
         Prints Private Messages
 
@@ -90,9 +111,11 @@ class IrcEventPrinter(BaseIrclient):
         :param event:      the IRC Event
         :return:           None
         """
-        self.logger.log(event.source + ": " + event.arguments[0], LOG.PRIVATE_MESSAGE)
+        self.logger.log(event.source + ": " + event.arguments[0],
+                        LOG.PRIVATE_MESSAGE)
 
-    def on_pubnotice(self, connection: irc.client.ServerConnection, event: irc.client.Event) -> None:
+    def on_pubnotice(self, connection: irc.client.ServerConnection,
+                     event: irc.client.Event):
         """
         Prints Public Notices
 
@@ -100,9 +123,11 @@ class IrcEventPrinter(BaseIrclient):
         :param event:      the IRC Event
         :return:           None
         """
-        self.logger.log(event.source + ": " + event.arguments[0], LOG.PUBLIC_NOTICE)
+        self.logger.log(event.source + ": " + event.arguments[0],
+                        LOG.PUBLIC_NOTICE)
 
-    def on_pubmsg(self, connection: irc.client.ServerConnection, event: irc.client.Event) -> None:
+    def on_pubmsg(self, connection: irc.client.ServerConnection,
+                  event: irc.client.Event):
         """
         Prints Public Messages
 
@@ -110,9 +135,11 @@ class IrcEventPrinter(BaseIrclient):
         :param event:      the IRC Event
         :return:           None
         """
-        self.logger.log(event.source + ": " + event.arguments[0], LOG.PUBLIC_MESSAGE)
+        self.logger.log(event.source + ": " + event.arguments[0],
+                        LOG.PUBLIC_MESSAGE)
 
-    def on_ping(self, connection: irc.client.ServerConnection, event: irc.client.Event) -> None:
+    def on_ping(self, connection: irc.client.ServerConnection,
+                event: irc.client.Event):
         """
         Prints Pings
 
@@ -122,7 +149,8 @@ class IrcEventPrinter(BaseIrclient):
         """
         self.logger.log("PING: " + event.arguments[0], LOG.PING)
 
-    def on_ctcp(self, connection: irc.client.ServerConnection, event: irc.client.Event) -> None:
+    def on_ctcp(self, connection: irc.client.ServerConnection,
+                event: irc.client.Event):
         """
         Prints Client-To-Client_Protocol 'Version' Messages
 

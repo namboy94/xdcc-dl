@@ -20,7 +20,8 @@ along with xdcc-dl.  If not, see <http://www.gnu.org/licenses/>.
 # imports
 import os
 import unittest
-from xdcc_dl.pack_searchers.procedures.intel_haruhichan import find_intel_haruhichan_packs
+from xdcc_dl.pack_searchers.procedures.intel_haruhichan import\
+    find_intel_haruhichan_packs
 
 
 class UnitTests(unittest.TestCase):
@@ -41,7 +42,10 @@ class UnitTests(unittest.TestCase):
         pack = packs[0]
         self.assertEqual(pack.get_packnumber(), 1)
         self.assertEqual(pack.get_server().get_address(), "irc.rizon.net")
-        self.assertEqual(pack.get_filepath(), os.path.join(os.getcwd(), pack.get_filename()))
+        self.assertEqual(
+            pack.get_filepath(),
+            os.path.join(os.getcwd(), pack.get_filename())
+        )
         self.assertEqual(pack.get_filename(), "Gin.txt")
         self.assertEqual(pack.get_bot(), "Ginpachi-Sensei")
 
@@ -50,4 +54,9 @@ class UnitTests(unittest.TestCase):
         self.assertLess(10, len(packs))
 
     def test_non_result_query(self):
-        self.assertEqual(0, len(find_intel_haruhichan_packs("sdgyfdhkdashsahdqhdsadlsajdhsaohdsausahoashdsahdlahdsah")))
+        self.assertEqual(
+            0,
+            len(find_intel_haruhichan_packs(
+                "sdgyfdhkdashsahdqhdsadlsajdhsaohdsausahoashdsahdlahdsah"
+            ))
+        )

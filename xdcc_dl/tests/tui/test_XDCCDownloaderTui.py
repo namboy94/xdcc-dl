@@ -91,7 +91,8 @@ class UnitTests(unittest.TestCase):
         self.assertEqual(1, len(self.tui.download_queue))
 
     def test_removing_packs_from_queue(self):
-        self.tui.download_queue = xdcc_packs_from_xdcc_message("/msg xdcc_servbot xdcc send #1-3")
+        self.tui.download_queue = xdcc_packs_from_xdcc_message(
+            "/msg xdcc_servbot xdcc send #1-3")
         self.assertEqual(3, len(self.tui.download_queue))
         self.tui.refresh_ui()
         self.tui.download_queue_checks[0].set_state(True)
@@ -99,8 +100,8 @@ class UnitTests(unittest.TestCase):
         self.assertEqual(2, len(self.tui.download_queue))
 
     def test_download(self):
-        self.tui.download_queue = xdcc_packs_from_xdcc_message("/msg xdcc_servbot xdcc send #1-3",
-                                                               server="irc.namibsun.net")
+        self.tui.download_queue = xdcc_packs_from_xdcc_message(
+            "/msg xdcc_servbot xdcc send #1-3", server="irc.namibsun.net")
         self.tui.refresh_ui()
         self.tui.download(None)
 
@@ -112,8 +113,8 @@ class UnitTests(unittest.TestCase):
         self.assertTrue(os.path.isfile("3_test.txt"))
 
     def test_download_while_downloading(self):
-        self.tui.download_queue = xdcc_packs_from_xdcc_message("/msg xdcc_servbot xdcc send #1-3",
-                                                               server="irc.namibsun.net")
+        self.tui.download_queue = xdcc_packs_from_xdcc_message(
+            "/msg xdcc_servbot xdcc send #1-3", server="irc.namibsun.net")
         self.tui.refresh_ui()
         self.tui.download(None)
 
@@ -121,7 +122,8 @@ class UnitTests(unittest.TestCase):
 
         self.assertNotEqual(self.tui.download_button.get_label(), "Download")
 
-        self.tui.download_queue = xdcc_packs_from_xdcc_message("/msg Ginpachi-Sensei xdcc send #1")
+        self.tui.download_queue = xdcc_packs_from_xdcc_message(
+            "/msg Ginpachi-Sensei xdcc send #1")
         self.tui.refresh_ui()
         self.tui.download(None)
 
@@ -134,12 +136,14 @@ class UnitTests(unittest.TestCase):
         self.assertFalse(os.path.isfile("Gin.txt"))
 
     def test_download_wrong_directory(self):
-        self.tui.download_queue = xdcc_packs_from_xdcc_message("/msg xdcc_servbot xdcc send #1-3",
-                                                               server="irc.namibsun.net")
+        self.tui.download_queue = xdcc_packs_from_xdcc_message(
+            "/msg xdcc_servbot xdcc send #1-3", server="irc.namibsun.net")
 
-        self.assertEqual(self.tui.destination_edit.get_edit_text(), os.getcwd())
+        self.assertEqual(
+            self.tui.destination_edit.get_edit_text(), os.getcwd())
         self.tui.destination_edit.set_edit_text("NotADirectory")
-        self.assertEqual(self.tui.destination_edit.get_edit_text(), "NotADirectory")
+        self.assertEqual(self.tui.destination_edit.get_edit_text(),
+                         "NotADirectory")
 
         self.tui.refresh_ui()
         self.tui.download(None)

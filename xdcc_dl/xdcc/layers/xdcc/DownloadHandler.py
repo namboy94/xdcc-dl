@@ -41,7 +41,8 @@ class DownloadHandler(XDCCInitiator):
     Layer 5 of the XDCC Bot
     """
 
-    def on_dccmsg(self, connection: irc.client.ServerConnection, event: irc.client.Event) -> None:
+    def on_dccmsg(self, connection: irc.client.ServerConnection,
+                  event: irc.client.Event):
         """
         Runs each time a new chunk of data is received while downloading
 
@@ -49,8 +50,12 @@ class DownloadHandler(XDCCInitiator):
         :param event:      the IRC Event
         :return:           None
         """
-        if self.already_downloaded:  # Send a single message to the server indicating that the transfer is done
-            self.dcc_connection.send_bytes(struct.pack(b"!I", self.progress.get_single_progress_total()))
+        # Send a single message to the server
+        # indicating that the transfer is done
+        if self.already_downloaded:
+            self.dcc_connection.send_bytes(
+                struct.pack(b"!I", self.progress.get_single_progress_total())
+            )
 
         else:
 
@@ -60,20 +65,29 @@ class DownloadHandler(XDCCInitiator):
             self.file.write(data)
             self.progress.add_single_progress(data_length)
 
-            progress_message = " Progress: %.2f" % self.progress.get_single_progress_percentage()
-            progress_message += "% (" + str(self.progress.get_single_progress())
-            progress_message += "/" + str(self.progress.get_single_progress_total()) + ")"
+            progress_message = " Progress: %.2f" % \
+                               self.progress.get_single_progress_percentage()
+            progress_message += \
+                "% (" + str(self.progress.get_single_progress())
+            progress_message += \
+                "/" + str(self.progress.get_single_progress_total()) + ")"
 
-            self.logger.log(progress_message, LOG.DOWNLOAD_PROGRESS, carriage_return=True)
+            self.logger.log(
+                progress_message, LOG.DOWNLOAD_PROGRESS, carriage_return=True
+            )
 
             # Send Acknowledge Message
-            self.dcc_connection.send_bytes(struct.pack(b"!I", self.progress.get_single_progress()))
+            self.dcc_connection.send_bytes(struct.pack(
+                b"!I", self.progress.get_single_progress())
+            )
             # -> on_dccmsg if download not yet complete
             # -> on_dcc_disconnect if completed
 
-    def on_dcc_disconnect(self, connection: irc.client.ServerConnection, event: irc.client.Event) -> None:
+    def on_dcc_disconnect(self, connection: irc.client.ServerConnection,
+                          event: irc.client.Event):
         """
-        The DCC Connection was disconnected. Checks if download was completed. If not, try to resend Pack request
+        The DCC Connection was disconnected. Checks if download was completed.
+        If not, try to resend Pack request
 
         :param connection: the IRC Connection
         :param event:      the IRC Event
@@ -82,16 +96,23 @@ class DownloadHandler(XDCCInitiator):
         if self.file is not None:
             self.file.close()
 
-            if os.path.getsize(self.current_pack.get_filepath()) < self.filesize:
-                self.logger.log("Download Incomplete, Trying again.", LOG.DOWNLOAD_INCOMPLETE)
-                self.connection.privmsg(self.current_pack.get_bot(), self.current_pack.get_request_message())
+            filesize = os.path.getsize(self.current_pack.get_filepath())
+            if filesize < self.filesize:
+                self.logger.log("Download Incomplete, Trying again.",
+                                LOG.DOWNLOAD_INCOMPLETE)
+                self.connection.privmsg(
+                    self.current_pack.get_bot(),
+                    self.current_pack.get_request_message()
+                )
                 return
             else:
-                self.logger.log("\nDownload completed in %.2f seconds" % (time.time() - self.start_time), LOG.DEFAULT)
+                self.logger.log("\nDownload completed in %.2f seconds" %
+                                (time.time() - self.start_time), LOG.DEFAULT)
 
         if len(self.pack_queue) > 0:
 
-            if not self.current_pack.get_server().get_address() == self.pack_queue[0].get_server().get_address():
+            if not self.current_pack.get_server().get_address() == \
+                    self.pack_queue[0].get_server().get_address():
                 self.quit()  # -> on_disconnect
 
             else:
@@ -105,9 +126,11 @@ class DownloadHandler(XDCCInitiator):
         else:
             self.quit()  # -> on_disconnect
 
-    def on_disconnect(self, connection: irc.client.ServerConnection, event: irc.client.Event) -> None:
+    def on_disconnect(self, connection: irc.client.ServerConnection,
+                      event: irc.client.Event):
         """
-        Extends the disconnect method by adding a check for already downloaded files
+        Extends the disconnect method by adding a check for already
+        downloaded files
 
         :param connection: the IRC Connection
         :param event:      the IRC Event

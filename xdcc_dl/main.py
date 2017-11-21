@@ -31,7 +31,7 @@ except ImportError:  # pragma: no cover
     start_gui = None
 
 
-def main() -> None:
+def main():
     """
     Starts the main method of the program
 

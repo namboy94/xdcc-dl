@@ -41,9 +41,15 @@ class UnitTests(unittest.TestCase):
         pack = packs[0]
         self.assertEqual(pack.get_packnumber(), 1)
         self.assertEqual(pack.get_server().get_address(), "irc.namibsun.net")
-        self.assertEqual(pack.get_filepath(), os.path.join(os.getcwd(), pack.get_filename()))
+        self.assertEqual(pack.get_filepath(),
+                         os.path.join(os.getcwd(), pack.get_filename()))
         self.assertEqual(pack.get_filename(), "1_test.txt")
         self.assertEqual(pack.get_bot(), "xdcc_servbot")
 
     def test_non_result_query(self):
-        self.assertEqual(0, len(find_namibsun_packs("sdgyfdhkdashsahdqhdsadlsajdhsaohdsausahoashdsahdlahdsah")))
+        self.assertEqual(
+            0,
+            len(find_namibsun_packs(
+                "sdgyfdhkdashsahdqhdsadlsajdhsaohdsausahoashdsahdlahdsah"
+            ))
+        )

@@ -27,12 +27,13 @@ class User(object):
     Models an IRC user
     """
 
-    def __init__(self, username: str = "random") -> None:
+    def __init__(self, username: str = "random"):
         """
         Initializes the User
 
-        :param username: the user's username. If left empty, or the string 'random' is passed, a random
-                         username consisting only of ASCII characters will be generated as the username
+        :param username: the user's username. If left empty, or the string
+                         'random' is passed, a random username consisting only
+                         of ASCII characters will be generated as the username.
                          An empty string will also result in a random username
         """
         if username == "random" or username == "":
@@ -54,4 +55,5 @@ class User(object):
         :param length: The length of the username
         :return:       The random username
         """
-        return "".join(random.choice(string.ascii_uppercase) for _ in range(length))
+        return "".join(random.choice(string.ascii_uppercase)
+                       for _ in range(length))

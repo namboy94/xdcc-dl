@@ -38,7 +38,8 @@ class UnitTests(unittest.TestCase):
         self.assertEqual(self.pack.get_bot(), "xdcc_servbot")
         self.assertEqual(self.pack.get_filename(), "")
         self.assertEqual(self.pack.get_size(), 0)
-        self.assertEqual(self.pack.get_server().get_address(), "irc.namibsun.net")
+        self.assertEqual(self.pack.get_server().get_address(),
+                         "irc.namibsun.net")
         self.assertEqual(self.pack.get_filepath(), os.getcwd() + os.sep)
         self.assertEqual(self.pack.get_request_message(), "xdcc send #1")
 
@@ -46,31 +47,40 @@ class UnitTests(unittest.TestCase):
 
         self.pack.set_filename("test")
         self.assertEqual(self.pack.get_filename(), "test")
-        self.assertEqual(self.pack.get_filepath(), os.path.join(os.getcwd(), "test"))
+        self.assertEqual(
+            self.pack.get_filepath(), os.path.join(os.getcwd(), "test"))
 
         self.pack.set_filename("something")
         self.assertEqual(self.pack.get_filename(), "test")
-        self.assertEqual(self.pack.get_filepath(), os.path.join(os.getcwd(), "test"))
+        self.assertEqual(
+            self.pack.get_filepath(), os.path.join(os.getcwd(), "test"))
 
         self.pack.set_filename("something", override=True)
         self.assertEqual(self.pack.get_filename(), "something")
-        self.assertEqual(self.pack.get_filepath(), os.path.join(os.getcwd(), "something"))
+        self.assertEqual(
+            self.pack.get_filepath(), os.path.join(os.getcwd(), "something"))
 
         self.pack.set_filename("something_else.txt")
         self.assertEqual(self.pack.get_filename(), "something.txt")
-        self.assertEqual(self.pack.get_filepath(), os.path.join(os.getcwd(), "something.txt"))
+        self.assertEqual(self.pack.get_filepath(),
+                         os.path.join(os.getcwd(), "something.txt"))
 
         self.pack.set_filename("something_else.txt")
         self.assertEqual(self.pack.get_filename(), "something.txt")
-        self.assertEqual(self.pack.get_filepath(), os.path.join(os.getcwd(), "something.txt"))
+        self.assertEqual(self.pack.get_filepath(),
+                         os.path.join(os.getcwd(), "something.txt"))
 
         self.pack.set_filename("something_else.mkv")
         self.assertEqual(self.pack.get_filename(), "something.txt.mkv")
-        self.assertEqual(self.pack.get_filepath(), os.path.join(os.getcwd(), "something.txt.mkv"))
+        self.assertEqual(self.pack.get_filepath(),
+                         os.path.join(os.getcwd(), "something.txt.mkv"))
 
         self.pack.set_directory(os.path.join(os.getcwd(), "test"))
         self.assertEqual(self.pack.get_filename(), "something.txt.mkv")
-        self.assertEqual(self.pack.get_filepath(), os.path.join(os.getcwd(), "test", "something.txt.mkv"))
+        self.assertEqual(
+            self.pack.get_filepath(),
+            os.path.join(os.getcwd(), "test", "something.txt.mkv")
+        )
 
     def test_original_filename_check(self):
 
@@ -82,11 +92,13 @@ class UnitTests(unittest.TestCase):
 
     def test_request_message(self):
         self.assertEqual(self.pack.get_request_message(), "xdcc send #1")
-        self.assertEqual(self.pack.get_request_message(full=True), "/msg xdcc_servbot xdcc send #1")
+        self.assertEqual(self.pack.get_request_message(full=True),
+                         "/msg xdcc_servbot xdcc send #1")
 
     def test_generating_from_xdcc_message_single(self):
 
-        packs = xdcc_packs_from_xdcc_message("/msg xdcc_servbot xdcc send #1", "testdir", "irc.namibsun.net")
+        packs = xdcc_packs_from_xdcc_message(
+            "/msg xdcc_servbot xdcc send #1", "testdir", "irc.namibsun.net")
         self.assertEqual(len(packs), 1)
         pack = packs[0]
 
@@ -94,11 +106,15 @@ class UnitTests(unittest.TestCase):
         self.assertEqual(pack.get_bot(), "xdcc_servbot")
         self.assertEqual(pack.get_server().get_address(), "irc.namibsun.net")
         self.assertEqual(pack.get_filepath(), "testdir" + os.sep)
-        self.assertTrue(pack.get_request_message() in "/msg xdcc_servbot xdcc send #1")
+        self.assertTrue(
+            pack.get_request_message() in "/msg xdcc_servbot xdcc send #1"
+        )
 
     def test_generating_from_xdcc_message_range(self):
 
-        packs = xdcc_packs_from_xdcc_message("/msg xdcc_servbot xdcc send #1-100")
+        packs = xdcc_packs_from_xdcc_message(
+            "/msg xdcc_servbot xdcc send #1-100"
+        )
         self.assertEqual(len(packs), 100)
 
         for i, pack in enumerate(packs):
@@ -108,7 +124,9 @@ class UnitTests(unittest.TestCase):
 
     def test_generating_from_xdcc_message_range_with_jumps(self):
 
-        packs = xdcc_packs_from_xdcc_message("/msg xdcc_servbot xdcc send #1-100,2")
+        packs = xdcc_packs_from_xdcc_message(
+            "/msg xdcc_servbot xdcc send #1-100,2"
+        )
         self.assertEqual(len(packs), 50)
 
         i = 1

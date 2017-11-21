@@ -63,7 +63,8 @@ class UnitTests(unittest.TestCase):
                 self.on_dcc_disconnect(conn, event)
 
             # noinspection PyUnusedLocal
-            def logging_handler(self, string, formatting, carriage_return=None):
+            def logging_handler(self, string, formatting,
+                                carriage_return=None):
                 if string == "Download Incomplete, Trying again.":
                     self.download_incomplete_check = True
                 elif "Download completed in" in string:
@@ -92,7 +93,10 @@ class UnitTests(unittest.TestCase):
 
                 event.arguments = []
                 self.on_privnotice(conn, event)
-                event.arguments = ["You will have to re-send that, to the bot that transferred the file."]
+                event.arguments = [
+                    "You will have to re-send that,"
+                    "to the bot that transferred the file."
+                ]
                 self.on_privnotice(conn, event)
 
         Tester("irc.namibsun.net", "random").start()

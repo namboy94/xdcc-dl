@@ -55,7 +55,7 @@ class ConnectionStates(object):
         # Stats
         self.start_time = time.time()
 
-    def reset_connection_state(self) -> None:
+    def reset_connection_state(self):
         """
         Resets all connection state variables
 

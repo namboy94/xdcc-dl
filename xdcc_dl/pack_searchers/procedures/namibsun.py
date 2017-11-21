@@ -27,19 +27,24 @@ from xdcc_dl.entities.IrcServer import IrcServer
 
 def find_namibsun_packs(search_phrase: str) -> List[XDCCPack]:
     """
-    Searches for XDCC Packs matching the specified search string on irc.namibsun.net:8000
+    Searches for XDCC Packs matching the specified search string on
+    irc.namibsun.net:8000
 
     :param search_phrase: The search phrase to search for
     :return:              The list of found XDCC Packs
     """
 
-    soup = BeautifulSoup(requests.get("http://irc.namibsun.net:8000").text, "html.parser")
+    soup = BeautifulSoup(requests.get(
+        "http://irc.namibsun.net:8000").text, "html.parser"
+                         )
     content = soup.select(".content")
 
     all_packs = []
     for i, item in enumerate(content):
         if item.text == search_phrase:
-            all_packs.append(XDCCPack(IrcServer("irc.namibsun.net"), "xdcc_servbot", i + 1))
+            all_packs.append(XDCCPack(IrcServer(
+                "irc.namibsun.net"), "xdcc_servbot", i + 1)
+            )
             all_packs[len(all_packs) - 1].set_filename(item.text)
 
     return all_packs

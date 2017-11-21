@@ -27,7 +27,8 @@ from xdcc_dl.pack_searchers.PackSearcher import PackSearcher
 from xdcc_dl.entities.XDCCPack import xdcc_packs_from_xdcc_message
 from xdcc_dl.gui.pyuic.xdcc_downloader import Ui_XDCCDownloaderWindow
 from xdcc_dl.xdcc.MultipleServerDownloader import MultipleServerDownloader
-from PyQt5.QtWidgets import QMainWindow, QApplication, QTreeWidgetItem, QPushButton, QMessageBox
+from PyQt5.QtWidgets import QMainWindow, QApplication, QTreeWidgetItem,\
+    QPushButton, QMessageBox
 from PyQt5.QtCore import pyqtSignal, Qt
 
 
@@ -36,14 +37,21 @@ class XDCCDownloaderGui(QMainWindow, Ui_XDCCDownloaderWindow):
     Class that models a QT GUI for the XDCC Downloader
     """
 
-    spinner_start_signal = pyqtSignal(str, name="spinner_start")
-    spinner_updater_signal = pyqtSignal(QPushButton, str, name="spinner_updater")
-    refresh_search_results_signal = pyqtSignal(str, name="refresh_search_results")
-    refresh_download_queue_signal = pyqtSignal(str, name="refresh_download_queue")
-    show_download_complete_message_signal = pyqtSignal(str, name="show_download_complete_message")
-    progress_update_signal = pyqtSignal(float, float, name="progress_update")
+    spinner_start_signal = \
+        pyqtSignal(str, name="spinner_start")
+    spinner_updater_signal = \
+        pyqtSignal(QPushButton, str, name="spinner_updater")
+    refresh_search_results_signal = \
+        pyqtSignal(str, name="refresh_search_results")
+    refresh_download_queue_signal = \
+        pyqtSignal(str, name="refresh_download_queue")
+    show_download_complete_message_signal = \
+        pyqtSignal(str, name="show_download_complete_message")
+    progress_update_signal = \
+        pyqtSignal(float, float, name="progress_update")
 
-    def __init__(self, parent: QMainWindow = None) -> None:
+    # noinspection PyUnresolvedReferences
+    def __init__(self, parent: QMainWindow = None):
         """
         Sets up the interactive UI elements
 
@@ -56,11 +64,13 @@ class XDCCDownloaderGui(QMainWindow, Ui_XDCCDownloaderWindow):
         header.hideSection(header.logicalIndex(header.visualIndex(0)))
 
         self.spinner_start_signal.connect(lambda x: self.start_spinner(x))
-        self.spinner_updater_signal.connect(lambda x, y: self.update_spinner(x, y))
         self.refresh_search_results_signal.connect(self.refresh_search_results)
         self.refresh_download_queue_signal.connect(self.refresh_download_queue)
-        self.show_download_complete_message_signal.connect(self.show_download_complete_message)
         self.progress_update_signal.connect(self.progress_update)
+        self.spinner_updater_signal.connect(
+            lambda x, y: self.update_spinner(x, y))
+        self.show_download_complete_message_signal.connect(
+            self.show_download_complete_message)
 
         self.searching = False
         self.downloading = False
@@ -80,19 +90,21 @@ class XDCCDownloaderGui(QMainWindow, Ui_XDCCDownloaderWindow):
         self.search_term_edit.returnPressed.connect(self.search)
 
         self.up_arrow_button.clicked.connect(lambda: self.move_packs(up=True))
-        self.down_arrow_button.clicked.connect(lambda: self.move_packs(down=True))
         self.left_arrow_button.clicked.connect(self.remove_packs_from_queue)
         self.rigth_arrow_button.clicked.connect(self.add_packs_to_queue)
+        self.down_arrow_button.clicked.connect(
+            lambda: self.move_packs(down=True))
 
     def add_pack(self):
 
         message = self.message_edit.text()
         server = self.server_edit.text()
 
-        self.download_queue += xdcc_packs_from_xdcc_message(message, server=server)
+        self.download_queue += \
+            xdcc_packs_from_xdcc_message(message, server=server)
         self.refresh_download_queue()
 
-    def search(self) -> None:
+    def search(self):
         """
         Starts the XDCC search
 
@@ -104,10 +116,12 @@ class XDCCDownloaderGui(QMainWindow, Ui_XDCCDownloaderWindow):
 
             search_term = self.search_term_edit.text()
             search_engine = self.search_engine_combo_box.currentText()
-            search_engines = [search_engine] if search_engine != "All" else PackSearcher.get_available_pack_searchers()
+            search_engines = [search_engine] if search_engine != "All" else\
+                PackSearcher.get_available_pack_searchers()
 
             searcher = PackSearcher(search_engines)
 
+            # noinspection PyUnresolvedReferences
             def search_thread():
 
                 self.spinner_start_signal.emit("search")
@@ -117,9 +131,10 @@ class XDCCDownloaderGui(QMainWindow, Ui_XDCCDownloaderWindow):
 
             Thread(target=search_thread).start()
 
-    def refresh_search_results(self) -> None:
+    def refresh_search_results(self):
         """
-        Refreshes the Search Results Tree Widget with the current search results
+        Refreshes the Search Results Tree Widget with the
+        current search results
 
         :return: None
         """
@@ -127,19 +142,28 @@ class XDCCDownloaderGui(QMainWindow, Ui_XDCCDownloaderWindow):
         self.search_results.sort(key=lambda x: x.get_bot())
 
         for i, result in enumerate(self.search_results):
-            column = [str(i),
-                      result.get_bot(), str(result.get_packnumber()), str(result.get_size()), result.get_filename()]
-            self.search_result_tree_widget.addTopLevelItem(QTreeWidgetItem(column))
+            self.search_result_tree_widget.addTopLevelItem(
+                QTreeWidgetItem([
+                    str(i),
+                    result.get_bot(),
+                    str(result.get_packnumber()),
+                    str(result.get_size()),
+                    result.get_filename()
+                ])
+            )
 
         self.search_result_tree_widget.sortByColumn(1, Qt.AscendingOrder)
 
-    def start_spinner(self, spinner_type: str) -> None:
+    def start_spinner(self, spinner_type: str):
         """
         Starts a spinner animation while either searching or downloading
 
-        :param spinner_type: The type of spinner (a string that's either 'download' or 'search')
+        :param spinner_type: The type of spinner (a string that's either
+                             'download' or 'search')
         :return:         None
         """
+
+        # noinspection PyUnresolvedReferences
         def spin():
 
             search = spinner_type == "search"
@@ -148,12 +172,16 @@ class XDCCDownloaderGui(QMainWindow, Ui_XDCCDownloaderWindow):
             while self.searching or self.downloading:
 
                 if self.searching and search:
-                    new_text = "Searching" + (self.search_button.text().count(".") % 3 + 1) * "."
-                    self.spinner_updater_signal.emit(self.search_button, new_text)
+                    new_text = "Searching" + (self.search_button.text().
+                                              count(".") % 3 + 1) * "."
+                    self.spinner_updater_signal.emit(
+                        self.search_button, new_text)
 
                 if self.downloading and download:
-                    new_text = "Downloading" + (self.download_button.text().count(".") % 3 + 1) * "."
-                    self.spinner_updater_signal.emit(self.download_button, new_text)
+                    new_text = "Downloading" + (self.download_button.text()
+                                                .count(".") % 3 + 1) * "."
+                    self.spinner_updater_signal.emit(
+                        self.download_button, new_text)
 
                 time.sleep(0.3)
 
@@ -165,7 +193,7 @@ class XDCCDownloaderGui(QMainWindow, Ui_XDCCDownloaderWindow):
         Thread(target=spin).start()
 
     # noinspection PyMethodMayBeStatic
-    def update_spinner(self, widget: QPushButton, text: str) -> None:
+    def update_spinner(self, widget: QPushButton, text: str):
         """
         Sets the text of the given spinner button
 
@@ -177,7 +205,8 @@ class XDCCDownloaderGui(QMainWindow, Ui_XDCCDownloaderWindow):
 
     def add_packs_to_queue(self):
         """
-        Adds selected packs from the search results tree widget to the download queue
+        Adds selected packs from the search results tree widget to the
+        download queue
 
         :return: None
         """
@@ -187,7 +216,7 @@ class XDCCDownloaderGui(QMainWindow, Ui_XDCCDownloaderWindow):
 
         self.refresh_download_queue()
 
-    def remove_packs_from_queue(self) -> None:
+    def remove_packs_from_queue(self):
         """
         Removes all selected elements from the Download Queue
 
@@ -202,7 +231,7 @@ class XDCCDownloaderGui(QMainWindow, Ui_XDCCDownloaderWindow):
 
         self.refresh_download_queue()
 
-    def move_packs(self, up: bool = False, down: bool = False) -> None:
+    def move_packs(self, up: bool = False, down: bool = False):
         """
         Moves items on the queue up or down
 
@@ -211,17 +240,23 @@ class XDCCDownloaderGui(QMainWindow, Ui_XDCCDownloaderWindow):
         :return:     None
         """
 
-        size_check = (lambda x: x > 0) if up and not down else (lambda x: x < len(self.download_queue) - 1)
-        index_change = (lambda x: x - 1) if up and not down else (lambda x: x + 1)
+        size_check = (lambda x: x > 0) if up and not down else \
+            (lambda x: x < len(self.download_queue) - 1)
+        index_change = (lambda x: x - 1) if up and not down else \
+            (lambda x: x + 1)
 
-        indexes = self.download_queue_list_widget.selectedIndexes() if up and not down \
+        indexes = self.download_queue_list_widget.selectedIndexes() \
+            if up and not down \
             else reversed(self.download_queue_list_widget.selectedIndexes())
 
         for row in indexes:
 
             index = row.row()
             if size_check(index):
-                self.download_queue.insert(index_change(index), self.download_queue.pop(index))
+                self.download_queue.insert(
+                    index_change(index),
+                    self.download_queue.pop(index)
+                )
 
         self.refresh_download_queue()
 
@@ -233,7 +268,9 @@ class XDCCDownloaderGui(QMainWindow, Ui_XDCCDownloaderWindow):
         """
         self.download_queue_list_widget.clear()
         for pack in self.download_queue:
-            self.download_queue_list_widget.addItem(pack.get_request_message(full=True))
+            self.download_queue_list_widget.addItem(
+                pack.get_request_message(full=True)
+            )
 
     def download(self):
         """
@@ -247,10 +284,15 @@ class XDCCDownloaderGui(QMainWindow, Ui_XDCCDownloaderWindow):
 
             if not os.path.isdir(directory):
 
-                msg = self.generate_message(QMessageBox.Warning, "Invalid Directory",
-                                            "The entered directory is not valid", directory)
+                msg = self.generate_message(
+                    QMessageBox.Warning,
+                    "Invalid Directory",
+                    "The entered directory is not valid",
+                    directory
+                )
 
-                if not sys.argv == [sys.argv[0], "-platform", "minimal"]:  # pragma: no cover
+                # pragma: no cover
+                if not sys.argv == [sys.argv[0], "-platform", "minimal"]:
                     msg.exec_()
 
             else:
@@ -260,15 +302,20 @@ class XDCCDownloaderGui(QMainWindow, Ui_XDCCDownloaderWindow):
                 for pack in self.download_queue:
                     pack.set_directory(directory)
 
+                # noinspection PyUnresolvedReferences
                 def do_download():
 
-                    progress = Progress(len(self.download_queue),
-                                        callback=lambda a, b, sin, d, e, tot, g, h: self.progress_update_signal.emit(
-                                            sin, tot))
+                    progress = Progress(
+                        len(self.download_queue),
+                        callback=lambda a, b, sin, d, e, tot, g, h:
+                        self.progress_update_signal.emit(sin, tot)
+                    )
 
                     self.spinner_start_signal.emit("download")
                     self.downloader = MultipleServerDownloader("random")
-                    results = self.downloader.download(self.download_queue, progress)
+                    results = self.downloader.download(
+                        self.download_queue, progress
+                    )
                     self.download_queue = []
                     self.refresh_download_queue_signal.emit("")
                     self.progress_update_signal.emit(0.0, 0.0)
@@ -277,13 +324,17 @@ class XDCCDownloaderGui(QMainWindow, Ui_XDCCDownloaderWindow):
 
                     list_of_downloaded_packs = ""
                     for result in results:
-                        list_of_downloaded_packs += result.get_filepath() + "\n"
+                        list_of_downloaded_packs += \
+                            result.get_filepath() + "\n"
 
-                    self.show_download_complete_message_signal.emit(list_of_downloaded_packs)
+                    self.show_download_complete_message_signal.emit(
+                        list_of_downloaded_packs
+                    )
 
                 Thread(target=do_download).start()
 
-    def progress_update(self, single_percentage: float, total_percentage: float):
+    def progress_update(self, single_percentage: float,
+                        total_percentage: float):
         """
         Updates the progress bars
 
@@ -295,7 +346,8 @@ class XDCCDownloaderGui(QMainWindow, Ui_XDCCDownloaderWindow):
         self.total_progress_bar.setValue(total_percentage)
 
     # noinspection PyMethodMayBeStatic
-    def generate_message(self, icon: int, title: str, text: str, detailed_text: str) -> QMessageBox:
+    def generate_message(self, icon: int, title: str, text: str,
+                         detailed_text: str) -> QMessageBox:
         """
         Generates a Message Dialog
 
@@ -306,6 +358,7 @@ class XDCCDownloaderGui(QMainWindow, Ui_XDCCDownloaderWindow):
         :return:               The generated message dialog
         """
         msg = QMessageBox()
+        # noinspection PyTypeChecker
         msg.setIcon(icon)
         msg.setWindowTitle(title)
         msg.setText(text)
@@ -313,18 +366,23 @@ class XDCCDownloaderGui(QMainWindow, Ui_XDCCDownloaderWindow):
         msg.setStandardButtons(QMessageBox.Ok)
         return msg
 
-    def show_download_complete_message(self, details: str) -> None:
+    def show_download_complete_message(self, details: str):
         """
         Message shown when the download has finished
 
         :param details: A formatted list of packs
         :return:        None
         """
-        msg = self.generate_message(QMessageBox.Information, "Download Complete",
-                                    "The download has been completed", "List of downloaded packs:")
+        msg = self.generate_message(
+            QMessageBox.Information,
+            "Download Complete",
+            "The download has been completed",
+            "List of downloaded packs:"
+        )
         msg.setDetailedText(details.rstrip().lstrip())
 
-        if not sys.argv == [sys.argv[0], "-platform", "minimal"]:  # pragma: no cover
+        # pragma: no cover
+        if not sys.argv == [sys.argv[0], "-platform", "minimal"]:
             msg.exec_()
 
 

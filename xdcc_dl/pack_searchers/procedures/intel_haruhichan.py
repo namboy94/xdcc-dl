@@ -27,7 +27,8 @@ from xdcc_dl.entities.IrcServer import IrcServer
 
 def find_intel_haruhichan_packs(search_phrase: str) -> List[XDCCPack]:
     """
-    Searches for XDCC Packs matching the specified search string on intel.haruhichan.com
+    Searches for XDCC Packs matching the specified search
+    string on intel.haruhichan.com
 
     :param search_phrase: The search phrase to search for
     :return:              The list of found XDCC Packs
@@ -36,7 +37,8 @@ def find_intel_haruhichan_packs(search_phrase: str) -> List[XDCCPack]:
     if not search_phrase:
         return []
 
-    # Generate the search string that can be inserted into intel.haruhichan.com's URL to conduct a search
+    # Generate the search string that can be inserted into
+    # intel.haruhichan.com's URL to conduct a search
     # Intel Haruhichan uses %20 to separate spaces in their search query URLs
     split_search_term = search_phrase.split(" ")
     prepared_search_term = split_search_term[0]
@@ -58,16 +60,18 @@ def find_intel_haruhichan_packs(search_phrase: str) -> List[XDCCPack]:
     for i, line in enumerate(packs):
 
         # Explanation how this works:
-        # Every fifth 'td' element is the start of a new search result. They go in order:
+        # Every fifth 'td' element is the start of a new search result.
+        # They go in order:
         #       1. Bot Name
         #       2. Pack Number
         #       3. Requests (Not used)
         #       4. File Size
         #       5. File Name
         #
-        # This means, that we check with modulo 5 at which td element we currently are, and increment i
-        # after every loop.
-        # If we are at the fifth element, we have all the information we need to generate an XDCCPack
+        # This means, that we check with modulo 5 at which td element
+        # we currently are, and increment i after every loop.
+        # If we are at the fifth element,
+        # we have all the information we need to generate an XDCCPack
 
         if i % 5 == 0:
             bot = line.text

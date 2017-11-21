@@ -37,6 +37,7 @@ class UnitTests(unittest.TestCase):
         except SystemExit:
             self.assertEqual(True, True)
 
+    # noinspection PyStatementEffect
     def test_keyboard_interrupt(self):
 
         if sys.version_info[0] >= 3:

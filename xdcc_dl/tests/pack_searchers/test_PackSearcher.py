@@ -41,7 +41,8 @@ class UnitTests(unittest.TestCase):
         searcher = PackSearcher()
 
         for procedure in procedures:
-            self.assertTrue(PackSearcher.procedure_map[procedure] in searcher.procedures)
+            self.assertTrue(PackSearcher.procedure_map[procedure]
+                            in searcher.procedures)
 
     def test_selected_searchers(self):
 
@@ -51,4 +52,5 @@ class UnitTests(unittest.TestCase):
         for procedure in PackSearcher.get_available_pack_searchers():
 
             if procedure not in ["nibl", "namibsun"]:
-                self.assertFalse(PackSearcher.procedure_map[procedure] in searcher.procedures)
+                self.assertFalse(PackSearcher.procedure_map[procedure]
+                                 in searcher.procedures)

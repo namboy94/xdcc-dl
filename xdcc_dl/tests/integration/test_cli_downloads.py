@@ -80,7 +80,10 @@ class UnitTests(unittest.TestCase):
         sys.argv.append("/msg xdcc_servbot xdcc send #3")
 
         with open("3_test.txt", 'w') as testthree:
-            testthree.write("This is a Test File for XDCC File Transfers\n\nThis is Pack 3")
+            testthree.write(
+                "This is a Test File for XDCC File Transfers\n\n"
+                "This is Pack 3"
+            )
 
         self.check_content(3)
 
@@ -117,5 +120,6 @@ class UnitTests(unittest.TestCase):
         with open(str(number) + "_test.txt", 'r') as f:
 
             content = f.read()
-            self.assertTrue("This is a Test File for XDCC File Transfers" in content)
+            self.assertTrue(
+                "This is a Test File for XDCC File Transfers" in content)
             self.assertTrue("This is Pack " + str(number) in content)
