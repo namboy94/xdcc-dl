@@ -38,9 +38,11 @@ html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 html_static_path = ['.static']
 htmlhelp_basename = 'xdcc-dl-doc'
 
-# Latex
+# Latex Hack to circumvent 'Too deeply nested' error
 latex_elements = {
+    'maxlistdepth': '7',
 }
+
 latex_documents = [
     (master_doc, 'xdcc-dl.tex', 'xdcc-dl Documentation',
      'Hermann Krumrey', 'manual'),
