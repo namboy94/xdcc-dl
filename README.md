@@ -33,13 +33,6 @@ An XDCC File downloader based on the [irclib](https://github.com/jaraco/irc) fra
     # python setup.py install
     or
     $ sudo python setup.py install
-    
-    
-### Binaries
-
-The supplied binaries at the [Github Releases](https://github.com/namboy94/xdcc-dl/releases) page
-do not require installation nor any dependencies. They can simply be executed.
-
 
 ## Usage
 
