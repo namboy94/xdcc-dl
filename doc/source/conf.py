@@ -22,7 +22,7 @@ master_doc = 'index'
 # noinspection PyShadowingBuiltins
 copyright = '2016, Hermann Krumrey'
 author = 'Hermann Krumrey'
-project = 'xdcc-downloader'
+project = 'xdcc-dl'
 
 version = version_number
 release = version_number
@@ -36,26 +36,26 @@ todo_include_todos = False
 html_theme = 'sphinx_rtd_theme'
 html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 html_static_path = ['.static']
-htmlhelp_basename = 'xdcc-downloader-doc'
+htmlhelp_basename = 'xdcc-dl-doc'
 
 # Latex
 latex_elements = {
 }
 latex_documents = [
-    (master_doc, 'xdcc-downloader.tex', 'xdcc-downloader Documentation',
+    (master_doc, 'xdcc-dl.tex', 'xdcc-dl Documentation',
      'Hermann Krumrey', 'manual'),
 ]
 
 # Man Pages
 man_pages = [
-    (master_doc, 'xdcc-downloader', 'xdcc-downloader Documentation',
+    (master_doc, 'xdcc-dl', 'xdcc-dl Documentation',
      [author], 1)
 ]
 
 # Tex
 texinfo_documents = [
-    (master_doc, 'xdcc-downloader', 'xdcc-downloader Documentation',
-     author, 'xdcc-downloader', 'An XDCC Downloader bot',
+    (master_doc, 'xdcc-dl', 'xdcc-dl Documentation',
+     author, 'xdcc-dl', 'An XDCC Downloader bot',
      'Miscellaneous'),
 ]
 

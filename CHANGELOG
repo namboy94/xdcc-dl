@@ -1,3 +1,7 @@
+V 2.1.0:
+  - Renamed repository to 2.1.0
+  - Moved project metadata to root __init__.py file
+  - Removed sentry/raven integration
 V 2.0.0:
   - Fixed nibl.co.uk parser
   - Breaking change: metadata module now completely redone
