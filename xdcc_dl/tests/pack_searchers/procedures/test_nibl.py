@@ -36,7 +36,7 @@ class UnitTests(unittest.TestCase):
         self.assertEqual(len(packs), 0)
 
     def test_gin_txt(self):
-        packs = find_nibl_packs("Gin.txt")
+        packs = find_nibl_packs("AHQ Official Dragon Ball Z Releases.txt")
         self.assertEqual(len(packs), 1)
 
         pack = packs[0]
@@ -44,8 +44,9 @@ class UnitTests(unittest.TestCase):
         self.assertEqual(pack.get_server().get_address(), "irc.rizon.net")
         self.assertEqual(pack.get_filepath(),
                          os.path.join(os.getcwd(), pack.get_filename()))
-        self.assertEqual(pack.get_filename(), "Gin.txt")
-        self.assertEqual(pack.get_bot(), "Ginpachi-Sensei")
+        self.assertEqual(pack.get_filename(),
+                         "AHQ Official Dragon Ball Z Releases.txt")
+        self.assertEqual(pack.get_bot(), "Arutha|DragonBall")
 
     def test_larger_result(self):
         packs = find_nibl_packs("One Punch Man")

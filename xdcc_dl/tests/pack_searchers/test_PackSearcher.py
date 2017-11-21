@@ -32,8 +32,15 @@ class UnitTests(unittest.TestCase):
 
     def test_all_searchers(self):
 
-        results = PackSearcher().search("Gin.txt")
-        self.assertEqual(len(results), 5)
+        # Subject to change when real-world stuff changes
+        for term, amount in {
+            "AHQ Official Dragon Ball Z Releases.txt": 2,
+            "Gin.txt": 1,
+            "mashiro.txt": 1,
+            "1_test.txt": 1
+        }.items():
+            results = PackSearcher().search(term)
+            self.assertEqual(len(results), amount)
 
     def test_getting_searchers(self):
 
@@ -47,7 +54,9 @@ class UnitTests(unittest.TestCase):
     def test_selected_searchers(self):
 
         searcher = PackSearcher(["nibl", "namibsun"])
-        self.assertEqual(len(searcher.search("Gin.txt")), 1)
+        self.assertEqual(len(searcher.search(
+            "AHQ Official Dragon Ball Z Releases.txt")
+        ), 1)
 
         for procedure in PackSearcher.get_available_pack_searchers():
 

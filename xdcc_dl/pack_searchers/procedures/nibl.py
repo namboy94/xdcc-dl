@@ -23,8 +23,6 @@ from typing import List
 from bs4 import BeautifulSoup
 from xdcc_dl.entities.XDCCPack import XDCCPack
 from xdcc_dl.entities.IrcServer import IrcServer
-from requests.packages.urllib3 import disable_warnings
-from requests.packages.urllib3.exceptions import InsecureRequestWarning
 
 
 def find_nibl_packs(search_phrase: str) -> List[XDCCPack]:
@@ -45,19 +43,15 @@ def find_nibl_packs(search_phrase: str) -> List[XDCCPack]:
 
     # Get the data from the website
 
-    url = "http://nibl.co.uk/bots.php?search=" + prepared_search_term
+    url = "https://nibl.co.uk/bots.php?search=" + prepared_search_term
+    html = requests.get(url).text
 
-    # Since nibl.com has some sort of issue with their SSL certificate,
-    # we get the HTML content without verifying the SSL cert.
-    # Additionally, the warning that
-    # gets printed by default if you do that is suppressed
-    disable_warnings(InsecureRequestWarning)
-    html = requests.get(url, verify=False).text
+    print(html)
 
     content = BeautifulSoup(html, "html.parser")
     file_names = content.select(".filename")
     pack_numbers = content.select(".packnumber")
-    bot_names = content.select(".botname")
+    bot_names = content.select(".name")
     file_sizes = content.select(".filesize")
 
     results = []
@@ -69,6 +63,7 @@ def find_nibl_packs(search_phrase: str) -> List[XDCCPack]:
         filename = file_names[i].text.rsplit(" \n", 1)[0]
 
         # The bot name has a link after it, which needs to be cut out
+        print(bot_names)
         bot = bot_names[i].text.rsplit(" ", 1)[0]
 
         server = "irc.rizon.net"

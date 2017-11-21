@@ -36,7 +36,7 @@ class UnitTests(unittest.TestCase):
 
     def test_gin_txt(self):
         packs = find_ixirc_packs("Gin.txt")
-        self.assertEqual(len(packs), 2)
+        self.assertEqual(len(packs), 1)
 
         pack = packs[0]
         self.assertEqual(pack.get_packnumber(), 1)

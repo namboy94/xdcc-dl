@@ -64,7 +64,7 @@ class UnitTests(unittest.TestCase):
 
         downloader.download([
             XDCCPack(IrcServer("irc.namibsun.net"), "xdcc_servbot", 2),
-            XDCCPack(IrcServer("h2618595.stratoserver.net"), "xdcc_servbot", 3)
+            XDCCPack(IrcServer("namibsun.net"), "xdcc_servbot", 3)
         ], progress)
 
         self.assertTrue(os.path.isfile("2_test.txt"))
