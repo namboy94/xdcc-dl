@@ -50,6 +50,11 @@ def main():
         parser.add_argument("-d", "--destination",
                             help="Specifies the target download destination. "
                                  "Defaults to " + os.getcwd())
+        parser.add_argument("-o", "--out",
+                            help="Specifies the target file. "
+                                 "Defaults to the pack's file name. "
+                                 "When downloading multiple packs, index "
+                                 "numbers will be appended to the filename")
         parser.add_argument("-u", "--username",
                             help="Specifies the username")
         parser.add_argument("-v", "--verbosity", type=int, default=1,
@@ -73,6 +78,13 @@ def main():
             packs = xdcc_packs_from_xdcc_message(
                 args.message, destination, server
             )
+
+            if args.out is not None:
+                if len(packs) == 1:
+                    packs[0].set_filename(args.out, True)
+                else:
+                    for i, pack in enumerate(packs):
+                        pack.set_filename(args.out + "-" + str(i), True)
 
             downloader = XDCCDownloader(server, user, verbosity)
             results = downloader.download(packs)
