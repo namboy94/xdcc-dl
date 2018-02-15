@@ -162,3 +162,5 @@ class IrcEventPrinter(BaseIrclient):
             connection.ctcp("VERSION", self.server.address, "xdcc-dl")
             self.logger.log(event.arguments[0], LOG.CTCP_VERSION)
             return
+        elif event.arguments[0] == "PING":
+            print("CTCP PING")
