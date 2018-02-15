@@ -181,7 +181,7 @@ def xdcc_packs_from_xdcc_message(xdcc_message: str,
     :return: The generated XDCC Packs in a list
     """
     if not re.search(
-            r"^/msg [^ ]+ xdcc send #[0-9]+(-[0-9]+(,[0-9]+)?)?$",
+            r"^/msg [^ ]+ xdcc send #[0-9]+((,[0-9]+)*|(-[0-9]+(;[0-9]+)?)?)$",
             xdcc_message
     ):
         return []
@@ -189,18 +189,24 @@ def xdcc_packs_from_xdcc_message(xdcc_message: str,
     bot = xdcc_message.split("/msg ")[1].split(" ")[0]
 
     try:
-        packnumber = int(xdcc_message.rsplit("#", 1)[1])
-        xdcc_pack = XDCCPack(IrcServer(server), bot, packnumber)
-        xdcc_pack.set_directory(destination_directory)
-        return [xdcc_pack]
+        packnumber = xdcc_message.rsplit("#", 1)[1]
+        packnumbers = packnumber.split(",")
+
+        packs = []
+        for number in packnumbers:
+            xdcc_pack = XDCCPack(IrcServer(server), bot, int(number))
+            xdcc_pack.set_directory(destination_directory)
+            packs.append(xdcc_pack)
+
+        return packs
 
     except ValueError:
         packnumbers = xdcc_message.rsplit("#", 1)[1]
         start, end = packnumbers.split("-")
 
         try:
-            step = int(end.split(",")[1])
-            end = end.split(",")[0]
+            step = int(end.split(";")[1])
+            end = end.split(";")[0]
         except (IndexError, ValueError):
             step = 1
 
