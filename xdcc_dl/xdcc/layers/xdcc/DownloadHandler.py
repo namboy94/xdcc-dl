@@ -50,6 +50,7 @@ class DownloadHandler(XDCCInitiator):
         :param event:      the IRC Event
         :return:           None
         """
+        self.last_dcc_data_timestamp = time.time()
         # Send a single message to the server
         # indicating that the transfer is done
         if self.already_downloaded:

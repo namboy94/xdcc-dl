@@ -96,10 +96,7 @@ class XDCCDownloader(DownloadHandler):
             if status_code != "INCOMPLETE":
                 self.progress.next_file()
             else:
-                pack_queue = self.pack_queue
-                self.pack_queue = [self.current_pack]
-                for pack in pack_queue:
-                    self.pack_queue.append(pack)
+                self.pack_queue.insert(0, self.current_pack)
                 self.progress.reset_current_file_progress()
 
             self.reset_connection_state()

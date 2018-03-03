@@ -61,7 +61,6 @@ def find_nibl_packs(search_phrase: str) -> List[XDCCPack]:
         filename = file_names[i].text.rsplit(" \n", 1)[0]
 
         # The bot name has a link after it, which needs to be cut out
-        print(bot_names)
         bot = bot_names[i].text.rsplit(" ", 1)[0]
 
         server = "irc.rizon.net"

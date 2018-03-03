@@ -19,9 +19,11 @@ along with xdcc-dl.  If not, see <http://www.gnu.org/licenses/>.
 
 # imports
 import os
+import time
 import shlex
 import irc.client
 from typing import List
+from threading import Thread
 # noinspection PyPep8Naming
 from xdcc_dl.logging.LoggingTypes import LoggingTypes as LOG
 from xdcc_dl.xdcc.layers.xdcc.MessageSender import MessageSender
@@ -143,7 +145,7 @@ class XDCCInitiator(MessageSender):
             self.dcc_connection = self.dcc_connect(
                 self.peer_address, self.peer_port, "raw"
             )  # -> on_dccmsg
-            self.download_started = True
+            self.start_download()
 
     def dcc_accept_handler(self, ctcp_arguments: List[str],
                            connection: irc.client.ServerConnection):
@@ -164,7 +166,29 @@ class XDCCInitiator(MessageSender):
         self.file = open(self.current_pack.get_filepath(), "ab")
         self.dcc_connection = self.dcc_connect(
             self.peer_address, self.peer_port, "raw")  # -> on_dccmsg
+        self.start_download()
+
+    def start_download(self):
+        """
+        Starts the download and the monitor thread that monitors if the
+        download is stuck
+
+        :return: None
+        """
         self.download_started = True
+        self.last_dcc_data_timestamp = time.time()
+
+        def stuck_checker():
+            while self.download_started and self.monitor_thread is not None:
+                if time.time() - self.last_dcc_data_timestamp > 30:
+                    self.logger.log("Download Incomplete, Trying again.",
+                                    LOG.DOWNLOAD_INCOMPLETE)
+                    self.quit()
+                time.sleep(1)
+
+        self.monitor_thread = Thread(target=stuck_checker)
+        self.monitor_thread.daemon = True
+        self.monitor_thread.start()
 
     def on_privnotice(self, connection: irc.client.ServerConnection,
                       event: irc.client.Event):
