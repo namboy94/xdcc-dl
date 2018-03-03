@@ -46,8 +46,6 @@ def find_nibl_packs(search_phrase: str) -> List[XDCCPack]:
     url = "https://nibl.co.uk/bots.php?search=" + prepared_search_term
     html = requests.get(url).text
 
-    print(html)
-
     content = BeautifulSoup(html, "html.parser")
     file_names = content.select(".filename")
     pack_numbers = content.select(".packnumber")
