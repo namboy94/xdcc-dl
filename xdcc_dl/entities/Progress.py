@@ -85,6 +85,14 @@ class Progress(object):
                 self.single_progress = 0
                 self.single_total = 0
 
+    def reset_current_file_progress(self):
+        """
+        Resets the progress of the current file
+
+        :return: None
+        """
+        self.single_progress = 0
+
     def handle_callback(self):
         """
         Handles the callback method

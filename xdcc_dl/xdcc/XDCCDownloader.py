@@ -18,6 +18,7 @@ along with xdcc-dl.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 # imports
+import os
 from typing import List, Dict
 
 from xdcc_dl.entities.XDCCPack import XDCCPack
@@ -57,7 +58,7 @@ class XDCCDownloader(DownloadHandler):
                    "OTHERSERVER":     If a pack was found that is hosted on a
                                       different server
         """
-        self.progress = progress if progress is not None else\
+        self.progress = progress if progress is not None else \
             Progress(len(packs))
         self.pack_queue = packs
         self.pack_states = {}
@@ -86,9 +87,22 @@ class XDCCDownloader(DownloadHandler):
             except NetworkError:
                 status_code = "NETWORKERROR"
 
+            path = self.current_pack.get_filepath()
+            if os.path.getsize(path) < self.filesize:
+                status_code = "INCOMPLETE"
+
             self.pack_states[self.current_pack] = status_code
+
+            if status_code != "INCOMPLETE":
+                self.progress.next_file()
+            else:
+                pack_queue = self.pack_queue
+                self.pack_queue = [self.current_pack]
+                for pack in pack_queue:
+                    self.pack_queue.append(pack)
+                self.progress.reset_current_file_progress()
+
             self.reset_connection_state()
-            self.progress.next_file()
 
         self.quit()
 
