@@ -56,7 +56,6 @@ class ConnectionStates(object):
         self.start_time = time.time()
 
         # Monitoring
-        self.monitor_thread = None
         self.last_dcc_data_timestamp = 0
 
     def reset_connection_state(self):
@@ -88,5 +87,4 @@ class ConnectionStates(object):
         self.start_time = time.time()
 
         # Monitoring
-        self.monitor_thread = None
         self.last_dcc_data_timestamp = 0

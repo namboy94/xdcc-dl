@@ -64,6 +64,9 @@ def main():
                             help="Starts the XDCC Downloader GUI")
         parser.add_argument("-t", "--tui", action="store_true",
                             help="Starts the XDCC Downloader TUI")
+        parser.add_argument("--timeout-time", type=int, default=10,
+                            help="Determines how long a download may be stuck "
+                                 "before being retried.")
         args = parser.parse_args()
 
         if args.message:
@@ -86,7 +89,8 @@ def main():
                     for i, pack in enumerate(packs):
                         pack.set_filename(args.out + "-" + str(i), True)
 
-            downloader = XDCCDownloader(server, user, verbosity)
+            downloader = \
+                XDCCDownloader(server, user, verbosity, args.timeout_time)
             results = downloader.download(packs)
             downloader.quit()
 

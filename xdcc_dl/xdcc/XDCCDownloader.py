@@ -19,11 +19,16 @@ along with xdcc-dl.  If not, see <http://www.gnu.org/licenses/>.
 
 # imports
 import os
+import time
 from typing import List, Dict
-
 from xdcc_dl.entities.XDCCPack import XDCCPack
 from xdcc_dl.entities.Progress import Progress
-from xdcc_dl.xdcc.layers.irc.BaseIrcClient import NetworkError
+from xdcc_dl.entities.IrcServer import IrcServer
+from xdcc_dl.entities.User import User
+from xdcc_dl.logging.Logger import Logger
+# noinspection PyPep8Naming
+from xdcc_dl.logging.LoggingTypes import LoggingTypes as LOG
+from xdcc_dl.xdcc.layers.irc.BaseIrcClient import NetworkError, Disconnect
 from xdcc_dl.xdcc.layers.irc.BotFinder import BotNotFoundException
 from xdcc_dl.xdcc.layers.xdcc.DownloadHandler import DownloadHandler,\
     AlreadyDownloaded
@@ -36,6 +41,32 @@ class XDCCDownloader(DownloadHandler):
     The XDCC Downloader that combines the capabilities of
     all XDCC Layers to offer a stable interface to download XDCC Packs
     """
+
+    def __init__(self, server: IrcServer or str, user: User or str,
+                 logger: Logger or int = 0, timeout_time: int = 10):
+        """
+        Adds a check for stuck downloads every second that aborts and retries
+        after 30 seconds without response
+        :param server: The server to use
+        :param user: The user to log in with
+        :param logger: The logger used to log stuff
+        :param timeout_time: The time to wait for a stuck download before
+                             retrying
+        """
+
+        super().__init__(server, user, logger)
+
+        def stuck_check():
+            if self.download_started:
+                if time.time() - self.last_dcc_data_timestamp > timeout_time:
+                    self.logger.log(
+                        "Download Incomplete, Trying again.",
+                        LOG.DOWNLOAD_INCOMPLETE)
+                    self.download_started = False
+                    self.joined_channels = []
+                    self.quit()
+
+        self.reactor.scheduler.execute_every(period=1, func=stuck_check)
 
     def download(self, packs: List[XDCCPack], progress: Progress = None)\
             -> Dict[XDCCPack, str]:
@@ -86,6 +117,8 @@ class XDCCDownloader(DownloadHandler):
                 status_code = "INCORRECT"
             except NetworkError:
                 status_code = "NETWORKERROR"
+            except Disconnect:
+                status_code = "DISCONNECTED"
 
             path = self.current_pack.get_filepath()
             if os.path.getsize(path) < self.filesize:

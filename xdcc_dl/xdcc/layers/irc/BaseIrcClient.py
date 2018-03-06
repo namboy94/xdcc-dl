@@ -178,6 +178,7 @@ class BaseIrclient(irc.client.SimpleIRCClient, ConnectionStates, Variables):
         """
 
         try:
+            self.reactor.disconnect_all()
             self.connection.disconnect()
             self.connection.quit()
         except (Disconnect, irc.client.ServerNotConnectedError):
