@@ -20,7 +20,9 @@ along with xdcc-dl.  If not, see <http://www.gnu.org/licenses/>.
 # imports
 import os
 import sys
+import logging
 import argparse
+from irc.client import log
 from xdcc_dl.xdcc.XDCCDownloader import XDCCDownloader
 from xdcc_dl.tui.XDCCDownloaderTui import XDCCDownloaderTui
 from xdcc_dl.entities.XDCCPack import xdcc_packs_from_xdcc_message
@@ -38,7 +40,6 @@ def main():
     :return: None
     """
     try:
-
         parser = argparse.ArgumentParser()
         parser.add_argument("message", nargs='?',
                             help="An XDCC Message. "
@@ -68,6 +69,15 @@ def main():
                             help="Determines how long a download may be stuck "
                                  "before being retried.")
         args = parser.parse_args()
+
+        if args.verbosity > 7:
+            stdout_handler = logging.StreamHandler(stream=sys.stdout)
+            stdout_handler.setLevel(logging.DEBUG)
+
+            logging.basicConfig(
+                level=logging.DEBUG,
+                handlers=[stdout_handler]
+            )
 
         if args.message:
 

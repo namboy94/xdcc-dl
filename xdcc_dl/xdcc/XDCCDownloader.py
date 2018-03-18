@@ -31,7 +31,7 @@ from xdcc_dl.logging.LoggingTypes import LoggingTypes as LOG
 from xdcc_dl.xdcc.layers.irc.BaseIrcClient import NetworkError, Disconnect
 from xdcc_dl.xdcc.layers.irc.BotFinder import BotNotFoundException
 from xdcc_dl.xdcc.layers.xdcc.DownloadHandler import DownloadHandler,\
-    AlreadyDownloaded
+    AlreadyDownloaded, IncompleteDownload
 from xdcc_dl.xdcc.layers.xdcc.XDCCInitiator import IncorrectFileSentException,\
     NoValidWhoisQueryException
 
@@ -60,13 +60,14 @@ class XDCCDownloader(DownloadHandler):
             if self.download_started:
                 if time.time() - self.last_dcc_data_timestamp > timeout_time:
                     self.logger.log(
-                        "Download Incomplete, Trying again.",
+                        "Download Stuck, Trying again.",
                         LOG.DOWNLOAD_INCOMPLETE)
-                    self.download_started = False
-                    self.joined_channels = []
-                    self.quit()
+                    self.dcc_connection.disconnect()
+                    # self.download_started = False
+                    # self.joined_channels = []
+                    # self.quit()
 
-        self.reactor.scheduler.execute_every(period=1, func=stuck_check)
+        # self.reactor.scheduler.execute_every(period=5, func=stuck_check)
 
     def download(self, packs: List[XDCCPack], progress: Progress = None)\
             -> Dict[XDCCPack, str]:
@@ -119,6 +120,8 @@ class XDCCDownloader(DownloadHandler):
                 status_code = "NETWORKERROR"
             except Disconnect:
                 status_code = "DISCONNECTED"
+            except IncompleteDownload:
+                status_code = "INCOMPLETE"
 
             path = self.current_pack.get_filepath()
             if os.path.getsize(path) < self.filesize:
@@ -126,11 +129,11 @@ class XDCCDownloader(DownloadHandler):
 
             self.pack_states[self.current_pack] = status_code
 
-            if status_code != "INCOMPLETE":
-                self.progress.next_file()
-            else:
+            if status_code == "INCOMPLETE":
                 self.pack_queue.insert(0, self.current_pack)
                 self.progress.reset_current_file_progress()
+            else:
+                self.progress.next_file()
 
             self.reset_connection_state()
 

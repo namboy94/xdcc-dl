@@ -34,6 +34,13 @@ class AlreadyDownloaded(Exception):
     pass
 
 
+class IncompleteDownload(Exception):
+    """
+    Gets thrown when a download did not complete
+    """
+    pass
+
+
 # noinspection PyUnusedLocal
 class DownloadHandler(XDCCInitiator):
     """
@@ -55,7 +62,7 @@ class DownloadHandler(XDCCInitiator):
         # indicating that the transfer is done
         if self.already_downloaded:
             self.dcc_connection.send_bytes(
-                struct.pack(b"!I", self.progress.get_single_progress_total())
+                struct.pack(b"!Q", self.progress.get_single_progress_total())
             )
 
         else:
@@ -79,7 +86,7 @@ class DownloadHandler(XDCCInitiator):
 
             # Send Acknowledge Message
             self.dcc_connection.send_bytes(struct.pack(
-                b"!I", self.progress.get_single_progress())
+                b"!Q", self.progress.get_single_progress())
             )
             # -> on_dccmsg if download not yet complete
             # -> on_dcc_disconnect if completed
@@ -99,13 +106,10 @@ class DownloadHandler(XDCCInitiator):
 
             filesize = os.path.getsize(self.current_pack.get_filepath())
             if filesize < self.filesize:
-                self.logger.log("Download Incomplete, Trying again.",
+
+                self.logger.log("Download Incomplete",
                                 LOG.DOWNLOAD_INCOMPLETE)
-                self.connection.privmsg(
-                    self.current_pack.get_bot(),
-                    self.current_pack.get_request_message()
-                )
-                return
+                raise IncompleteDownload()
             else:
                 self.logger.log("\nDownload completed in %.2f seconds" %
                                 (time.time() - self.start_time), LOG.DEFAULT)
