@@ -53,7 +53,6 @@ class XDCCDownloader(DownloadHandler):
         :param timeout_time: The time to wait for a stuck download before
                              retrying
         """
-
         super().__init__(server, user, logger)
 
         def stuck_check():

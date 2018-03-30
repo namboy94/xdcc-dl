@@ -159,7 +159,9 @@ class IrcEventPrinter(BaseIrclient):
         :return:           None
         """
         if event.arguments[0] == "VERSION":
-            connection.ctcp("VERSION", self.server.address, "xdcc-dl")
+            print("\nVERSION")
+            self.connection.version(self.server.address)
+            # connection.ctcp("VERSION", self.server.address, "xdcc-dl")
             self.logger.log(event.arguments[0], LOG.CTCP_VERSION)
             return
         elif event.arguments[0] == "PING":
