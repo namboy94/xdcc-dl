@@ -22,7 +22,7 @@ import irc.client
 import irc.events
 # noinspection PyUnresolvedReferences,PyPep8Naming
 from xdcc_dl.logging.LoggingTypes import LoggingTypes as LOG
-from xdcc_dl.xdcc.layers.irc.BaseIrcClient import BaseIrclient
+from xdcc_dl.xdcc.legacy.layers import BaseIrclient
 
 
 def create_event_printer(event: str, formatting: str, show_tag: bool = False) \

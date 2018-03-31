@@ -13,7 +13,7 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License
+You should have received$ a copy of the GNU General Public License
 along with xdcc-dl.  If not, see <http://www.gnu.org/licenses/>.
 """
 
@@ -25,7 +25,7 @@ import irc.client
 from typing import List
 # noinspection PyPep8Naming
 from xdcc_dl.logging.LoggingTypes import LoggingTypes as LOG
-from xdcc_dl.xdcc.layers.xdcc.MessageSender import MessageSender
+from xdcc_dl.xdcc.legacy.layers import MessageSender
 
 
 class IncorrectFileSentException(Exception):

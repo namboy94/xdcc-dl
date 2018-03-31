@@ -20,7 +20,7 @@ along with xdcc-dl.  If not, see <http://www.gnu.org/licenses/>.
 # imports
 import os
 import unittest
-from xdcc_dl.xdcc.XDCCDownloader import XDCCDownloader
+from xdcc_dl.xdcc.legacy.XDCCDownloader import XDCCDownloader
 from xdcc_dl.pack_searchers.PackSearcher import PackSearcher
 
 

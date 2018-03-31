@@ -24,10 +24,10 @@ from jaraco.stream import buffer
 from xdcc_dl.entities.User import User
 from xdcc_dl.logging.Logger import Logger
 from xdcc_dl.entities.IrcServer import IrcServer
-from xdcc_dl.xdcc.layers.helpers.Variables import Variables
+from xdcc_dl.xdcc.legacy.layers import Variables
 # noinspection PyPep8Naming
 from xdcc_dl.logging.LoggingTypes import LoggingTypes as LOG
-from xdcc_dl.xdcc.layers.helpers.ConnectionStates import ConnectionStates
+from xdcc_dl.xdcc.legacy.layers import ConnectionStates
 
 
 class IgnoreErrorsBuffer(buffer.DecodingLineBuffer):

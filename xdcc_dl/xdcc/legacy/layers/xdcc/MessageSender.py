@@ -19,7 +19,7 @@ along with xdcc-dl.  If not, see <http://www.gnu.org/licenses/>.
 
 # imports
 import irc.client
-from xdcc_dl.xdcc.layers.irc.BotFinder import BotFinder
+from xdcc_dl.xdcc.legacy.layers import BotFinder
 # noinspection PyPep8Naming
 from xdcc_dl.logging.LoggingTypes import LoggingTypes as LOG
 

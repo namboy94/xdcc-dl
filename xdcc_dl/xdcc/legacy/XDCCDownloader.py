@@ -28,11 +28,11 @@ from xdcc_dl.entities.User import User
 from xdcc_dl.logging.Logger import Logger
 # noinspection PyPep8Naming
 from xdcc_dl.logging.LoggingTypes import LoggingTypes as LOG
-from xdcc_dl.xdcc.layers.irc.BaseIrcClient import NetworkError, Disconnect
-from xdcc_dl.xdcc.layers.irc.BotFinder import BotNotFoundException
-from xdcc_dl.xdcc.layers.xdcc.DownloadHandler import DownloadHandler,\
+from xdcc_dl.xdcc.legacy.layers import NetworkError, Disconnect
+from xdcc_dl.xdcc.legacy.layers import BotNotFoundException
+from xdcc_dl.xdcc.legacy.layers import DownloadHandler,\
     AlreadyDownloaded, IncompleteDownload
-from xdcc_dl.xdcc.layers.xdcc.XDCCInitiator import IncorrectFileSentException,\
+from xdcc_dl.xdcc.legacy.layers import IncorrectFileSentException,\
     NoValidWhoisQueryException
 
 

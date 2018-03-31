@@ -26,7 +26,7 @@ from xdcc_dl.entities.Progress import Progress
 from xdcc_dl.pack_searchers.PackSearcher import PackSearcher
 from xdcc_dl.entities.XDCCPack import xdcc_packs_from_xdcc_message
 from xdcc_dl.gui.pyuic.xdcc_downloader import Ui_XDCCDownloaderWindow
-from xdcc_dl.xdcc.MultipleServerDownloader import MultipleServerDownloader
+from xdcc_dl.xdcc.legacy.MultipleServerDownloader import MultipleServerDownloader
 from PyQt5.QtWidgets import QMainWindow, QApplication, QTreeWidgetItem,\
     QPushButton, QMessageBox
 from PyQt5.QtCore import pyqtSignal, Qt

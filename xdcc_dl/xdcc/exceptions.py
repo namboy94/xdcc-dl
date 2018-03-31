@@ -1,5 +1,5 @@
 """
-Copyright 2016-2017 Hermann Krumrey
+Copyright 2016-2018 Hermann Krumrey
 
 This file is part of xdcc-dl.
 
@@ -17,14 +17,14 @@ You should have received a copy of the GNU General Public License
 along with xdcc-dl.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-# imports
-import unittest
+
+class InvalidCTCPException(Exception):
+    pass
 
 
-class UnitTests(unittest.TestCase):
+class AlreadyDownloadedException(Exception):
+    pass
 
-    def setUp(self):
-        pass
 
-    def tearDown(self):
-        pass
+class DownloadCompleted(Exception):
+    pass

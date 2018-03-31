@@ -21,8 +21,8 @@ along with xdcc-dl.  If not, see <http://www.gnu.org/licenses/>.
 import irc.client
 # noinspection PyPep8Naming
 from xdcc_dl.logging.LoggingTypes import LoggingTypes as LOG
-from xdcc_dl.xdcc.layers.irc.IrcEventPrinter import IrcEventPrinter
-from xdcc_dl.xdcc.layers.helpers.BotChannelMapper import BotChannelMapper
+from xdcc_dl.xdcc.legacy.layers import IrcEventPrinter
+from xdcc_dl.xdcc.legacy.layers import BotChannelMapper
 
 
 class BotNotFoundException(Exception):

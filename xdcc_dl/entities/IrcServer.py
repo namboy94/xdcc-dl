@@ -45,3 +45,15 @@ class IrcServer(object):
         :return: the server port
         """
         return self.port
+
+    def __eq__(self, other) -> bool:
+        """
+        Checks two IrcServer objects for equality
+        :param other: The other object to check
+        :return: True if the objects are equal, False otherwise
+        """
+        # noinspection PyBroadException
+        try:
+            return self.address == other.address and self.port == other.port
+        except Exception:
+            return False

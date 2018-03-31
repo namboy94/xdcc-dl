@@ -25,7 +25,7 @@ from xdcc_dl.entities.User import User
 from xdcc_dl.entities.XDCCPack import XDCCPack
 from xdcc_dl.entities.Progress import Progress
 from xdcc_dl.entities.IrcServer import IrcServer
-from xdcc_dl.xdcc.XDCCDownloader import XDCCDownloader
+from xdcc_dl.xdcc.legacy.XDCCDownloader import XDCCDownloader
 
 
 class MultipleServerDownloader(object):

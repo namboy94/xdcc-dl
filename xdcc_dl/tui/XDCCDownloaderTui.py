@@ -26,7 +26,7 @@ from xdcc_dl import version
 from xdcc_dl.entities.Progress import Progress
 from xdcc_dl.pack_searchers.PackSearcher import PackSearcher
 from xdcc_dl.entities.XDCCPack import xdcc_packs_from_xdcc_message
-from xdcc_dl.xdcc.MultipleServerDownloader import MultipleServerDownloader
+from xdcc_dl.xdcc.legacy.MultipleServerDownloader import MultipleServerDownloader
 
 
 # noinspection PyUnusedLocal

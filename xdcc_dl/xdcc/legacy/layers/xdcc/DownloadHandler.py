@@ -24,7 +24,7 @@ import struct
 import irc.client
 # noinspection PyPep8Naming
 from xdcc_dl.logging.LoggingTypes import LoggingTypes as LOG
-from xdcc_dl.xdcc.layers.xdcc.XDCCInitiator import XDCCInitiator
+from xdcc_dl.xdcc.legacy.layers import XDCCInitiator
 
 
 class AlreadyDownloaded(Exception):

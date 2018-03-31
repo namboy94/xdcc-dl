@@ -1,5 +1,5 @@
 """
-Copyright 2016-2017 Hermann Krumrey
+Copyright 2016-2018 Hermann Krumrey
 
 This file is part of xdcc-dl.
 
@@ -22,8 +22,7 @@ import os
 import sys
 import logging
 import argparse
-from irc.client import log
-from xdcc_dl.xdcc.XDCCDownloader import XDCCDownloader
+from xdcc_dl.xdcc.legacy.XDCCDownloader import XDCCDownloader
 from xdcc_dl.tui.XDCCDownloaderTui import XDCCDownloaderTui
 from xdcc_dl.entities.XDCCPack import xdcc_packs_from_xdcc_message
 
