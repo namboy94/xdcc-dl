@@ -19,12 +19,21 @@ along with xdcc-dl.  If not, see <http://www.gnu.org/licenses/>.
 
 
 class InvalidCTCPException(Exception):
+    """
+    Exception thrown when an invalid CTCP DCC message type is received
+    """
     pass
 
 
 class AlreadyDownloadedException(Exception):
+    """
+    Exception thrown when a file was already downloaded
+    """
     pass
 
 
 class DownloadCompleted(Exception):
+    """
+    Excepton thrown once the download has been completed
+    """
     pass

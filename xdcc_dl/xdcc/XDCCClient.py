@@ -34,10 +34,6 @@ class XDCCCLient(SimpleIRCClient):
     IRC Client that can download an XDCC pack
     """
 
-    for event in ["privmessage", "privnotice"]:
-        exec("def on_" + event + "(self, c, e):\n" +
-             "    print(\"" + event + "\" + str(e.arguments))")
-
     def __init__(self, pack: XDCCPack):
         """
         Initializes the XDCC IRC client
@@ -158,6 +154,12 @@ class XDCCCLient(SimpleIRCClient):
         :raise InvalidCTCPException: In case no valid DCC message was received
         """
 
+        print("Source: " + str(event.source))
+        print("Args: " + str(event.arguments))
+        print("Type: " + str(event.type))
+        print("Tags: " + str(event.tags))
+        print("Target: " + str(event.target))
+
         def start_download(append: bool = False):
             """
             Helper method that starts the download of an XDCC pack
@@ -194,9 +196,10 @@ class XDCCCLient(SimpleIRCClient):
 
                     print("Resume")
                     self.progress = position
+                    bot = event.source.split("!")[0]
                     resume_param = "\"" + filename + "\" " + \
                                    str(self.peer_port) + " " + str(position)
-                    conn.ctcp("DCC RESUME", self.pack.bot, resume_param)
+                    conn.ctcp("DCC RESUME", bot, resume_param)
 
                 else:
                     start_download()

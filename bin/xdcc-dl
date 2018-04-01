@@ -1,6 +1,6 @@
-#!/bin/env python
+#!/usr/bin/env python
 """
-Copyright 2016-2017 Hermann Krumrey
+Copyright 2016-2018 Hermann Krumrey
 
 This file is part of xdcc-dl.
 
@@ -18,7 +18,75 @@ You should have received a copy of the GNU General Public License
 along with xdcc-dl.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-from xdcc_dl.main import main
+# imports
+import os
+import logging
+import argparse
+from xdcc_dl.logging.Logger import Logger
+from xdcc_dl.xdcc import download_packs
+from xdcc_dl.entities.XDCCPack import xdcc_packs_from_xdcc_message
+
+try:
+    from xdcc_dl.gui.XDCCDownloaderGui import start as start_gui
+except ImportError:  # pragma: no cover
+    start_gui = None
+
+
+def main():
+    """
+    Starts the main method of the program
+
+    :return: None
+    """
+    try:
+        parser = argparse.ArgumentParser()
+        parser.add_argument("message",
+                            help="An XDCC Message. Supports ranges (1-100), "
+                                 "ranges with steps (1-100;2) as well as "
+                                 "comma-separated packs: (1,2,3).")
+        parser.add_argument("-s", "--server",
+                            default="irc.rizon.net",
+                            help="Specifies the IRC Server. "
+                                 "Defaults to irc.rizon.net")
+        parser.add_argument("-o", "--out",
+                            help="Specifies the target file. "
+                                 "Defaults to the pack's file name. "
+                                 "When downloading multiple packs, index "
+                                 "numbers will be appended to the filename")
+        parser.add_argument("-v", "--verbose", action="store_true",
+                            help="Sets the verbosity of the program to INFO")
+        parser.add_argument("-d", "--debug", action="store_true",
+                            help="Sets the verbosity of the program to DEBUG")
+        parser.add_argument("-q", "--quiet", action="store_true",
+                            help="Disables all output")
+        args = parser.parse_args()
+
+        if args.quiet:
+            log_level = logging.ERROR
+        elif args.verbose:
+            log_level = logging.INFO
+        elif args.debug:
+            log_level = logging.DEBUG
+        else:
+            log_level = logging.WARNING
+        Logger.logging_level = log_level
+
+        packs = xdcc_packs_from_xdcc_message(
+            args.message, os.getcwd(), args.server
+        )
+
+        if args.out is not None:
+            if len(packs) == 1:
+                packs[0].set_filename(args.out, True)
+            else:
+                for i, pack in enumerate(packs):
+                    pack.set_filename(args.out + "-" + str(i).zfill(3), True)
+
+        download_packs(packs)
+        print("Done")
+
+    except KeyboardInterrupt:
+        print("Thanks for using xdcc-dl!")
 
 
 if __name__ == "__main__":
