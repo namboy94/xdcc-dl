@@ -36,6 +36,12 @@ class XDCCCLient(SimpleIRCClient):
     IRC Client that can download an XDCC pack
     """
 
+    download_limit = -1
+    """
+    Maximum speed of the download in bytes/s
+    If set to -1, will be unlimited
+    """
+
     def __init__(self, pack: XDCCPack):
         """
         Initializes the XDCC IRC client
@@ -58,6 +64,8 @@ class XDCCCLient(SimpleIRCClient):
         self.progress = 0
         self.xdcc_file = None
         self.xdcc_connection = None
+
+        self.logger.debug("Download Limit set to: " + str(self.download_limit))
 
         super().__init__()
 
@@ -176,6 +184,7 @@ class XDCCCLient(SimpleIRCClient):
             """
             self.downloading = True
             self.xdcc_timestamp = time.time()
+            self._start_monitor()
             mode = "ab" if append else "wb"
             self.logger.debug("Starting Download (" + mode + ")")
             self.xdcc_file = open(self.pack.get_filepath(), mode)
@@ -225,20 +234,29 @@ class XDCCCLient(SimpleIRCClient):
         :param event: The 'dccmsg' event
         :return: None
         """
-        self.xdcc_timestamp = time.time()
-
         data = event.arguments[0]
-        data_length = len(data)
+        chunk_size = len(data)
 
         self.xdcc_file.write(data)
-        self.progress += data_length
-
-        self.xdcc_connection.send_bytes(struct.pack(b"!Q", self.progress))
+        self.progress += chunk_size
 
         percentage = "%.2f" % (100 * (self.progress / self.filesize))
         self.logger.info("[" + self.pack.filename + "]: (" +
-                         percentage + "%)",
+                         percentage + "%) |" + str(self.progress) + "|",
                          end="\r", back=Back.LIGHTYELLOW_EX, fore=Fore.BLACK)
+
+        # Limit the download speed
+        if self.download_limit != -1:
+            delta = abs(time.time() - self.xdcc_timestamp)
+            chunk_time = chunk_size / self.download_limit
+            sleep_time = chunk_time - delta
+
+            if sleep_time > 0:
+                self.logger.debug("Throttling for %.2f seconds" % sleep_time)
+                time.sleep(sleep_time)
+
+        self.xdcc_connection.send_bytes(struct.pack(b"!Q", self.progress))
+        self.xdcc_timestamp = time.time()
 
     def on_dcc_disconnect(self, _: ServerConnection, __: Event):
         """
@@ -251,3 +269,14 @@ class XDCCCLient(SimpleIRCClient):
         if self.xdcc_file is not None:
             self.xdcc_file.close()
         raise DownloadCompleted()
+
+    def _monitor(self):
+        while True:
+            if time.time() - self.xdcc_timestamp > 5:
+                print("Stuck!")
+
+    def _start_monitor(self):
+        from threading import Thread
+        t = Thread(target=self._monitor)
+        t.daemon = True
+        t.start()

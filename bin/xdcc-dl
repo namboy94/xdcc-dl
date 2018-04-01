@@ -20,8 +20,10 @@ along with xdcc-dl.  If not, see <http://www.gnu.org/licenses/>.
 
 # imports
 import os
+import sys
 import logging
 import argparse
+from xdcc_dl.xdcc.XDCCClient import XDCCCLient
 from xdcc_dl.logging.Logger import Logger
 from xdcc_dl.xdcc import download_packs
 from xdcc_dl.entities.XDCCPack import xdcc_packs_from_xdcc_message
@@ -57,6 +59,9 @@ def main():
                             help="Sets the verbosity of the program to INFO")
         parser.add_argument("-q", "--quiet", action="store_true",
                             help="Disables all output")
+        parser.add_argument("-t", "--throttle",
+                            help="Limits the download speed of xdcc-dl. "
+                                 "Append K,M or G for more convenient units")
         args = parser.parse_args()
 
         if args.quiet:
@@ -70,6 +75,27 @@ def main():
         packs = xdcc_packs_from_xdcc_message(
             args.message, os.getcwd(), args.server
         )
+
+        # Set the Download Speed Limit
+        try:
+            throttle = args.throttle
+            if throttle is not None:
+                multiplier = 1
+                units = {"k": 1000, "m": 1000000, "g": 1000000000}
+                throttle_num = ""
+                for i, char in enumerate(throttle):
+                    if char.isdigit():
+                        throttle_num += char
+                    else:
+                        if len(throttle) - 1 != i:
+                            raise KeyError
+                        else:
+                            multiplier = units[char.lower()]
+                limit = multiplier * int(throttle_num)
+                XDCCCLient.download_limit = limit
+        except KeyError:
+            print("Invalid throttle value")
+            sys.exit(1)
 
         if args.out is not None:
             if len(packs) == 1:
