@@ -81,7 +81,7 @@ class XDCCCLient(SimpleIRCClient):
             self.logger.info("File " + self.pack.filename +
                              " downloaded successfully")
         except KeyboardInterrupt:
-            self.logger.warning("Download Aborted")
+            self.logger.warning("\nDownload Aborted")
         finally:
             self.logger.debug("Disconnecting")
             try:
@@ -247,6 +247,7 @@ class XDCCCLient(SimpleIRCClient):
         :param __: The 'dccmsg' event
         :return: None
         """
+        print()
         if self.xdcc_file is not None:
             self.xdcc_file.close()
         raise DownloadCompleted()
