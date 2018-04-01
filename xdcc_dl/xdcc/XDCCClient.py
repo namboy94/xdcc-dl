@@ -240,11 +240,6 @@ class XDCCCLient(SimpleIRCClient):
         self.xdcc_file.write(data)
         self.progress += chunk_size
 
-        percentage = "%.2f" % (100 * (self.progress / self.filesize))
-        self.logger.info("[" + self.pack.filename + "]: (" +
-                         percentage + "%) |" + str(self.progress) + "|",
-                         end="\r", back=Back.LIGHTYELLOW_EX, fore=Fore.BLACK)
-
         # Limit the download speed
         if self.download_limit != -1:
             delta = abs(time.time() - self.xdcc_timestamp)
@@ -252,8 +247,15 @@ class XDCCCLient(SimpleIRCClient):
             sleep_time = chunk_time - delta
 
             if sleep_time > 0:
-                self.logger.debug("Throttling for %.2f seconds" % sleep_time)
+                self.logger.debug(
+                    "{Throttling for %.2f seconds} " % sleep_time, end=""
+                )
                 time.sleep(sleep_time)
+
+        percentage = "%.2f" % (100 * (self.progress / self.filesize))
+        self.logger.info("[" + self.pack.filename + "]: (" +
+                         percentage + "%) |" + str(self.progress) + "|",
+                         end="\r", back=Back.LIGHTYELLOW_EX, fore=Fore.BLACK)
 
         self.xdcc_connection.send_bytes(struct.pack(b"!Q", self.progress))
         self.xdcc_timestamp = time.time()
