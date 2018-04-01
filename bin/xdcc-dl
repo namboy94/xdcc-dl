@@ -79,10 +79,9 @@ def main():
                     pack.set_filename(args.out + "-" + str(i).zfill(3), True)
 
         download_packs(packs)
-        print("Done")
 
     except KeyboardInterrupt:
-        print("Thanks for using xdcc-dl!")
+        Logger().info("Thanks for using xdcc-dl!")
 
 
 if __name__ == "__main__":
