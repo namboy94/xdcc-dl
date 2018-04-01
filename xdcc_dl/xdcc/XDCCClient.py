@@ -80,9 +80,14 @@ class XDCCCLient(SimpleIRCClient):
         except DownloadCompleted:
             self.logger.info("File " + self.pack.filename +
                              " downloaded successfully")
+        except KeyboardInterrupt:
+            self.logger.warning("Download Aborted")
         finally:
             self.logger.debug("Disconnecting")
-            self.reactor.disconnect_all()
+            try:
+                self.reactor.disconnect_all()
+            except DownloadCompleted:
+                pass
             return self.pack.get_filepath()
 
     def on_welcome(self, conn: ServerConnection, _: Event):
@@ -231,7 +236,8 @@ class XDCCCLient(SimpleIRCClient):
         self.xdcc_connection.send_bytes(struct.pack(b"!Q", self.progress))
 
         percentage = "%.2f" % (100 * (self.progress / self.filesize))
-        self.logger.info("[" + self.pack.filename + "]: (" + percentage + ")",
+        self.logger.info("[" + self.pack.filename + "]: (" +
+                         percentage + "%)",
                          end="\r", back=Back.LIGHTYELLOW_EX, fore=Fore.BLACK)
 
     def on_dcc_disconnect(self, _: ServerConnection, __: Event):

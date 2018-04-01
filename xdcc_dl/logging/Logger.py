@@ -44,7 +44,7 @@ class Logger(object):
         :return: None
         """
         if self.logging_level <= level:
-            print(fore + back + message + Style.RESET_ALL + end)
+            print(fore + back + message + Style.RESET_ALL, end=end)
 
     def info(self, message: str, back: Back = Back.BLACK,
              fore: Fore = Fore.GREEN, end: str = "\n"):

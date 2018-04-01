@@ -165,6 +165,13 @@ class XDCCPack(object):
         else:
             return "xdcc send #" + str(self.packnumber)
 
+    def __str__(self) -> str:
+        """
+        :return: A string representation of the pack
+        """
+        return self.filename + " (/msg " + self.bot + " " + \
+            self.get_request_message() + ")"
+
 
 def xdcc_packs_from_xdcc_message(xdcc_message: str,
                                  destination_directory: str = os.getcwd(),

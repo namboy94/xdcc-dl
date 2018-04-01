@@ -55,8 +55,6 @@ def main():
                                  "numbers will be appended to the filename")
         parser.add_argument("-v", "--verbose", action="store_true",
                             help="Sets the verbosity of the program to INFO")
-        parser.add_argument("-d", "--debug", action="store_true",
-                            help="Sets the verbosity of the program to DEBUG")
         parser.add_argument("-q", "--quiet", action="store_true",
                             help="Disables all output")
         args = parser.parse_args()
@@ -64,11 +62,9 @@ def main():
         if args.quiet:
             log_level = logging.ERROR
         elif args.verbose:
-            log_level = logging.INFO
-        elif args.debug:
             log_level = logging.DEBUG
         else:
-            log_level = logging.WARNING
+            log_level = logging.INFO
         Logger.logging_level = log_level
 
         packs = xdcc_packs_from_xdcc_message(
