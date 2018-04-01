@@ -1,5 +1,5 @@
 """
-Copyright 2016-2017 Hermann Krumrey
+Copyright 2016-2018 Hermann Krumrey
 
 This file is part of xdcc-dl.
 

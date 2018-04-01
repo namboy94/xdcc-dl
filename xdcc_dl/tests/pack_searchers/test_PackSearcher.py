@@ -1,5 +1,5 @@
 """
-Copyright 2016-2017 Hermann Krumrey
+Copyright 2016-2018 Hermann Krumrey
 
 This file is part of xdcc-dl.
 
@@ -35,9 +35,8 @@ class UnitTests(unittest.TestCase):
         # Subject to change when real-world stuff changes
         for term, amount in {
             "AHQ Official Dragon Ball Z Releases.txt": 2,
-            "Gin.txt": 1,
-            "mashiro.txt": 1,
-            "1_test.txt": 1
+            "Gin.txt": 3,
+            "mashiro.txt": 1
         }.items():
             results = PackSearcher().search(term)
             self.assertEqual(len(results), amount)
@@ -53,13 +52,13 @@ class UnitTests(unittest.TestCase):
 
     def test_selected_searchers(self):
 
-        searcher = PackSearcher(["nibl", "namibsun"])
+        searcher = PackSearcher(["nibl"])
         self.assertEqual(len(searcher.search(
             "AHQ Official Dragon Ball Z Releases.txt")
         ), 1)
 
         for procedure in PackSearcher.get_available_pack_searchers():
 
-            if procedure not in ["nibl", "namibsun"]:
+            if procedure not in ["nibl"]:
                 self.assertFalse(PackSearcher.procedure_map[procedure]
                                  in searcher.procedures)

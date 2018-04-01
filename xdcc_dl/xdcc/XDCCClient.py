@@ -21,8 +21,10 @@ import os
 import time
 import struct
 import shlex
-from xdcc_dl.entities.XDCCPack import XDCCPack
+from colorama import Fore, Back
 from xdcc_dl.entities.User import User
+from xdcc_dl.logging.Logger import Logger
+from xdcc_dl.entities.XDCCPack import XDCCPack
 from xdcc_dl.xdcc.exceptions import InvalidCTCPException, \
     AlreadyDownloadedException, DownloadCompleted
 from irc.client import SimpleIRCClient, ServerConnection, Event, \
@@ -39,6 +41,8 @@ class XDCCCLient(SimpleIRCClient):
         Initializes the XDCC IRC client
         :param pack: The pack to download
         """
+        self.logger = Logger()
+
         self.user = User()
         self.pack = pack
         self.server = pack.server
@@ -63,6 +67,8 @@ class XDCCCLient(SimpleIRCClient):
         :return: The path to the downloaded file
         """
         try:
+            self.logger.debug("Connecting to " + self.server.address + ":" +
+                              str(self.server.port))
             self.connect(
                 self.server.address,
                 self.server.port,
@@ -70,10 +76,12 @@ class XDCCCLient(SimpleIRCClient):
             )
             self.start()
         except AlreadyDownloadedException:
-            pass
+            self.logger.error("File already downloaded")
         except DownloadCompleted:
-            pass
+            self.logger.info("File " + self.pack.filename +
+                             " downloaded successfully")
         finally:
+            self.logger.debug("Disconnecting")
             self.reactor.disconnect_all()
             return self.pack.get_filepath()
 
@@ -85,7 +93,7 @@ class XDCCCLient(SimpleIRCClient):
         :param _: The 'welcome' event
         :return: None
         """
-        print("Welcome")
+        self.logger.debug("Connected to server")
         conn.whois(self.pack.bot)
 
     def on_whoischannels(self, conn: ServerConnection, event: Event):
@@ -97,7 +105,7 @@ class XDCCCLient(SimpleIRCClient):
         :param event: The 'whoischannels' event
         :return: None
         """
-        print("WHOIS Channels: " + str(event.arguments))
+        self.logger.debug("WHOIS: " + str(event.arguments))
         channels = event.arguments[1].split("#")
         channels.pop(0)
         channels = list(map(lambda x: "#" + x.split(" ")[0], channels))
@@ -116,7 +124,7 @@ class XDCCCLient(SimpleIRCClient):
         :param _: The 'endofwhois' event
         :return: None
         """
-        print("End of WHOIS")
+        self.logger.debug("WHOIS End")
         if self.channels is None:
             self.on_join(conn, _)
 
@@ -132,12 +140,13 @@ class XDCCCLient(SimpleIRCClient):
         # Make sure we were the ones joining
         if not event.source.startswith(self.user.get_name()):
             return
-        print("Joined Channel: " + event.target)
+        self.logger.debug("Joined Channel: " + event.target)
 
         if not self.message_sent:
-            print("Send MSG")
+            msg = self.pack.get_request_message()
+            self.logger.debug("Send XDCC Message: " + msg)
             self.message_sent = True
-            conn.privmsg(self.pack.bot, self.pack.get_request_message())
+            conn.privmsg(self.pack.bot, msg)
 
     def on_ctcp(self, conn: ServerConnection, event: Event):
         """
@@ -154,12 +163,6 @@ class XDCCCLient(SimpleIRCClient):
         :raise InvalidCTCPException: In case no valid DCC message was received
         """
 
-        print("Source: " + str(event.source))
-        print("Args: " + str(event.arguments))
-        print("Type: " + str(event.type))
-        print("Tags: " + str(event.tags))
-        print("Target: " + str(event.target))
-
         def start_download(append: bool = False):
             """
             Helper method that starts the download of an XDCC pack
@@ -169,12 +172,12 @@ class XDCCCLient(SimpleIRCClient):
             self.downloading = True
             self.xdcc_timestamp = time.time()
             mode = "ab" if append else "wb"
-            print("Start Download: " + mode)
+            self.logger.debug("Starting Download (" + mode + ")")
             self.xdcc_file = open(self.pack.get_filepath(), mode)
             self.xdcc_connection = \
                 self.dcc_connect(self.peer_address, self.peer_port, "raw")
 
-        print("CTCP: " + str(event.arguments))
+        self.logger.debug("CTCP Message: " + str(event.arguments))
         if event.arguments[0] == "DCC":
             payload = shlex.split(event.arguments[1])
 
@@ -194,7 +197,7 @@ class XDCCCLient(SimpleIRCClient):
                     if position >= self.filesize:
                         raise AlreadyDownloadedException(self.pack.filename)
 
-                    print("Resume")
+                    self.logger.debug("Requesting Resume")
                     self.progress = position
                     bot = event.source.split("!")[0]
                     resume_param = "\"" + filename + "\" " + \
@@ -226,7 +229,10 @@ class XDCCCLient(SimpleIRCClient):
         self.progress += data_length
 
         self.xdcc_connection.send_bytes(struct.pack(b"!Q", self.progress))
-        print("Progress: " + str(self.progress / self.filesize), end="\r")
+
+        percentage = "%.2f" % (100 * (self.progress / self.filesize))
+        self.logger.info("[" + self.pack.filename + "]: (" + percentage + ")",
+                         end="\r", back=Back.LIGHTYELLOW_EX, fore=Fore.BLACK)
 
     def on_dcc_disconnect(self, _: ServerConnection, __: Event):
         """
@@ -237,5 +243,4 @@ class XDCCCLient(SimpleIRCClient):
         """
         if self.xdcc_file is not None:
             self.xdcc_file.close()
-            print("Download complete")
         raise DownloadCompleted()

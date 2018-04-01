@@ -1,5 +1,5 @@
 """
-Copyright 2016-2017 Hermann Krumrey
+Copyright 2016-2018 Hermann Krumrey
 
 This file is part of xdcc-dl.
 
@@ -125,7 +125,7 @@ class UnitTests(unittest.TestCase):
     def test_generating_from_xdcc_message_range_with_jumps(self):
 
         packs = xdcc_packs_from_xdcc_message(
-            "/msg xdcc_servbot xdcc send #1-100,2"
+            "/msg xdcc_servbot xdcc send #1-100;2"
         )
         self.assertEqual(len(packs), 50)
 

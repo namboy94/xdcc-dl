@@ -34,6 +34,6 @@ class AlreadyDownloadedException(Exception):
 
 class DownloadCompleted(Exception):
     """
-    Excepton thrown once the download has been completed
+    Exception thrown once the download has been completed
     """
     pass

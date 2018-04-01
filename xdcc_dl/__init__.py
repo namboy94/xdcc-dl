@@ -1,5 +1,5 @@
 """
-Copyright 2016-2017 Hermann Krumrey
+Copyright 2016-2018 Hermann Krumrey
 
 This file is part of xdcc-dl.
 
@@ -17,12 +17,6 @@ You should have received a copy of the GNU General Public License
 along with xdcc-dl.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-"""
-The metadata is stored here. It can be used by any other module in this project
-this way, most notably by the setup.py file
-"""
-
-# pragma: no cover
 version = "3.0.0"
 """
 The current version of the program
