@@ -19,7 +19,8 @@ along with xdcc-dl.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 import argparse
-from xdcc_dl.pack_searchers.PackSearcher import PackSearcher
+from requests.exceptions import ConnectionError
+from xdcc_dl.pack_search.SearchEngine import SearchEngineType
 
 
 def main():
@@ -27,18 +28,21 @@ def main():
     Conducts a XDCC pack search
     :return: None
     """
-
     parser = argparse.ArgumentParser()
     parser.add_argument("search_term", help="The term to search for")
     parser.add_argument("search_engine",
-                        choices=PackSearcher.get_available_pack_searchers(),
+                        choices=SearchEngineType.choices(True),
                         help="The Search Engine to use")
     args = parser.parse_args()
 
-    results = PackSearcher.procedure_map[args.search_engine](args.search_term)
+    search_engine = SearchEngineType.resolve(args.search_engine)
 
-    for result in results:
-        print(result)
+    try:
+        results = search_engine.search(args.search_term)
+        for result in results:
+            print(result)
+    except ConnectionError:
+        print("Connection Error, could not conduct search")
 
 
 if __name__ == "__main__":

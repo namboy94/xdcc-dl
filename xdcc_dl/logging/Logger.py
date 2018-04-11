@@ -18,6 +18,7 @@ along with xdcc-dl.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 import logging
+from datetime import datetime
 from colorama import Fore, Back, Style
 
 
@@ -32,6 +33,11 @@ class Logger(object):
     The logging level to display
     """
 
+    last_end = "\n"
+    """
+    Keeps track of the last character to be printed
+    """
+
     def log(self, message: str, level: int, back: Back = Back.BLACK,
             fore: Fore = Fore.GREEN, end: str = "\n"):
         """
@@ -44,7 +50,15 @@ class Logger(object):
         :return: None
         """
         if self.logging_level <= level:
-            print(" " + fore + back + message + Style.RESET_ALL, end=end)
+
+            if self.last_end == "\r" and end != "\r":
+                print()
+
+            log_message = datetime.now().strftime("[%Y-%d-%m:%H-%M-%S]")
+            log_message += " " + fore + back + message
+            print(log_message + Style.RESET_ALL, end=end)
+
+            self.last_end = end
 
     def info(self, message: str, back: Back = Back.BLACK,
              fore: Fore = Fore.GREEN, end: str = "\n"):

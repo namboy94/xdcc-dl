@@ -21,12 +21,15 @@ import os
 import time
 import struct
 import shlex
+import socket
+import irc.events
+import irc.client
 from colorama import Fore, Back
 from xdcc_dl.entities.User import User
 from xdcc_dl.logging.Logger import Logger
 from xdcc_dl.entities.XDCCPack import XDCCPack
 from xdcc_dl.xdcc.exceptions import InvalidCTCPException, \
-    AlreadyDownloadedException, DownloadCompleted
+    AlreadyDownloadedException, DownloadCompleted, DownloadIncomplete
 from irc.client import SimpleIRCClient, ServerConnection, Event, \
     ip_numstr_to_quad
 
@@ -42,12 +45,22 @@ class XDCCCLient(SimpleIRCClient):
     If set to -1, will be unlimited
     """
 
-    def __init__(self, pack: XDCCPack):
+    for event in irc.events.all:
+        if event.endswith("msg") or event.endswith("notice") or event in ["part", "ping", "quit"]:
+            exec("def on_" + event + "(self, c, e):\n    self.logger.debug(\"" + event + ":\" + str(e.arguments))")
+        else:
+            pass  # exec("def on_" + event + "(self, c, e):\n    self.logger.debug(\"" + event + "\")")
+
+    def __init__(self, pack: XDCCPack, retry: bool = False):
         """
         Initializes the XDCC IRC client
-        :param pack: The pack to download
+        :param pack: The pack to downloadX
+        :param retry: Set to true for retried downloads.
         """
         self.logger = Logger()
+
+        # Save us from decoding errors!
+        irc.client.ServerConnection.buffer_class.errors = "replace"
 
         self.user = User()
         self.pack = pack
@@ -56,6 +69,7 @@ class XDCCCLient(SimpleIRCClient):
         self.xdcc_timestamp = 0
         self.channels = None  # to list if channel joins are required
         self.message_sent = False
+        self.connect_start_time = 0
 
         # XDCC state variables
         self.peer_address = ""
@@ -64,8 +78,14 @@ class XDCCCLient(SimpleIRCClient):
         self.progress = 0
         self.xdcc_file = None
         self.xdcc_connection = None
+        self.retry = retry
 
-        self.logger.debug("Download Limit set to: " + str(self.download_limit))
+        if not self.retry:
+            if self.download_limit == -1:
+                limit = "\"unlimited\""
+            else:
+                limit = str(self.download_limit)
+            self.logger.debug("Download Limit set to: " + limit)
 
         super().__init__()
 
@@ -74,6 +94,7 @@ class XDCCCLient(SimpleIRCClient):
         Downloads the pack
         :return: The path to the downloaded file
         """
+        completed = False
         try:
             self.logger.debug("Connecting to " + self.server.address + ":" +
                               str(self.server.port))
@@ -82,21 +103,37 @@ class XDCCCLient(SimpleIRCClient):
                 self.server.port,
                 self.user.username
             )
+            self.connect_start_time = time.time()
             self.start()
         except AlreadyDownloadedException:
             self.logger.error("File already downloaded")
+            completed = True
         except DownloadCompleted:
             self.logger.info("File " + self.pack.filename +
                              " downloaded successfully")
-        except KeyboardInterrupt:
-            self.logger.warning("\nDownload Aborted")
+            completed = True
+        except DownloadIncomplete:
+            self.logger.info("File " + self.pack.filename +
+                             " not downloaded completely")
+            completed = False
         finally:
             self.logger.debug("Disconnecting")
             try:
-                self.reactor.disconnect_all()
-            except DownloadCompleted:
+                self._disconnect()
+            except (DownloadCompleted, ):
                 pass
-            return self.pack.get_filepath()
+
+        if not completed:
+            self.logger.error("Download Incomplete. Retrying.")
+            retry_client = XDCCCLient(self.pack, True)
+            retry_client.download_limit = self.download_limit
+            retry_client.download()
+
+        if not self.retry:
+            dl_time = str(int(abs(time.time() - self.connect_start_time)))
+            self.logger.debug("Download completed in " + dl_time + " seconds.")
+
+        return self.pack.get_filepath()
 
     def on_welcome(self, conn: ServerConnection, _: Event):
         """
@@ -156,10 +193,7 @@ class XDCCCLient(SimpleIRCClient):
         self.logger.debug("Joined Channel: " + event.target)
 
         if not self.message_sent:
-            msg = self.pack.get_request_message()
-            self.logger.debug("Send XDCC Message: " + msg)
-            self.message_sent = True
-            conn.privmsg(self.pack.bot, msg)
+            self._send_xdcc_request_message(conn)
 
     def on_ctcp(self, conn: ServerConnection, event: Event):
         """
@@ -184,12 +218,12 @@ class XDCCCLient(SimpleIRCClient):
             """
             self.downloading = True
             self.xdcc_timestamp = time.time()
-            self._start_monitor()
             mode = "ab" if append else "wb"
             self.logger.debug("Starting Download (" + mode + ")")
             self.xdcc_file = open(self.pack.get_filepath(), mode)
             self.xdcc_connection = \
                 self.dcc_connect(self.peer_address, self.peer_port, "raw")
+            self.xdcc_connection.socket.settimeout(5)
 
         self.logger.debug("CTCP Message: " + str(event.arguments))
         if event.arguments[0] == "DCC":
@@ -257,7 +291,7 @@ class XDCCCLient(SimpleIRCClient):
                          percentage + "%) |" + str(self.progress) + "|",
                          end="\r", back=Back.LIGHTYELLOW_EX, fore=Fore.BLACK)
 
-        self.xdcc_connection.send_bytes(struct.pack(b"!Q", self.progress))
+        self._ack()
         self.xdcc_timestamp = time.time()
 
     def on_dcc_disconnect(self, _: ServerConnection, __: Event):
@@ -267,18 +301,45 @@ class XDCCCLient(SimpleIRCClient):
         :param __: The 'dccmsg' event
         :return: None
         """
-        print()
+        self.downloading = False
+
         if self.xdcc_file is not None:
             self.xdcc_file.close()
-        raise DownloadCompleted()
 
-    def _monitor(self):
-        while True:
-            if time.time() - self.xdcc_timestamp > 5:
-                print("Stuck!")
+        if self.progress >= self.filesize:
+            raise DownloadCompleted()
+        else:
+            raise DownloadIncomplete()
 
-    def _start_monitor(self):
-        from threading import Thread
-        t = Thread(target=self._monitor)
-        t.daemon = True
-        t.start()
+    def _send_xdcc_request_message(self, conn: ServerConnection):
+        """
+        Sends an XDCC request message
+        :param conn: The connection to use
+        :return: None
+        """
+        msg = self.pack.get_request_message()
+        self.logger.debug("Send XDCC Message: " + msg)
+        self.message_sent = True
+        conn.privmsg(self.pack.bot, msg)
+
+    def _ack(self):
+        """
+        Sends the acknowledgement to the XDCC bot that a
+        chunk has been received.
+        This process is responsible for the program hanging due to a stuck
+        socket.send.
+        This is mitigated by completely disconnecting the client and restarting
+        the download process with a new XDCC CLient
+        :return: None
+        """
+        try:
+            self.xdcc_connection.socket.send(struct.pack(b"!Q", self.progress))
+        except socket.error:
+            self._disconnect()
+
+    def _disconnect(self):
+        """
+        Disconnects all connections of the XDCC Client
+        :return: None
+        """
+        self.connection.reactor.disconnect_all()

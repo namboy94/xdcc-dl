@@ -37,3 +37,10 @@ class DownloadCompleted(Exception):
     Exception thrown once the download has been completed
     """
     pass
+
+
+class DownloadIncomplete(Exception):
+    """
+    Exception thrown if a download did not complete
+    """
+    pass
