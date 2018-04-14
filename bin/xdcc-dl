@@ -20,12 +20,11 @@ along with xdcc-dl.  If not, see <http://www.gnu.org/licenses/>.
 
 # imports
 import os
-import sys
 import logging
 import argparse
-from xdcc_dl.xdcc.XDCCClient import XDCCCLient
-from xdcc_dl.logging.Logger import Logger
 from xdcc_dl.xdcc import download_packs
+from xdcc_dl.logging.Logger import Logger
+from xdcc_dl.helper import set_throttle_value
 from xdcc_dl.entities.XDCCPack import xdcc_packs_from_xdcc_message
 
 try:
@@ -76,26 +75,7 @@ def main():
             args.message, os.getcwd(), args.server
         )
 
-        # Set the Download Speed Limit
-        try:
-            throttle = args.throttle
-            if throttle is not None:
-                multiplier = 1
-                units = {"k": 1000, "m": 1000000, "g": 1000000000}
-                throttle_num = ""
-                for i, char in enumerate(throttle):
-                    if char.isdigit():
-                        throttle_num += char
-                    else:
-                        if len(throttle) - 1 != i:
-                            raise KeyError
-                        else:
-                            multiplier = units[char.lower()]
-                limit = multiplier * int(throttle_num)
-                XDCCCLient.download_limit = limit
-        except KeyError:
-            print("Invalid throttle value")
-            sys.exit(1)
+        set_throttle_value(args.throttle)
 
         if args.out is not None:
             if len(packs) == 1:
