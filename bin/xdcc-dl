@@ -23,14 +23,9 @@ import os
 import logging
 import argparse
 from xdcc_dl.xdcc import download_packs
-from xdcc_dl.logging.Logger import Logger
+from xdcc_dl.logging import Logger
 from xdcc_dl.helper import set_throttle_value
-from xdcc_dl.entities.XDCCPack import xdcc_packs_from_xdcc_message
-
-try:
-    from xdcc_dl.gui.XDCCDownloaderGui import start as start_gui
-except ImportError:  # pragma: no cover
-    start_gui = None
+from xdcc_dl.entities import XDCCPack
 
 
 def main():
@@ -71,7 +66,7 @@ def main():
             log_level = logging.INFO
         Logger.logging_level = log_level
 
-        packs = xdcc_packs_from_xdcc_message(
+        packs = XDCCPack.from_xdcc_message(
             args.message, os.getcwd(), args.server
         )
 

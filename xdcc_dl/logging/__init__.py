@@ -16,3 +16,5 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with xdcc-dl.  If not, see <http://www.gnu.org/licenses/>.
 """
+
+from xdcc_dl.logging.Logger import Logger

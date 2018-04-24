@@ -25,9 +25,8 @@ import socket
 import irc.events
 import irc.client
 from colorama import Fore, Back
-from xdcc_dl.entities.User import User
-from xdcc_dl.logging.Logger import Logger
-from xdcc_dl.entities.XDCCPack import XDCCPack
+from xdcc_dl.entities import User, XDCCPack
+from xdcc_dl.logging import Logger
 from xdcc_dl.xdcc.exceptions import InvalidCTCPException, \
     AlreadyDownloadedException, DownloadCompleted, DownloadIncomplete
 from irc.client import SimpleIRCClient, ServerConnection, Event, \
@@ -44,12 +43,6 @@ class XDCCCLient(SimpleIRCClient):
     Maximum speed of the download in bytes/s
     If set to -1, will be unlimited
     """
-
-    for event in irc.events.all:
-        if event.endswith("msg") or event.endswith("notice") or event in ["part", "ping", "quit"]:
-            exec("def on_" + event + "(self, c, e):\n    self.logger.debug(\"" + event + ":\" + str(e.arguments))")
-        else:
-            pass  # exec("def on_" + event + "(self, c, e):\n    self.logger.debug(\"" + event + "\")")
 
     def __init__(self, pack: XDCCPack, retry: bool = False):
         """

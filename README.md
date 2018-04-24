@@ -10,35 +10,13 @@ An XDCC File downloader based on the [irclib](https://github.com/jaraco/irc) fra
 
 ## Installation
 
-### Via Pip (Preferred):
-
-**As User (Preferred)**
-
-    $ pip install xdcc_dl --user
-    
-**Systemwide**
-
-    # pip install xdcc_dl
-    or
-    $ sudo pip install xdcc_dl
-    
-### Via setup.py
-
-**As User (Preferred)**
-
-    $ python setup.py install --user
-    
-**Systemwide**
-
-    # python setup.py install
-    or
-    $ sudo python setup.py install
+Either install the program using `pip install xdcc-dl` or `python setup.py install`
 
 ## Usage
 
 ### Message-based CLI
 
-XDCC Packlists usually list xdcc commands in the folowing form:
+XDCC Packlists usually list xdcc commands in the following form:
 
     /msg <BOTNAME> xdcc send #<PACKNUMBER>
     
@@ -49,78 +27,64 @@ By supplying this message as a positional parameter, the pack can be downloaded.
     # This is the xdcc message:  '/msg the_bot xdcc send #1'
     
     # This command downloads pack 1 from the_bot
-    $ xdcc_dl "/msg the_bot xdcc send #1"
+    $ xdcc-dl "/msg the_bot xdcc send #1"
     
     # It's possible to download a range of packs (1-10 in this case):
-    $ xdcc_dl "/msg the_bot xdcc send #1-10"
+    $ xdcc-dl "/msg the_bot xdcc send #1-10"
     
     # Range stepping is also possible:
-    $ xdcc_dl "/msg the_bot xdcc send #1-10,10"
+    $ xdcc-dl "/msg the_bot xdcc send #1-10;2"
     # (This will download packs 1,3,5,7,9)
+
+    # Explicitly specifying the packs to download as a comma-separated list:
+    $ xdcc-dl "/msg the_bot xdcc send #1,2,5,8"
+    # (This will download packs 1,2,5,8)
     
     # you can also specify the destination file or directory:
-    $ xdcc_dl "/msg the_bot xdcc send #1" -d /home/user/Downloads
-    # The destination defaults to your current working directory
+    $ xdcc-dl "/msg the_bot xdcc send #1" -o /home/user/Downloads/test.txt
     
     # if the bot is on a different server than irc.rizon.net, a server
     # has to be specified:
-    $ xdcc_dl "/msg the_bot xdcc send #1" --server irc.freenode.org
+    $ xdcc-dl "/msg the_bot xdcc send #1" --server irc.freenode.org
     
-    # You can also specify an IRC username. If none was supplied, a
-    # random string of numbers will be used instead
-    $ xdcc_dl "/msg the_bot xdcc send #1" --user Me
-    
-    # To specify how verbose the program is, you can pass the
-    # verbosity parameter as a number between 0 and 6:
-    $ xdcc_dl "/msg the_bot xdcc send #1" --verbosity 3
-    
-### GUI
-
-By calling the program with the ```-g``` flag (or without arguments on Windows)
-a graphical user interface is started. It offers searching for packs using various
-web scrapers or adding packs manually like with the CLI, adding these packs
-to a download queue and then downloading these queued packs.
-
-![Screenshot](resources/screenshots/opm_gui_example.png)
-    
-### TUI
-
-Similar to the GUI, a textual user interface can be used by calling the program
-in conjunction with the ```-t``` flag.
-
-![Screenshot](resources/screenshots/tui_basic_screenshot.png)
+    # To specify different levels of verbosity, pass the `--verbose` or
+    # `--quiet` flag
+    $ xdcc-dl -v ...
+    $ xdcc-dl -q ...
 
 ### As a library:
 
 xdcc-dl is built to be used as a library for use in other projects.
 To make use of the XDCC downloader in your application, you will first need to
-create a list of [XDCCPack](xdcc_dl/entitites/XDCCPack.py) objects, either by hand
-or by using the [PackSearcher](xdcc_dl/pack_searchers/PackSearcher.py). 
+create a list of [XDCCPack](xdcc_dl/entitites/XDCCPack.py) objects.
 
-Once this list of XDCCPacks is created, use one of the following classes:
+This can be done manually using the constructor, the XDCCPack.from_xdcc_message
+class method or by using an
+[XDCC Search Engine](xdcc_dl/pack_search/SearchEngine.py)
 
-* [XDCCDownloader](xdcc_dl/xdcc/XDCCDownloader.py), if you can guarantee that every pack is on the same server
-* [MultipleServerDownloader](xdcc_dl/xdcc/MultipleServerDownloader), if the packs are on different IRC servers
+Once this list of XDCCPacks is created, use the `download_packs` function in
+the `xdcc module`.
 
-Do not use any classes in ```xdcc_dl.xdcc.layers```, those all work in tandem to create these two higher-level
-classes.
+An example on how to use the library is listed below:
 
-Both classes are initialized using the following parameters:
+```python
 
-**user**:  Either a string, or a [User](xdcc_dl/entitites/User.py) object which specifies
-           the username for connecting to the IRC network.
-           A random username can be generated when passing 'random' as the username
-           
-**logger**: Either pass an integer value between 0 and 6 to set the verbosity,
-            a [Logger](xdcc_dl/logging/Logger.py) object or another object of
-            a class that implements all of Logger's methods.
+from xdcc_dl.xdcc import download_packs
+from xdcc_dl.pack_search import SearchEngines
+from xdcc_dl.entities import XDCCPack, IrcServer
 
-Once initialized, start the XDCC downloads by passing the list of XDCCPacks
-to the downloader's download() method.
+# Generate packs
+manual = XDCCPack(IrcServer("irc.rizon.net"), "bot", 1)
+from_message = XDCCPack.from_xdcc_message("/msg bot xdcc send #2-10")
+search_results = SearchEngines.HORRIBLESUBS.value.search("Test")
+combined = [manual] + from_message + search_results
 
-A second optional Parameter is the progress. This parameter is an instance of the
-[Progress](xdcc_dl/entitites/Progress.py) class and can be used to see the progress of
-the downloads from a different point in the application
+# Start download
+download_packs(combined)
+
+```
+
+
     
 ## Projects using xdcc-dl
 
