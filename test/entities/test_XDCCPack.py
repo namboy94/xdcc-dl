@@ -18,7 +18,8 @@ along with xdcc-dl.  If not, see <http://www.gnu.org/licenses/>.
 LICENSE"""
 
 from unittest import TestCase
-from xdcc_dl.entities import XDCCPack, IrcServer
+from xdcc_dl.entities.XDCCPack import XDCCPack
+from xdcc_dl.entities.IrcServer import IrcServer
 
 
 class XDCCPackTest(TestCase):

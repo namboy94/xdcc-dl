@@ -29,6 +29,9 @@ run_unit_tests_with_coverage:
     - python3
     - progstats-live
   script:
+    - python3 -m venv virtual
+    - source virtual/bin/activate
+    - pip install nose
     - python3 setup.py nosetests -v --with-coverage --cover-package=xdcc_dl --cover-branches --cover-erase --cover-html --cover-inclusive
     - rsync -av cover/ /var/www/progstats.namibsun.net/data/coverage/xdcc-dl --delete-before
 

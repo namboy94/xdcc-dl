@@ -19,7 +19,7 @@ LICENSE"""
 
 from enum import Enum
 from typing import List, Set
-from xdcc_dl.entities import XDCCPack
+from xdcc_dl.entities.XDCCPack import XDCCPack
 from xdcc_dl.pack_search.procedures.nibl import find_nibl_packs
 from xdcc_dl.pack_search.procedures.ixirc import find_ixirc_packs
 from xdcc_dl.pack_search.procedures.horriblesubs import find_horriblesubs_packs
