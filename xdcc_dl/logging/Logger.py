@@ -19,6 +19,7 @@ LICENSE"""
 
 import logging
 from datetime import datetime
+from subprocess import check_output
 from colorama import Fore, Back, Style
 
 
@@ -56,6 +57,10 @@ class Logger(object):
 
             log_message = datetime.now().strftime("[%Y-%d-%m:%H-%M-%S]")
             log_message += " " + fore + back + message
+
+            rows, columns = check_output(['stty', 'size']).split()
+            log_message = log_message[0:int(columns)]
+
             print(log_message + Style.RESET_ALL, end=end)
 
             self.last_end = end
