@@ -1,7 +1,6 @@
 stages:
   - mirror
   - test
-  - deploy
   - release
   - docs
 
@@ -22,40 +21,29 @@ stylecheck:
   tags:
     - pycodestyle
   script:
-    - pycodestyle . --exclude=LoggingTypes.py,xdcc_downloader.py
+    - pycodestyle .
 
-run_unit_tests_python_2:
-  stage: test
-  tags:
-    - python2
-    - 3to2
-  script:
-    - 3to2 . --write
-    - python2 setup.py test
-
-run_unit_tests_python_3_with_coverage:
+run_unit_tests_with_coverage:
   stage: test
   tags:
     - python3
+    - progstats-live
   script:
-    - python3 setup.py nosetests -v
-      --with-coverage --cover-package=xdcc_dl --cover-branches --cover-erase --cover-html --cover-inclusive
-    - rsync -av cover/ /var/www/coverage.namibsun.net/public_html/xdcc-dl --delete-before
+    - python3 -m venv virtual
+    - source virtual/bin/activate
+    - pip install nose coverage
+    - python3 setup.py nosetests -v --with-coverage --cover-package=xdcc_dl --cover-branches --cover-erase --cover-html --cover-inclusive
+    - rsync -av cover/ /var/www/progstats.namibsun.net/data/coverage/xdcc-dl --delete-before
 
 pypi_dist:
-  stage: deploy
+  stage: release
   only:
     - master
   tags:
-    - python2
     - python3
-    - pypi
   script:
-    - python3 setup.py register sdist upload
-    - python3 setup.py bdist_wheel upload
-    - 3to2 . --write
-    - rm -rf dist
-    - python2 setup.py bdist_wheel
+    - echo "$PYPIRC" > ~/.pypirc
+    - python3 setup.py bdist_wheel sdist
     - twine upload dist/*
 
 upload_release_to_github:
@@ -63,12 +51,12 @@ upload_release_to_github:
   only:
     - master
   tags:
-    - python
+    - python3
   script:
     - mkdir -p artifacts
     - git clone https://gitlab.namibsun.net/namboy94/ci-scripts.git
-    - python ci-scripts/src/changelog-reader/changelog-reader.py -c CHANGELOG -d current_changelog
-    - python ci-scripts/src/github-release-uploader/github-release-uploader.py namboy94 xdcc-dl $GITHUB_ACCESS_TOKEN
+    - python3 ci-scripts/src/changelog-reader/changelog-reader.py -c CHANGELOG -d current_changelog
+    - python3 ci-scripts/src/github-release-uploader/github-release-uploader.py namboy94 xdcc-dl $GITHUB_ACCESS_TOKEN
       $(python3 setup.py -V) current_changelog artifacts -b master
 
 upload_release_to_gitlab:
@@ -76,12 +64,12 @@ upload_release_to_gitlab:
   only:
     - master
   tags:
-    - python
+    - python3
   script:
     - mkdir -p artifacts
     - git clone https://gitlab.namibsun.net/namboy94/ci-scripts.git
-    - python ci-scripts/src/changelog-reader/changelog-reader.py -c CHANGELOG -d  current_changelog
-    - python ci-scripts/src/gitlab-release-uploader/gitlab-release-uploader.py namboy94 xdcc-dl $GITLAB_ACCESS_TOKEN
+    - python3 ci-scripts/src/changelog-reader/changelog-reader.py -c CHANGELOG -d  current_changelog
+    - python3 ci-scripts/src/gitlab-release-uploader/gitlab-release-uploader.py namboy94 xdcc-dl $GITLAB_ACCESS_TOKEN
       $(python3 setup.py -V) current_changelog artifacts -b master -u https://gitlab.namibsun.net
 
 generate_sphinx_documentation:
@@ -90,15 +78,17 @@ generate_sphinx_documentation:
     - master
     - develop
   tags:
-    - sphinx
+    - python3
     - latex
-    - docs
+    - progstats-live
   script:
+    - python3 -m venv virtual
+    - source virtual/bin/activate
+    - python3 setup.py install
+    - pip install sphinx sphinx_rtd_theme
     - cd doc
     - make buildsource
     - make latexpdf
     - make html
-    - rsync -av build/latex/xdcc-dl.pdf
-      /var/www/docs.namibsun.net/public_html/pdf_docs/xdcc-dl.pdf --delete-before
-    - rsync -av build/html/ /var/www/docs.namibsun.net/public_html/html_docs/xdcc-dl --delete-before
-    - cd ..
+    - rsync -av build/latex/progstats.pdf /var/www/progstats.namibsun.net/data/doc_pdf/xdcc-dl.pdf --delete-before
+    - rsync -av build/html/ /var/www/progstats.namibsun.net/data/doc_html/xdcc-dl --delete-before

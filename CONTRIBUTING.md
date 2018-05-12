@@ -10,17 +10,17 @@ remain the author's.
 
 ## Coding guidelines
 
-**Unit Testing**
+**Testing**
 
-Code should be unit tested with a near-100% coverage. This may not always be completely
-feasible, but at least 90%+ should be targeted. However, Unit tests should not just be
-done to achieve a high test coverage, writing useful tests is even more important,
-just not as easily measurable.
+Due to the nature of this project, testing is rather complicated. Small unit
+tests for the offline components should be implemented, however the online
+components may prove to be too cumbersome to test. To test those, a complete
+server infrastructure would be required.
 
 **Style**
 
 We feel that a unified coding style is important, which is why we require a linter to
-be used. In this case **pycodestyle** is used. Code must pass pep8's tests.
+be used. In this case **pycodestyle** is used. Code must pass `pycodestyle`'s tests.
 
 **Documentation**
 

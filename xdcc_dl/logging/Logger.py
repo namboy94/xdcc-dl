@@ -1,5 +1,5 @@
-"""
-Copyright 2016-2017 Hermann Krumrey
+"""LICENSE
+Copyright 2016-2018 Hermann Krumrey
 
 This file is part of xdcc-dl.
 
@@ -15,77 +15,100 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with xdcc-dl.  If not, see <http://www.gnu.org/licenses/>.
-"""
+LICENSE"""
 
-# imports
-import os
-from typing import Dict
-from xdcc_dl.logging.LoggingTypes import LoggingTypes
+import logging
+from datetime import datetime
+from subprocess import check_output
+from colorama import Fore, Back, Style
 
 
+# noinspection PyMethodMayBeStatic
 class Logger(object):
     """
-    Logger for IRC/XDCC related events with variable verbosity levels
+    Class that handles log and print calls in the bot
     """
 
-    def __init__(self, verbosity_level: int, logfile: str = None,
-                 ignore_verbosity_in_logfile: bool = True):
+    logging_level = logging.WARNING
+    """
+    The logging level to display
+    """
+
+    last_end = "\n"
+    """
+    Keeps track of the last character to be printed
+    """
+
+    def log(self, message: str, level: int, back: Back = Back.BLACK,
+            fore: Fore = Fore.GREEN, end: str = "\n"):
         """
-        Initializes a new Logger object.
-        The verbosity of the logger is defined here.
-        Optionally, a logfile can be used to log to a file
-        in addition to the console.
-        If a logfile is specified, everything, regardless of verbosity level,
-        will be logged to the file by default, but may be changed by toggling
-        the ignore_verbosity_in_logfile parameter
-
-        :param verbosity_level: the verbosity level to be used.
-                                For more information, see
-                                xdcc_dl.logging.LoggingTypes
-        :param logfile: The path to a logfile. Specifying this is optional
-        :param ignore_verbosity_in_logfile: Determines if the logfile uses
-                                            the same verbosity level settings
-                                            as the console logging.
-                                            By default, the verbosity setting
-                                            is ignored.
-        """
-        self.verbosity_level = verbosity_level
-        self.logfile = logfile
-        self.ignore_logfile_verbosity = ignore_verbosity_in_logfile
-
-        if self.logfile is not None:
-            if not os.path.isfile(self.logfile):
-                open(self.logfile, 'w').close()
-
-    def log(self, message: str, logging_type: Dict[str, str or int]=None,
-            carriage_return: bool = False):
-        """
-        Logs a message to the console and optionally to a logfile
-
-        :param message: the message to log
-        :param logging_type: the type of message to log
-        :param carriage_return: If set to true,
-                                appends a carriage return to the log message
+        Logs a message at the specified logging level
+        :param message: The message to log
+        :param level: The level at which to log the message
+        :param back: The background color to print
+        :param fore: The foreground color to print
+        :param end: Characters to append to the string (Default newline)
         :return: None
         """
-        if logging_type is None:
-            logging_type = LoggingTypes.DEFAULT
+        if self.logging_level <= level:
 
-        priority = logging_type['priority']
+            if self.last_end == "\r" and end != "\r":
+                print()
 
-        if self.logfile is not None:
-            if self.ignore_logfile_verbosity or \
-                            self.verbosity_level >= priority:
-                with open(self.logfile, 'a') as log:
-                    log.write(message + "\n")
+            log_message = datetime.now().strftime("[%Y-%d-%m:%H-%M-%S]")
+            log_message += " " + fore + back + message
 
-        if self.verbosity_level >= priority:
+            rows, columns = check_output(['stty', 'size']).split()
+            log_message = log_message[0:int(columns)]
 
-            fg_color = logging_type["fg_color"]
-            bg_color = logging_type["bg_color"]
+            print(log_message + Style.RESET_ALL, end=end)
 
-            end = "\n" if not carriage_return else "\r"
+            self.last_end = end
 
-            print(
-                fg_color + bg_color + message + '\033[0m' + '\033[0m', end=end
-            )
+    def info(self, message: str, back: Back = Back.BLACK,
+             fore: Fore = Fore.GREEN, end: str = "\n"):
+        """
+        Logs a message at the INFO level
+        :param message: The message to log
+        :param back: The background color to print
+        :param fore: The foreground color to print
+        :param end: Characters to append to the string (Default newline)
+        :return: None
+        """
+        self.log(message, logging.INFO, back, fore, end)
+
+    def debug(self, message: str, back: Back = Back.WHITE,
+              fore: Fore = Fore.BLACK, end: str = "\n"):
+        """
+        Logs a message at the DEBUG level
+        :param message: The message to log
+        :param back: The background color to print
+        :param fore: The foreground color to print
+        :param end: Characters to append to the string (Default newline)
+        :return: None
+        """
+        self.log(message, logging.DEBUG, back, fore, end)
+
+    def error(self, message: str, back: Back = Back.RED,
+              fore: Fore = Fore.BLUE, end: str = "\n"):
+        """
+        Logs a message at the ERROR level
+        :param message: The message to log
+        :param back: The background color to print
+        :param fore: The foreground color to print
+        :param end: Characters to append to the string (Default newline)
+        :return: None
+        """
+        self.log(message, logging.ERROR, back, fore, end)
+
+    def warning(self, message: str, back: Back = Back.YELLOW,
+                fore: Fore = Fore.BLUE, end: str = "\n"):
+        """
+        Logs a message at the WARNING level
+        :param message: The message to log
+        :param back: The background color to print
+        :param fore: The foreground color to print
+        :param end: Characters to append to the string (Default newline)
+        :return: None
+        """
+        self.log(message, logging.WARNING, back, fore, end)
