@@ -171,6 +171,21 @@ class XDCCPack(object):
         return self.filename + " (/msg " + self.bot + " " + \
             self.get_request_message() + ")"
 
+    def __eq__(self, other) -> bool:
+        """
+        Checks two objects for equality
+        :param other: The other object to check against
+        :return: True if the objects are equal, false otherwise
+        """
+        if not issubclass(type(self), type(other)):
+            return False
+
+        return self.bot == other.bot \
+            and self.packnumber == other.packnumber \
+            and self.server == other.server \
+            and self.filename == other.filename \
+            and self.directory == other.directory
+
     @classmethod
     def from_xdcc_message(cls, xdcc_message: str,
                           destination_directory: str = os.getcwd(),
