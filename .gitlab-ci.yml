@@ -90,5 +90,5 @@ generate_sphinx_documentation:
     - make buildsource
     - make latexpdf
     - make html
-    - rsync -av build/latex/progstats.pdf /var/www/progstats.namibsun.net/data/doc_pdf/xdcc-dl.pdf --delete-before
+    - rsync -av build/latex/xdcc-dl.pdf /var/www/progstats.namibsun.net/data/doc_pdf/xdcc-dl.pdf --delete-before
     - rsync -av build/html/ /var/www/progstats.namibsun.net/data/doc_html/xdcc-dl --delete-before
