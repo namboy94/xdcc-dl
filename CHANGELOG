@@ -1,5 +1,6 @@
 V 3.0.0:
   - Redid the layer structure to be contained in a single, more concise class
+  - Integrated Progstats URL
 V 2.1.0:
   - Renamed repository to xdcc-dl
   - Moved project metadata to root __init__.py file
