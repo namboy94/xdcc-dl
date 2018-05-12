@@ -20,7 +20,7 @@ stylecheck:
     - python3
   script:
     - python3 -m venv virtual && source virtual/bin/activate && pip install pycodestyle
-    - pycodestyle .
+    - pycodestyle . --exclude=virtual
 
 run_unit_tests_with_coverage:
   stage: test
