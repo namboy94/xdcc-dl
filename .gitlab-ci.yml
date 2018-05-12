@@ -39,7 +39,7 @@ pypi_dist:
   tags:
     - python3
   script:
-    - python3 -m venv virtual && source virtual/bin/activate && pip install twine
+    - python3 -m venv virtual && source virtual/bin/activate && pip install twine wheel
     - echo "$PYPIRC" > ~/.pypirc
     - python3 setup.py bdist_wheel sdist
     - twine upload dist/*
