@@ -9,18 +9,17 @@ github_mirror:
   tags:
     - github_namboy94_push
   script:
-    - git checkout master
-    - git pull
+    - git checkout master && git pull
     - git push git@github.com:namboy94/xdcc-dl.git master -f
-    - git checkout develop
-    - git pull
+    - git checkout develop && git pull
     - git push git@github.com:namboy94/xdcc-dl.git develop -f
 
 stylecheck:
   stage: test
   tags:
-    - pycodestyle
+    - python3
   script:
+    - python3 -m venv virtual && source virtual/bin/activate && pip install pycodestyle
     - pycodestyle .
 
 run_unit_tests_with_coverage:
@@ -29,9 +28,7 @@ run_unit_tests_with_coverage:
     - python3
     - progstats-live
   script:
-    - python3 -m venv virtual
-    - source virtual/bin/activate
-    - pip install nose coverage
+    - python3 -m venv virtual && source virtual/bin/activate && pip install nose coverage
     - python3 setup.py nosetests -v --with-coverage --cover-package=xdcc_dl --cover-branches --cover-erase --cover-html --cover-inclusive
     - rsync -av cover/ /var/www/progstats.namibsun.net/data/coverage/xdcc-dl --delete-before
 
@@ -42,6 +39,7 @@ pypi_dist:
   tags:
     - python3
   script:
+    - python3 -m venv virtual && source virtual/bin/activate && pip install twine
     - echo "$PYPIRC" > ~/.pypirc
     - python3 setup.py bdist_wheel sdist
     - twine upload dist/*
@@ -82,10 +80,8 @@ generate_sphinx_documentation:
     - latex
     - progstats-live
   script:
-    - python3 -m venv virtual
-    - source virtual/bin/activate
+    - python3 -m venv virtual && source virtual/bin/activate && pip install sphinx sphinx_rtd_theme
     - python3 setup.py install
-    - pip install sphinx sphinx_rtd_theme
     - cd doc
     - make buildsource
     - make latexpdf
