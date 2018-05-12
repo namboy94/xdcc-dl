@@ -1,5 +1,5 @@
-"""
-Copyright 2016-2017 Hermann Krumrey
+"""LICENSE
+Copyright 2016-2018 Hermann Krumrey
 
 This file is part of xdcc-dl.
 
@@ -15,12 +15,11 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with xdcc-dl.  If not, see <http://www.gnu.org/licenses/>.
-"""
+LICENSE"""
 
 # imports
 import os
 import re
-from typing import List
 from xdcc_dl.entities.IrcServer import IrcServer
 
 
@@ -165,48 +164,75 @@ class XDCCPack(object):
         else:
             return "xdcc send #" + str(self.packnumber)
 
+    def __str__(self) -> str:
+        """
+        :return: A string representation of the pack
+        """
+        return self.filename + " (/msg " + self.bot + " " + \
+            self.get_request_message() + ")"
 
-def xdcc_packs_from_xdcc_message(xdcc_message: str,
-                                 destination_directory: str = os.getcwd(),
-                                 server: str = "irc.rizon.net") \
-        -> List[XDCCPack]:
-    """
-    Generates XDCC Packs from an xdcc message of the form
-    "/msg <bot> xdcc send #<packnumber>[-<packnumber>]"
+    def __eq__(self, other) -> bool:
+        """
+        Checks two objects for equality
+        :param other: The other object to check against
+        :return: True if the objects are equal, false otherwise
+        """
+        if not issubclass(type(self), type(other)):
+            return False
 
-    :param xdcc_message: the XDCC message to parse
-    :param destination_directory: the destination directory of the file
-    :param server: the server to use, defaults to irc.rizon.net for
-                   simplicity's sake
-    :return: The generated XDCC Packs in a list
-    """
-    if not re.search(
-            r"^/msg [^ ]+ xdcc send #[0-9]+(-[0-9]+(,[0-9]+)?)?$",
-            xdcc_message
-    ):
-        return []
+        return self.bot == other.bot \
+            and self.packnumber == other.packnumber \
+            and self.server == other.server \
+            and self.filename == other.filename \
+            and self.directory == other.directory
 
-    bot = xdcc_message.split("/msg ")[1].split(" ")[0]
+    @classmethod
+    def from_xdcc_message(cls, xdcc_message: str,
+                          destination_directory: str = os.getcwd(),
+                          server: str = "irc.rizon.net") \
+            -> list:
+        """
+        Generates XDCC Packs from an xdcc message of the form
+        "/msg <bot> xdcc send #<packnumber>[-<packnumber>]"
 
-    try:
-        packnumber = int(xdcc_message.rsplit("#", 1)[1])
-        xdcc_pack = XDCCPack(IrcServer(server), bot, packnumber)
-        xdcc_pack.set_directory(destination_directory)
-        return [xdcc_pack]
+        :param xdcc_message: the XDCC message to parse
+        :param destination_directory: the destination directory of the file
+        :param server: the server to use, defaults to irc.rizon.net for
+                       simplicity's sake
+        :return: The generated XDCC Packs in a list
+        """
+        regex = r"^/msg [^ ]+ xdcc send #" \
+                r"[0-9]+((,[0-9]+)*|(-[0-9]+(;[0-9]+)?)?)$"
+        if not re.search(regex, xdcc_message):
+            return []
 
-    except ValueError:
-        packnumbers = xdcc_message.rsplit("#", 1)[1]
-        start, end = packnumbers.split("-")
+        bot = xdcc_message.split("/msg ")[1].split(" ")[0]
 
         try:
-            step = int(end.split(",")[1])
-            end = end.split(",")[0]
-        except (IndexError, ValueError):
-            step = 1
+            packnumber = xdcc_message.rsplit("#", 1)[1]
+            packnumbers = packnumber.split(",")
 
-        packs = []
-        for pack in range(int(start), int(end) + 1, step):
-            xdcc_pack = XDCCPack(IrcServer(server), bot, pack)
-            xdcc_pack.set_directory(destination_directory)
-            packs.append(xdcc_pack)
-        return packs
+            packs = []
+            for number in packnumbers:
+                xdcc_pack = XDCCPack(IrcServer(server), bot, int(number))
+                xdcc_pack.set_directory(destination_directory)
+                packs.append(xdcc_pack)
+
+            return packs
+
+        except ValueError:
+            packnumbers = xdcc_message.rsplit("#", 1)[1]
+            start, end = packnumbers.split("-")
+
+            try:
+                step = int(end.split(";")[1])
+                end = end.split(";")[0]
+            except (IndexError, ValueError):
+                step = 1
+
+            packs = []
+            for pack in range(int(start), int(end) + 1, step):
+                xdcc_pack = XDCCPack(IrcServer(server), bot, pack)
+                xdcc_pack.set_directory(destination_directory)
+                packs.append(xdcc_pack)
+            return packs

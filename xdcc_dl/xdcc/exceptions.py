@@ -17,4 +17,30 @@ You should have received a copy of the GNU General Public License
 along with xdcc-dl.  If not, see <http://www.gnu.org/licenses/>.
 LICENSE"""
 
-from xdcc_dl.logging.Logger import Logger
+
+class InvalidCTCPException(Exception):
+    """
+    Exception thrown when an invalid CTCP DCC message type is received
+    """
+    pass
+
+
+class AlreadyDownloadedException(Exception):
+    """
+    Exception thrown when a file was already downloaded
+    """
+    pass
+
+
+class DownloadCompleted(Exception):
+    """
+    Exception thrown once the download has been completed
+    """
+    pass
+
+
+class DownloadIncomplete(Exception):
+    """
+    Exception thrown if a download did not complete
+    """
+    pass

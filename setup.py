@@ -1,5 +1,5 @@
-"""
-Copyright 2016-2017 Hermann Krumrey
+"""LICENSE
+Copyright 2016-2018 Hermann Krumrey
 
 This file is part of xdcc-dl.
 
@@ -15,7 +15,7 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with xdcc-dl.  If not, see <http://www.gnu.org/licenses/>.
-"""
+LICENSE"""
 
 # imports
 import os
@@ -23,62 +23,12 @@ from xdcc_dl import version
 from setuptools import setup, find_packages
 
 
-def readme():
-    """
-    Reads the readme file and converts it to RST if pypandoc is
-    installed. If not, the raw markdown text is returned
-    :return: the readme file as a string
-    """
-    # noinspection PyBroadException
-    try:
-        # noinspection PyPackageRequirements,PyUnresolvedReferences
-        import pypandoc
-        with open("README.md") as f:
-            # Convert markdown file to rst
-            markdown = f.read()
-            rst = pypandoc.convert(markdown, "rst", format="md")
-            return rst
-
-    except ModuleNotFoundError:
-        # If pandoc is not installed, just return the raw markdown text
-        with open("README.md") as f:
-            return f.read()
-
-
-def find_scripts():
-    """
-    Returns a list of scripts in the bin directory
-    :return: the list of scripts
-    """
-    scripts = []
-
-    for file_name in os.listdir("bin"):
-
-        path = os.path.join("bin", file_name)
-        if file_name == "__init__.py":
-            continue
-        elif not os.path.isfile(path):
-            continue
-        else:
-            scripts.append(os.path.join("bin", file_name))
-
-    return scripts
-
-
 setup(
     name="xdcc_dl",
     version=version,
     description="An XDCC File Downloader based on the irclib framework",
-    long_description=readme(),
+    long_description=open("README.md").read(),
     classifiers=[
-        "Environment :: Console",
-        "Natural Language :: English",
-        "Intended Audience :: Developers",
-        "Development Status :: 1 - Planning",
-        "Operating System :: OS Independent",
-        "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 2",
-        "Topic :: Communications :: File Sharing",
         "License :: OSI Approved :: GNU General Public License v3 (GPLv3)"
     ],
     url="https://gitlab.namibsun.net/namboy94/xdcc-dl",
@@ -88,9 +38,11 @@ setup(
     author_email="hermann@krumreyh.com",
     license="GNU GPL3",
     packages=find_packages(),
-    install_requires=["irc", "bs4", "requests", "cfscrape", "urwid", "typing"],
+    install_requires=[
+        "irc", "bs4", "requests", "cfscrape", "typing", "colorama"
+    ],
     test_suite='nose.collector',
     tests_require=['nose'],
-    scripts=find_scripts(),
+    scripts=list(map(lambda x: os.path.join("bin", x), os.listdir("bin"))),
     zip_safe=False
 )

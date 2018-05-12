@@ -17,4 +17,4 @@ You should have received a copy of the GNU General Public License
 along with xdcc-dl.  If not, see <http://www.gnu.org/licenses/>.
 LICENSE"""
 
-from xdcc_dl.logging.Logger import Logger
+from xdcc_dl.pack_search.SearchEngine import SearchEngineType as SearchEngines
