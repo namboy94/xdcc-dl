@@ -1,5 +1,5 @@
 """LICENSE
-Copyright 2016-2018 Hermann Krumrey
+Copyright 2016 Hermann Krumrey
 
 This file is part of xdcc-dl.
 
@@ -17,32 +17,32 @@ You should have received a copy of the GNU General Public License
 along with xdcc-dl.  If not, see <http://www.gnu.org/licenses/>.
 LICENSE"""
 
+
 # imports
 import os
-from xdcc_dl import version
 from setuptools import setup, find_packages
 
 
-setup(
-    name="xdcc_dl",
-    version=version,
-    description="An XDCC File Downloader based on the irclib framework",
-    long_description=open("README.md").read(),
-    classifiers=[
-        "License :: OSI Approved :: GNU General Public License v3 (GPLv3)"
-    ],
-    url="https://gitlab.namibsun.net/namboy94/xdcc-dl",
-    download_url="https://gitlab.namibsun.net/namboy94/xdcc-dl/"
-                 "repository/archive.zip?ref=master",
-    author="Hermann Krumrey",
-    author_email="hermann@krumreyh.com",
-    license="GNU GPL3",
-    packages=find_packages(),
-    install_requires=[
-        "irc", "bs4", "requests", "cfscrape", "typing", "colorama"
-    ],
-    test_suite='nose.collector',
-    tests_require=['nose'],
-    scripts=list(map(lambda x: os.path.join("bin", x), os.listdir("bin"))),
-    zip_safe=False
-)
+if __name__ == "__main__":
+
+    setup(
+        name="xdcc-dl",
+        version=open("version", "r").read(),
+        description="An XDCC File Downloader based on the irclib framework",
+        long_description=open("README.md", "r").read(),
+        long_description_content_type="text/markdown",
+        author="Hermann Krumrey",
+        author_email="hermann@krumreyh.com",
+        classifiers=[
+            "License :: OSI Approved :: GNU General Public License v3 (GPLv3)"
+        ],
+        url="https://gitlab.namibsun.net/namibsun/python/xdcc-dl",
+        license="GNU GPL3",
+        packages=find_packages(),
+        scripts=list(map(lambda x: os.path.join("bin", x), os.listdir("bin"))),
+        install_requires=[
+            "irc", "bs4", "requests", "cfscrape", "typing", "colorama"
+        ],
+        include_package_data=True,
+        zip_safe=False
+    )

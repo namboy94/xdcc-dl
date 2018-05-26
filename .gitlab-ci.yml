@@ -1,90 +1,58 @@
 stages:
-  - mirror
   - test
+  - stats
   - release
-  - docs
-
-github_mirror:
-  stage: mirror
-  tags:
-    - github_namboy94_push
-  script:
-    - git checkout master && git pull
-    - git push git@github.com:namboy94/xdcc-dl.git master -f
-    - git checkout develop && git pull
-    - git push git@github.com:namboy94/xdcc-dl.git develop -f
 
 stylecheck:
   stage: test
   tags:
     - python3
   script:
-    - python3 -m venv virtual && source virtual/bin/activate && pip install pycodestyle
-    - pycodestyle . --exclude=virtual
+    - python3 -m venv virtual && source virtual/bin/activate && pip install ci-scripts
+    - python-codestyle-check
 
-run_unit_tests_with_coverage:
+unittest:
   stage: test
   tags:
     - python3
-    - progstats-live
   script:
-    - python3 -m venv virtual && source virtual/bin/activate && pip install nose coverage
-    - python3 setup.py nosetests -v --with-coverage --cover-package=xdcc_dl --cover-branches --cover-erase --cover-html --cover-inclusive
-    - rsync -av cover/ /var/www/progstats.namibsun.net/data/coverage/xdcc-dl --delete-before
+    - python3 -m venv virtual && source virtual/bin/activate && python setup.py install
+    - python-unittest
 
-pypi_dist:
+release_upload:
   stage: release
   only:
     - master
   tags:
     - python3
   script:
-    - python3 -m venv virtual && source virtual/bin/activate && pip install twine wheel
-    - echo "$PYPIRC" > ~/.pypirc
-    - python3 setup.py bdist_wheel sdist
-    - twine upload dist/*
+    - python3 -m venv virtual && source virtual/bin/activate && python setup.py install
+    - github-release-upload $(cat version) "$(changelog-reader)"
+    - gitlab-release-upload $(cat version) "$(changelog-reader)"
 
-upload_release_to_github:
+pypi_upload:
   stage: release
   only:
     - master
   tags:
     - python3
   script:
-    - mkdir -p artifacts
-    - git clone https://gitlab.namibsun.net/namboy94/ci-scripts.git
-    - python3 ci-scripts/src/changelog-reader/changelog-reader.py -c CHANGELOG -d current_changelog
-    - python3 ci-scripts/src/github-release-uploader/github-release-uploader.py namboy94 xdcc-dl $GITHUB_ACCESS_TOKEN
-      $(python3 setup.py -V) current_changelog artifacts -b master
+    - python3 -m venv virtual && source virtual/bin/activate && python setup.py install
+    - pypi-upload
 
-upload_release_to_gitlab:
-  stage: release
-  only:
-    - master
+gitstats:
+  stage: stats
+  tags:
+    - python3
+    - gitstats
+  script:
+    - python3 -m venv virtual && source virtual/bin/activate && python setup.py install
+    - gitstats-gen
+
+docgen:
+  stage: stats
   tags:
     - python3
   script:
-    - mkdir -p artifacts
-    - git clone https://gitlab.namibsun.net/namboy94/ci-scripts.git
-    - python3 ci-scripts/src/changelog-reader/changelog-reader.py -c CHANGELOG -d  current_changelog
-    - python3 ci-scripts/src/gitlab-release-uploader/gitlab-release-uploader.py namboy94 xdcc-dl $GITLAB_ACCESS_TOKEN
-      $(python3 setup.py -V) current_changelog artifacts -b master -u https://gitlab.namibsun.net
-
-generate_sphinx_documentation:
-  stage: docs
-  only:
-    - master
-    - develop
-  tags:
-    - python3
-    - latex
-    - progstats-live
-  script:
-    - python3 -m venv virtual && source virtual/bin/activate && pip install sphinx sphinx_rtd_theme
-    - python3 setup.py install
-    - cd doc
-    - make buildsource
-    - make latexpdf
-    - make html
-    - rsync -av build/latex/xdcc-dl.pdf /var/www/progstats.namibsun.net/data/doc_pdf/xdcc-dl.pdf --delete-before
-    - rsync -av build/html/ /var/www/progstats.namibsun.net/data/doc_html/xdcc-dl --delete-before
+    - python3 -m venv virtual && source virtual/bin/activate && python setup.py install
+    - sphinx-docgen

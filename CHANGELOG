@@ -1,3 +1,5 @@
+V 3.0.1:
+  - Restructured project to make use of theimproved ci-scripts
 V 3.0.0:
   - Redid the layer structure to be contained in a single, more concise class
   - Integrated Progstats URL

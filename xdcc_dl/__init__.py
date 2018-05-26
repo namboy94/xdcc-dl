@@ -1,5 +1,5 @@
 """LICENSE
-Copyright 2016-2018 Hermann Krumrey
+Copyright 2016 Hermann Krumrey
 
 This file is part of xdcc-dl.
 
@@ -16,8 +16,3 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with xdcc-dl.  If not, see <http://www.gnu.org/licenses/>.
 LICENSE"""
-
-version = "3.0.0"
-"""
-The current version of the program
-"""
