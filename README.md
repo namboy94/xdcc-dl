@@ -2,7 +2,7 @@
 
 |master|develop|
 |:---:|:---:|
-|[![build status](https://gitlab.namibsun.net/namboy94/xdcc-dl/badges/master/build.svg)](https://gitlab.namibsun.net/namboy94/xdcc-dl/commits/master)|[![build status](https://gitlab.namibsun.net/namboy94/xdcc-dl/badges/develop/build.svg)](https://gitlab.namibsun.net/namboy94/xdcc-dl/commits/develop)|
+|[![build status](https://gitlab.namibsun.net/namibsun/python/xdcc-dl/badges/master/build.svg)](https://gitlab.namibsun.net/namibsun/python/xdcc-dl/commits/master)|[![build status](https://gitlab.namibsun.net/namibsun/python/xdcc-dl/badges/develop/build.svg)](https://gitlab.namibsun.net/namibsun/python/xdcc-dl/commits/develop)|
 
 ![Logo](resources/logo/logo-readme.png)
 
@@ -88,13 +88,13 @@ download_packs(combined)
     
 ## Projects using xdcc-dl
 
-* [toktokkie](https://gitlab.namibsun.net/namboy94/toktokkie)
+* [toktokkie](https://gitlab.namibsun.net/namibsun/python/toktokkie)
    
 ## Further Information
 
-* [Changelog](https://gitlab.namibsun.net/namboy94/xdcc-dl/raw/master/CHANGELOG)
-* [License (GPLv3)](https://gitlab.namibsun.net/namboy94/xdcc-dl/raw/master/LICENSE)
-* [Gitlab](https://gitlab.namibsun.net/namboy94/xdcc-dl)
+* [Changelog](CHANGELOG)
+* [License (GPLv3)](LICENSE)
+* [Gitlab](https://gitlab.namibsun.net/namibsun/python/xdcc-dl)
 * [Github](https://github.com/namboy94/xdcc-dl)
-* [Python Package Index Site](https://pypi.python.org/pypi/xdcc_dl)
 * [Progstats](https://progstats.namibsun.net/projects/xdcc-dl)
+* [PyPi](https://pypi.org/project/xdcc-dl)
