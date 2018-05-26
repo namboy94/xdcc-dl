@@ -8,8 +8,8 @@ stylecheck:
   tags:
     - python3
   script:
-    - python3 -m venv virtual && source virtual/bin/activate && pip install pycodestyle
-    - pycodestyle . --exclude=virtual
+    - python3 -m venv virtual && source virtual/bin/activate && pip install ci-scripts
+    - python-codestyle-check
 
 unittest:
   stage: test
