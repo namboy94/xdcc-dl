@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """LICENSE
-Copyright 2016 Hermann Krumrey
+Copyright 2016 Hermann Krumrey <hermann@krumreyh.com>
 
 This file is part of xdcc-dl.
 
