@@ -8,8 +8,4 @@ github_mirror:
   script:
     - git checkout master
     - git pull
-<<<<<<< HEAD
     - git push git@github.com:namboy94/jxdcc.git master -f
-=======
-    - git push git@github.com:namboy94/hexchat-downloader.git master -f
->>>>>>> hexchat-downloader/master

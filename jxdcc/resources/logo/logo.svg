@@ -26,7 +26,6 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.98994949"
-<<<<<<< HEAD
      inkscape:cx="383.92495"
      inkscape:cy="440.34426"
      inkscape:document-units="mm"
@@ -35,16 +34,6 @@
      inkscape:window-width="2560"
      inkscape:window-height="1415"
      inkscape:window-x="1920"
-=======
-     inkscape:cx="265.05105"
-     inkscape:cy="375.74238"
-     inkscape:document-units="mm"
-     inkscape:current-layer="layer1"
-     showgrid="false"
-     inkscape:window-width="1920"
-     inkscape:window-height="1055"
-     inkscape:window-x="0"
->>>>>>> hexchat-downloader/master
      inkscape:window-y="0"
      inkscape:window-maximized="1" />
   <metadata
@@ -66,7 +55,6 @@
      transform="translate(0,-97)">
     <path
        sodipodi:type="star"
-<<<<<<< HEAD
        style="fill:#00aad2;fill-opacity:1;stroke:#00aad2;stroke-width:3;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
        id="path812"
        sodipodi:sides="3"
@@ -116,38 +104,4 @@
            style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Z003;-inkscape-font-specification:Z003" /></flowRegion><flowPara
          id="flowPara824"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:192px;font-family:Z003;-inkscape-font-specification:Z003">J</flowPara></flowRoot>  </g>
-=======
-       style="fill:#c8ff00;fill-opacity:1;stroke:#030000;stroke-width:1.2656796;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       id="path840"
-       sodipodi:sides="6"
-       sodipodi:cx="99.42426"
-       sodipodi:cy="197"
-       sodipodi:r1="93.751114"
-       sodipodi:r2="46.875557"
-       sodipodi:arg1="0.53794426"
-       sodipodi:arg2="1.061543"
-       inkscape:flatsided="false"
-       inkscape:rounded="1.4"
-       inkscape:randomized="0"
-       d="m 179.93433,245.03542 c -41.67166,69.84405 13.35371,-46.75885 -57.65704,-7.10796 -71.010748,39.6509 57.12467,53.9807 -24.197886,52.81401 -81.322556,-1.16669 47.171206,-11.81478 -22.672847,-53.48644 -69.8440572,-41.67166 -18.186318,76.46177 -57.837216,5.45102 -39.650896,-71.01074 33.817497,34.94408 34.984188,-46.37848 1.166692,-81.32256 -75.31099,22.48107 -33.639329,-47.36299 41.67166,-69.844051 -13.3537093,46.75885 57.657036,7.10796 71.010744,-39.6509 -57.124674,-53.9807 24.197884,-52.81401 81.32256,1.16669 -47.171204,11.81478 22.67285,53.48644 69.84406,41.67166 18.18632,-76.461769 57.83721,-5.45102 39.6509,71.01074 -33.81749,-34.94408 -34.98418,46.37848 -1.16669,81.32256 75.31099,-22.48107 33.63933,47.36299 z" />
-    <flowRoot
-       xml:space="preserve"
-       id="flowRoot842"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:40px;line-height:1.25;font-family:'xos4 Terminus';-inkscape-font-specification:'xos4 Terminus';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none"
-       transform="matrix(0.26458333,0,0,0.26458333,-36.615925,86.041949)"><flowRegion
-         id="flowRegion844"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'xos4 Terminus';-inkscape-font-specification:'xos4 Terminus'"><rect
-           id="rect846"
-           width="547.50269"
-           height="364.66507"
-           x="238.396"
-           y="306.38763"
-           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'xos4 Terminus';-inkscape-font-specification:'xos4 Terminus'" /></flowRegion><flowPara
-         id="flowPara848"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:64px;font-family:'Estrangelo Midyat';-inkscape-font-specification:'Estrangelo Midyat';text-align:center;text-anchor:middle">hexchat</flowPara><flowPara
-         id="flowPara850"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:64px;font-family:'Estrangelo Midyat';-inkscape-font-specification:'Estrangelo Midyat';text-align:center;text-anchor:middle">-</flowPara><flowPara
-         id="flowPara852"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:64px;font-family:'Estrangelo Midyat';-inkscape-font-specification:'Estrangelo Midyat';text-align:center;text-anchor:middle">downloader</flowPara></flowRoot>  </g>
->>>>>>> hexchat-downloader/master
 </svg>
