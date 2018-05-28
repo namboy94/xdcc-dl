@@ -1,5 +1,4 @@
 <<<<<<< HEAD
-<<<<<<< HEAD
 # Created by https://www.gitignore.io/api/java
 
 ### Java ###
@@ -140,6 +139,3 @@ venv.bak/
 
 .idea/
 >>>>>>> hexchat-downloader/master
-=======
-.idea/
->>>>>>> mirc-download/master

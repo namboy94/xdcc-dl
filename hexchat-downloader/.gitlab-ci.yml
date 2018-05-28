@@ -9,11 +9,7 @@ github_mirror:
     - git checkout master
     - git pull
 <<<<<<< HEAD
-<<<<<<< HEAD
     - git push git@github.com:namboy94/jxdcc.git master -f
 =======
     - git push git@github.com:namboy94/hexchat-downloader.git master -f
 >>>>>>> hexchat-downloader/master
-=======
-    - git push git@github.com:namboy94/mirc-download.git master -f
->>>>>>> mirc-download/master

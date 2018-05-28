@@ -27,20 +27,14 @@
      inkscape:pageshadow="2"
      inkscape:zoom="0.98994949"
 <<<<<<< HEAD
-<<<<<<< HEAD
      inkscape:cx="383.92495"
      inkscape:cy="440.34426"
-=======
-     inkscape:cx="277.88119"
-     inkscape:cy="439.94599"
->>>>>>> mirc-download/master
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="false"
      inkscape:window-width="2560"
      inkscape:window-height="1415"
      inkscape:window-x="1920"
-<<<<<<< HEAD
 =======
      inkscape:cx="265.05105"
      inkscape:cy="375.74238"
@@ -51,8 +45,6 @@
      inkscape:window-height="1055"
      inkscape:window-x="0"
 >>>>>>> hexchat-downloader/master
-=======
->>>>>>> mirc-download/master
      inkscape:window-y="0"
      inkscape:window-maximized="1" />
   <metadata
@@ -74,7 +66,6 @@
      transform="translate(0,-97)">
     <path
        sodipodi:type="star"
-<<<<<<< HEAD
 <<<<<<< HEAD
        style="fill:#00aad2;fill-opacity:1;stroke:#00aad2;stroke-width:3;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
        id="path812"
@@ -159,33 +150,4 @@
          id="flowPara852"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:64px;font-family:'Estrangelo Midyat';-inkscape-font-specification:'Estrangelo Midyat';text-align:center;text-anchor:middle">downloader</flowPara></flowRoot>  </g>
 >>>>>>> hexchat-downloader/master
-=======
-       style="fill:#fc2214;fill-opacity:1;stroke:#3c41b4;stroke-width:4.36499977;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-       id="path983"
-       sodipodi:sides="3"
-       sodipodi:cx="93.811599"
-       sodipodi:cy="199.98117"
-       sodipodi:r1="80.281471"
-       sodipodi:r2="51.380138"
-       sodipodi:arg1="2.2949504"
-       sodipodi:arg2="3.342148"
-       inkscape:flatsided="false"
-       inkscape:rounded="0.13"
-       inkscape:randomized="0"
-       d="m 40.624962,260.11682 c -6.858164,-6.06567 1.01242,-61.39909 2.836358,-70.37127 1.823938,-8.97218 16.182498,-62.98667 24.864599,-65.89318 8.682103,-2.90651 52.666961,31.57632 59.525131,37.64199 6.85816,6.06566 46.45681,45.50779 44.63287,54.47997 -1.82394,8.97217 -53.67939,29.82276 -62.36149,32.72927 -8.6821,2.90651 -62.639304,17.47888 -69.497468,11.41322 z"
-       inkscape:transform-center-x="5.1965457"
-       inkscape:transform-center-y="6.4181758" />
-    <path
-       style="fill:#ffff5c;fill-opacity:1;stroke:#3c41b4;stroke-width:4.36499977;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-       id="path987"
-       sodipodi:type="arc"
-       sodipodi:cx="95.147957"
-       sodipodi:cy="197.84302"
-       sodipodi:rx="27.79603"
-       sodipodi:ry="27.79603"
-       sodipodi:start="0"
-       sodipodi:end="5.0178216"
-       d="m 122.94399,197.84302 a 27.79603,27.79603 0 0 1 -19.14893,26.41679 27.79603,27.79603 0 0 1 -31.063062,-9.98073 27.79603,27.79603 0 0 1 -0.177952,-32.62663 27.79603,27.79603 0 0 1 30.952334,-10.31898 l -8.358423,26.50955 z" />
-  </g>
->>>>>>> mirc-download/master
 </svg>
