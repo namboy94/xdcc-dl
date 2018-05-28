@@ -1,0 +1,61 @@
+stages:
+  - test
+  - stats
+  - release
+
+stylecheck:
+  stage: test
+  tags:
+    - python3
+  script:
+    - python3 -m venv virtual && source virtual/bin/activate && pip install ci-scripts
+    - python-codestyle-check
+
+unittest:
+  stage: test
+  tags:
+    - python3
+    - progstats
+  script:
+    - python3 -m venv virtual && source virtual/bin/activate && pip install ci-scripts
+    - python-unittest
+
+release_upload:
+  stage: release
+  only:
+    - master
+  tags:
+    - python3
+  script:
+    - python3 -m venv virtual && source virtual/bin/activate && pip install ci-scripts
+    - github-release-upload $(cat version) "$(changelog-reader)"
+    - gitlab-release-upload $(cat version) "$(changelog-reader)"
+
+pypi_upload:
+  stage: release
+  only:
+    - master
+  tags:
+    - python3
+  script:
+    - python3 -m venv virtual && source virtual/bin/activate && pip install ci-scripts
+    - pypi-upload
+
+gitstats:
+  stage: stats
+  tags:
+    - python3
+    - gitstats
+    - progstats
+  script:
+    - python3 -m venv virtual && source virtual/bin/activate && pip install ci-scripts
+    - gitstats-gen
+
+docgen:
+  stage: stats
+  tags:
+    - python3
+    - progstats
+  script:
+    - python3 -m venv virtual && source virtual/bin/activate && pip install ci-scripts
+    - sphinx-docgen

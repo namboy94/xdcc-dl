@@ -1,0 +1,89 @@
+#!/usr/bin/env python
+"""LICENSE
+Copyright 2016 Hermann Krumrey <hermann@krumreyh.com>
+
+This file is part of xdcc-dl.
+
+xdcc-dl is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+xdcc-dl is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with xdcc-dl.  If not, see <http://www.gnu.org/licenses/>.
+LICENSE"""
+
+# imports
+import os
+import logging
+import argparse
+from xdcc_dl.xdcc import download_packs
+from xdcc_dl.logging import Logger
+from xdcc_dl.helper import set_throttle_value
+from xdcc_dl.entities import XDCCPack
+
+
+def main():
+    """
+    Starts the main method of the program
+
+    :return: None
+    """
+    try:
+        parser = argparse.ArgumentParser()
+        parser.add_argument("message",
+                            help="An XDCC Message. Supports ranges (1-100), "
+                                 "ranges with steps (1-100;2) as well as "
+                                 "comma-separated packs: (1,2,3).")
+        parser.add_argument("-s", "--server",
+                            default="irc.rizon.net",
+                            help="Specifies the IRC Server. "
+                                 "Defaults to irc.rizon.net")
+        parser.add_argument("-o", "--out",
+                            help="Specifies the target file. "
+                                 "Defaults to the pack's file name. "
+                                 "When downloading multiple packs, index "
+                                 "numbers will be appended to the filename")
+        parser.add_argument("-v", "--verbose", action="store_true",
+                            help="Sets the verbosity of the program to INFO")
+        parser.add_argument("-q", "--quiet", action="store_true",
+                            help="Disables all output")
+        parser.add_argument("-t", "--throttle",
+                            help="Limits the download speed of xdcc-dl. "
+                                 "Append K,M or G for more convenient units")
+        args = parser.parse_args()
+
+        if args.quiet:
+            log_level = logging.ERROR
+        elif args.verbose:
+            log_level = logging.DEBUG
+        else:
+            log_level = logging.INFO
+        Logger.logging_level = log_level
+
+        packs = XDCCPack.from_xdcc_message(
+            args.message, os.getcwd(), args.server
+        )
+
+        set_throttle_value(args.throttle)
+
+        if args.out is not None:
+            if len(packs) == 1:
+                packs[0].set_filename(args.out, True)
+            else:
+                for i, pack in enumerate(packs):
+                    pack.set_filename(args.out + "-" + str(i).zfill(3), True)
+
+        download_packs(packs)
+
+    except KeyboardInterrupt:
+        Logger().info("Thanks for using xdcc-dl!")
+
+
+if __name__ == "__main__":
+    main()
