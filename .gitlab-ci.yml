@@ -15,6 +15,7 @@ unittest:
   stage: test
   tags:
     - python3
+    - progstats
   script:
     - python3 -m venv virtual && source virtual/bin/activate && python setup.py install
     - python-unittest
@@ -45,6 +46,7 @@ gitstats:
   tags:
     - python3
     - gitstats
+    - progstats
   script:
     - python3 -m venv virtual && source virtual/bin/activate && python setup.py install
     - gitstats-gen
@@ -53,6 +55,7 @@ docgen:
   stage: stats
   tags:
     - python3
+    - progstats
   script:
     - python3 -m venv virtual && source virtual/bin/activate && python setup.py install
     - sphinx-docgen
