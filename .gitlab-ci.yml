@@ -1,0 +1,11 @@
+stages:
+  - mirror
+
+github_mirror:
+  stage: mirror
+  tags:
+    - github_namboy94_push
+  script:
+    - git checkout master
+    - git pull
+    - git push git@github.com:namboy94/jxdcc.git master -f

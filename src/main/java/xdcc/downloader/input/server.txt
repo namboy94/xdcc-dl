@@ -1,0 +1,4 @@
+server irc.rizon.net
+	channel horriblesubs
+		bot Ginpachi-Sensei
+		bot CR-HOLLAND|NEW
