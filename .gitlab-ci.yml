@@ -17,7 +17,7 @@ unittest:
     - python3
     - progstats
   script:
-    - python3 -m venv virtual && source virtual/bin/activate && python setup.py install
+    - python3 -m venv virtual && source virtual/bin/activate && pip install ci-scripts
     - python-unittest
 
 release_upload:
@@ -27,7 +27,7 @@ release_upload:
   tags:
     - python3
   script:
-    - python3 -m venv virtual && source virtual/bin/activate && python setup.py install
+    - python3 -m venv virtual && source virtual/bin/activate && pip install ci-scripts
     - github-release-upload $(cat version) "$(changelog-reader)"
     - gitlab-release-upload $(cat version) "$(changelog-reader)"
 
@@ -38,7 +38,7 @@ pypi_upload:
   tags:
     - python3
   script:
-    - python3 -m venv virtual && source virtual/bin/activate && python setup.py install
+    - python3 -m venv virtual && source virtual/bin/activate && pip install ci-scripts
     - pypi-upload
 
 gitstats:
@@ -48,7 +48,7 @@ gitstats:
     - gitstats
     - progstats
   script:
-    - python3 -m venv virtual && source virtual/bin/activate && python setup.py install
+    - python3 -m venv virtual && source virtual/bin/activate && pip install ci-scripts
     - gitstats-gen
 
 docgen:
@@ -57,5 +57,5 @@ docgen:
     - python3
     - progstats
   script:
-    - python3 -m venv virtual && source virtual/bin/activate && python setup.py install
+    - python3 -m venv virtual && source virtual/bin/activate && pip install ci-scripts
     - sphinx-docgen
