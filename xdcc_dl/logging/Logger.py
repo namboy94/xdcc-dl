@@ -18,6 +18,7 @@ along with xdcc-dl.  If not, see <http://www.gnu.org/licenses/>.
 LICENSE"""
 
 import logging
+from typing import Optional
 from datetime import datetime
 from subprocess import check_output
 from colorama import Fore, Back, Style
@@ -39,18 +40,19 @@ class Logger(object):
     Keeps track of the last character to be printed
     """
 
-    def log(self, message: str, level: int, back: Back = Back.BLACK,
+    def log(self, message: str, level: Optional[int], back: Back = Back.BLACK,
             fore: Fore = Fore.GREEN, end: str = "\n"):
         """
         Logs a message at the specified logging level
         :param message: The message to log
-        :param level: The level at which to log the message
+        :param level: The level at which to log the message.
+                      If set as None, will always be printed.
         :param back: The background color to print
         :param fore: The foreground color to print
         :param end: Characters to append to the string (Default newline)
         :return: None
         """
-        if self.logging_level <= level:
+        if level is None or self.logging_level <= level:
 
             if self.last_end == "\r" and end != "\r":
                 print()
@@ -112,3 +114,15 @@ class Logger(object):
         :return: None
         """
         self.log(message, logging.WARNING, back, fore, end)
+
+    def print(self, message: str, back: Back = Back.BLACK,
+              fore: Fore = Fore.GREEN, end: str = "\n"):
+        """
+        Prints a message
+        :param message: The message to print
+        :param back: The background color to print
+        :param fore: The foreground color to print
+        :param end: Characters to append to the string (Default newline)
+        :return: None
+        """
+        self.log(message, None, back, fore, end)

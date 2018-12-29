@@ -26,6 +26,7 @@ from xdcc_dl.xdcc import download_packs
 from xdcc_dl.logging import Logger
 from xdcc_dl.helper import set_throttle_value
 from xdcc_dl.entities import XDCCPack
+from xdcc_dl.xdcc.exceptions import DownloadIncomplete
 
 
 def main():
@@ -51,6 +52,8 @@ def main():
                                  "numbers will be appended to the filename")
         parser.add_argument("-v", "--verbose", action="store_true",
                             help="Sets the verbosity of the program to INFO")
+        parser.add_argument("-d", "--debug", action="store_true",
+                            help="Sets the verbosity of the program to DEBUG")
         parser.add_argument("-q", "--quiet", action="store_true",
                             help="Disables all output")
         parser.add_argument("-t", "--throttle",
@@ -61,9 +64,11 @@ def main():
         if args.quiet:
             log_level = logging.ERROR
         elif args.verbose:
+            log_level = logging.INFO
+        elif args.debug:
             log_level = logging.DEBUG
         else:
-            log_level = logging.INFO
+            log_level = logging.WARNING
         Logger.logging_level = log_level
 
         packs = XDCCPack.from_xdcc_message(
@@ -82,7 +87,10 @@ def main():
         download_packs(packs)
 
     except KeyboardInterrupt:
-        Logger().info("Thanks for using xdcc-dl!")
+        Logger().print("Thanks for using xdcc-dl!")
+    except DownloadIncomplete:
+        Logger().warning("Download incomplete.")
+        Logger().print("Thanks for using xdcc-dl!")
 
 
 if __name__ == "__main__":
