@@ -18,6 +18,7 @@ unittest:
     - progstats
   script:
     - python3 -m venv virtual && source virtual/bin/activate && pip install ci-scripts
+    - pip install irc
     - python-unittest
 
 release_upload:
@@ -39,6 +40,7 @@ pypi_upload:
     - python3
   script:
     - python3 -m venv virtual && source virtual/bin/activate && pip install ci-scripts
+    - pip install irc
     - pypi-upload
 
 gitstats:
@@ -58,4 +60,5 @@ docgen:
     - progstats
   script:
     - python3 -m venv virtual && source virtual/bin/activate && pip install ci-scripts
+    - pip install irc
     - sphinx-docgen
