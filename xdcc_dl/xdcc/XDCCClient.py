@@ -72,7 +72,7 @@ class XDCCCLient(SimpleIRCClient):
         self.server = pack.server
         self.downloading = False
         self.xdcc_timestamp = 0
-        self.channels = None  # to list if channel joins are required
+        self.channels = None  # change to list if channel joins are required
         self.message_sent = False
         self.connect_start_time = 0
 
