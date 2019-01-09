@@ -41,13 +41,12 @@ if __name__ == "__main__":
         packages=find_packages(),
         scripts=list(map(lambda x: os.path.join("bin", x), os.listdir("bin"))),
         install_requires=[
-            "tempora",
-            "irc",
             "bs4",
             "requests",
             "cfscrape",
             "typing",
-            "colorama"
+            "colorama",
+            "irc"
         ],
         include_package_data=True,
         zip_safe=False

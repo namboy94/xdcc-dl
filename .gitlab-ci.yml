@@ -18,7 +18,6 @@ unittest:
     - progstats
   script:
     - python3 -m venv virtual && source virtual/bin/activate && pip install ci-scripts
-    - pip install irc
     - python-unittest
 
 release_upload:
