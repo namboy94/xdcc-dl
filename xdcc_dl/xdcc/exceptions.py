@@ -44,3 +44,9 @@ class DownloadIncomplete(Exception):
     Exception thrown if a download did not complete
     """
     pass
+
+
+class PackAlreadyRequested(Exception):
+    """
+    Exception raised if a pack was already requested
+    """

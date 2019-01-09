@@ -28,7 +28,8 @@ from colorama import Fore, Back
 from xdcc_dl.entities import User, XDCCPack
 from xdcc_dl.logging import Logger
 from xdcc_dl.xdcc.exceptions import InvalidCTCPException, \
-    AlreadyDownloadedException, DownloadCompleted, DownloadIncomplete
+    AlreadyDownloadedException, DownloadCompleted, DownloadIncomplete, \
+    PackAlreadyRequested
 from irc.client import SimpleIRCClient, ServerConnection, Event, \
     ip_numstr_to_quad
 
@@ -100,6 +101,7 @@ class XDCCCLient(SimpleIRCClient):
         :return: The path to the downloaded file
         """
         completed = False
+        pause = 0
         try:
             self.logger.info("Connecting to " + self.server.address + ":" +
                              str(self.server.port))
@@ -121,12 +123,19 @@ class XDCCCLient(SimpleIRCClient):
             self.logger.print("File " + self.pack.filename +
                               " not downloaded completely")
             completed = False
+        except PackAlreadyRequested:
+            self.logger.print("Pack already requested.")
+            completed = False
+            pause = 60
         finally:
             self.logger.info("Disconnecting")
             try:
                 self._disconnect()
             except (DownloadCompleted, ):
                 pass
+
+        self.logger.debug("Pausing for {}s".format(pause))
+        time.sleep(pause)
 
         if not completed:
             self.logger.error("Download Incomplete. Retrying.")
@@ -315,6 +324,22 @@ class XDCCCLient(SimpleIRCClient):
             raise DownloadCompleted()
         else:
             raise DownloadIncomplete()
+
+    # noinspection PyMethodMayBeStatic
+    def on_privnotice(self, _: ServerConnection, event: Event):
+        """
+        Handles privnotices. Bots sometimes send privnotices when
+        a pack was already requested or the user is put into a queue.
+
+        If the privnotice indicates that a pack was already requested,
+        the downloader will pause for 60 seconds
+
+        :param _: The connection
+        :param event: The privnotice event
+        :return: None
+        """
+        if "you already requested this pack" in event.arguments[0].lower():
+            raise PackAlreadyRequested()
 
     def _send_xdcc_request_message(self, conn: ServerConnection):
         """
