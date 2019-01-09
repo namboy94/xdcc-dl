@@ -46,6 +46,8 @@ if __name__ == "__main__":
             "cfscrape",
             "typing",
             "colorama",
+            "tempora",
+            "jaraco.stream",
             "irc"
         ],
         include_package_data=True,
