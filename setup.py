@@ -47,7 +47,7 @@ if __name__ == "__main__":
             "typing",
             "colorama",
             "tempora",
-            "jaraco.stream",
+            "jaraco",
             "irc"
         ],
         include_package_data=True,
