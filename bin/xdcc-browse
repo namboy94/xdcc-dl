@@ -18,27 +18,27 @@ You should have received a copy of the GNU General Public License
 along with xdcc-dl.  If not, see <http://www.gnu.org/licenses/>.
 LICENSE"""
 
-# imports
-import os
 import argparse
-from xdcc_dl.xdcc import download_packs
+from requests.exceptions import ConnectionError
+from xdcc_dl.xdcc.exceptions import DownloadIncomplete
 from xdcc_dl.helper import set_throttle_value, set_logging_level, prepare_packs
 from xdcc_dl.entities import XDCCPack
 from xdcc_dl.logging import Logger
-from xdcc_dl.xdcc.exceptions import DownloadIncomplete
+from xdcc_dl.xdcc import download_packs
+from xdcc_dl.pack_search.SearchEngine import SearchEngineType
 
 
 def main():
     """
-    Starts the main method of the program
-
+    Conducts a XDCC pack search
     :return: None
     """
     parser = argparse.ArgumentParser()
-    parser.add_argument("message",
-                        help="An XDCC Message. Supports ranges (1-100), "
-                             "ranges with steps (1-100;2) as well as "
-                             "comma-separated packs: (1,2,3).")
+    parser.add_argument("search_term", help="The term to search for")
+    parser.add_argument("--search_engine",
+                        default=SearchEngineType.HORRIBLESUBS.name.lower(),
+                        choices=SearchEngineType.choices(True),
+                        help="The Search Engine to use")
     parser.add_argument("-s", "--server",
                         default="irc.rizon.net",
                         help="Specifies the IRC Server. "
@@ -60,16 +60,33 @@ def main():
     args = parser.parse_args()
 
     try:
+
         set_logging_level(args)
         set_throttle_value(args.throttle)
 
-        packs = XDCCPack.from_xdcc_message(
-            args.message, os.getcwd(), args.server
+        search_engine = SearchEngineType.resolve(args.search_engine)
+
+        results = search_engine.search(args.search_term)
+        for i, result in enumerate(results):
+            print("{}: {}".format(i + 1, result))
+
+        selection = input("Enter the packs to download: ")
+        parsepacks = XDCCPack.from_xdcc_message(
+            "/msg A xdcc send #{}".format(selection)
         )
+
+        packs = []
+        for pack in parsepacks:  # type: XDCCPack
+            packs.append(results[pack.packnumber - 1])
         prepare_packs(args, packs)
+
+        for pack in packs:
+            print("Downloading pack {}".format(pack))
 
         download_packs(packs)
 
+    except ConnectionError:
+        print("Connection Error, could not conduct search")
     except KeyboardInterrupt:
         Logger().print("Thanks for using xdcc-dl!")
     except DownloadIncomplete:

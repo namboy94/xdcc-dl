@@ -35,14 +35,15 @@ def main():
                         help="The Search Engine to use")
     args = parser.parse_args()
 
-    search_engine = SearchEngineType.resolve(args.search_engine)
-
     try:
+        search_engine = SearchEngineType.resolve(args.search_engine)
         results = search_engine.search(args.search_term)
         for result in results:
             print(result)
     except ConnectionError:
         print("Connection Error, could not conduct search")
+    except KeyboardInterrupt:
+        print("Thanks for using xdcc-dl!")
 
 
 if __name__ == "__main__":
