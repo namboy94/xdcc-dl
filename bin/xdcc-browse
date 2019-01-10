@@ -61,14 +61,14 @@ def main():
 
     try:
 
-        set_logging_level(args)
+        set_logging_level(args.quiet, args.verbose, args.debug)
         set_throttle_value(args.throttle)
 
         search_engine = SearchEngineType.resolve(args.search_engine)
 
         results = search_engine.search(args.search_term)
         for i, result in enumerate(results):
-            print("{}: {}".format(i + 1, result))
+            Logger().print("{}: {}".format(i + 1, result))
 
         selection = input("Enter the packs to download: ")
         parsepacks = XDCCPack.from_xdcc_message(
@@ -78,10 +78,10 @@ def main():
         packs = []
         for pack in parsepacks:  # type: XDCCPack
             packs.append(results[pack.packnumber - 1])
-        prepare_packs(args, packs)
+        prepare_packs(packs, args.out)
 
         for pack in packs:
-            print("Downloading pack {}".format(pack))
+            Logger().info("Downloading pack {}".format(pack))
 
         download_packs(packs)
 

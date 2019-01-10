@@ -60,13 +60,13 @@ def main():
     args = parser.parse_args()
 
     try:
-        set_logging_level(args)
+        set_logging_level(args.quiet, args.verbose, args.debug)
         set_throttle_value(args.throttle)
 
         packs = XDCCPack.from_xdcc_message(
             args.message, os.getcwd(), args.server
         )
-        prepare_packs(args, packs)
+        prepare_packs(packs, args.out)
 
         download_packs(packs)
 

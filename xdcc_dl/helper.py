@@ -19,8 +19,7 @@ LICENSE"""
 
 import sys
 import logging
-from typing import List
-from argparse import Namespace
+from typing import List, Optional
 from xdcc_dl.logging import Logger
 from xdcc_dl.entities.XDCCPack import XDCCPack
 from xdcc_dl.xdcc.XDCCClient import XDCCCLient
@@ -53,24 +52,37 @@ def set_throttle_value(throttle_string: str):
         sys.exit(1)
 
 
-def set_logging_level(args: Namespace):
-
-    if args.quiet:
-        log_level = logging.ERROR
-    elif args.verbose:
-        log_level = logging.INFO
-    elif args.debug:
-        log_level = logging.DEBUG
+def set_logging_level(quiet: bool, verbose: bool, debug: bool):
+    """
+    Sets the logging level based on a combination of flags
+    If all flags are False, the logging level will be set to WARNING
+    :param quiet: If set to True, will set logging to ERROR
+    :param verbose: If set to True, will set logging to INFO
+    :param debug: If set to True, will set logging to DEBUG
+    :return: None
+    """
+    if quiet:
+        Logger.logging_level = logging.ERROR
+    elif verbose:
+        Logger.logging_level = logging.INFO
+    elif debug:
+        Logger.logging_level = logging.DEBUG
     else:
-        log_level = logging.WARNING
-    Logger.logging_level = log_level
+        Logger.logging_level = logging.WARNING
 
 
-def prepare_packs(args: Namespace, packs: List[XDCCPack]):
+def prepare_packs(packs: List[XDCCPack], location: Optional[str]):
+    """
+    Prepares the output path of a list of packs based on a location string
+    :param location: The location at which to save the packs.
+    :param packs: The packs to prepare
+    :return: None
+    """
 
-    if args.out is not None:
+    if location is not None:
         if len(packs) == 1:
-            packs[0].set_filename(args.out, True)
+            packs[0].set_filename(location, True)
         else:
+            # Generate unique names for each pack file
             for i, pack in enumerate(packs):
-                pack.set_filename(args.out + "-" + str(i).zfill(3), True)
+                pack.set_filename(location + "-" + str(i).zfill(3), True)
