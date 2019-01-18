@@ -75,13 +75,10 @@ def parse_result(result: str) -> Dict[str, str]:
     result = result[1:-1]  # Trim away curly braces
 
     current_key = None
-    print(result)
-    print(result.split("\""))
     for position, segment in enumerate(result.split("\"")):
 
         if segment == "":
             continue
-        print(repr(segment))
 
         if position % 2 == 0:
             # Segment is not a string, must be evaluated further
