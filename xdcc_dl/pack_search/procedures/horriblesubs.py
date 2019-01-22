@@ -19,7 +19,7 @@ LICENSE"""
 
 # imports
 import cfscrape
-from typing import List
+from typing import List, Dict
 from xdcc_dl.entities.XDCCPack import XDCCPack
 from xdcc_dl.entities.IrcServer import IrcServer
 
@@ -44,10 +44,11 @@ def find_horriblesubs_packs(search_phrase: str) -> List[XDCCPack]:
     for result in results:
 
         try:
-            botname = get_attribute(result, "b")
-            filename = get_attribute(result, "f")
-            filesize = get_attribute(result, "s")
-            packnumber = get_attribute(result, "n")
+            result = parse_result(result)
+            botname = result["b"]
+            filename = result["f"]
+            filesize = int(result["s"])
+            packnumber = int(result["n"])
             pack = XDCCPack(IrcServer("irc.rizon.net"), botname, packnumber)
             pack.set_filename(filename)
             pack.set_size(filesize)
@@ -55,23 +56,44 @@ def find_horriblesubs_packs(search_phrase: str) -> List[XDCCPack]:
 
         except IndexError:  # In case the line is not parseable
             pass
+
     return packs
 
 
-def get_attribute(pack_string: str, attribute: str) -> str or int:
+def parse_result(result: str) -> Dict[str, str]:
     """
-    Parses a horriblesubs pack string for an attribute
+    Turns the weird horriblesubs response syntax into a useable dictionary
+    :param result: The result to parse
+    :return: The result as a dictionary
+    """
 
-    :param pack_string: the string to parse
-    :param attribute:   the attribute to get
-    :return:            the requested attribute
-    """
-    attribute_value = pack_string.split(attribute + ":")[1].split(",")[0]
-    if attribute in ["b", "f"]:  # bot or file is encased in quotes
-        return attribute_value.split("\"")[1].split("\"")[0]
-    elif attribute == "s":
-        return attribute_value + "M"  # Size is in Megabyte
-    elif attribute == "n":
-        return int(attribute_value)
-    else:  # pragma: no cover
-        pass
+    # Result should look like this:
+    # {b: "Bot", n:filesize, s:packnumber, f:"filename"}
+
+    data = {}
+    result = result.split("=", 1)[1].strip()
+    result = result[1:-1]  # Trim away curly braces
+
+    current_key = None
+    for position, segment in enumerate(result.split("\"")):
+
+        if segment == "":
+            continue
+
+        if position % 2 == 0:
+            # Segment is not a string, must be evaluated further
+            for part in segment.split(","):
+
+                if part == "":
+                    continue
+
+                key, content = part.split(":", 1)
+                current_key = key.strip()
+                if content != "":
+                    data[current_key.strip()] = content.strip()
+
+        else:
+            # Segment is a string
+            data[current_key] = segment
+
+    return data

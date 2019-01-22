@@ -28,7 +28,8 @@ from colorama import Fore, Back
 from xdcc_dl.entities import User, XDCCPack
 from xdcc_dl.logging import Logger
 from xdcc_dl.xdcc.exceptions import InvalidCTCPException, \
-    AlreadyDownloadedException, DownloadCompleted, DownloadIncomplete
+    AlreadyDownloadedException, DownloadCompleted, DownloadIncomplete, \
+    PackAlreadyRequested
 from irc.client import SimpleIRCClient, ServerConnection, Event, \
     ip_numstr_to_quad
 
@@ -43,6 +44,18 @@ class XDCCCLient(SimpleIRCClient):
     Maximum speed of the download in bytes/s
     If set to -1, will be unlimited
     """
+
+    # Create a log command for all events that are printed in debug mode.
+    # If methods are overriden manually, these generated methods won't take
+    # effect.
+    for event in irc.events.all:
+        exec(
+            "def on_{}(self, c, e):\n"
+            "   self.logger.debug("
+            "       \"{}:\" + str(e.source) + \" \" + str(e.arguments),"
+            "       back=Back.BLUE"
+            ")".format(event, event)
+        )
 
     def __init__(self, pack: XDCCPack, retry: bool = False):
         """
@@ -60,7 +73,7 @@ class XDCCCLient(SimpleIRCClient):
         self.server = pack.server
         self.downloading = False
         self.xdcc_timestamp = 0
-        self.channels = None  # to list if channel joins are required
+        self.channels = None  # change to list if channel joins are required
         self.message_sent = False
         self.connect_start_time = 0
 
@@ -78,7 +91,7 @@ class XDCCCLient(SimpleIRCClient):
                 limit = "\"unlimited\""
             else:
                 limit = str(self.download_limit)
-            self.logger.debug("Download Limit set to: " + limit)
+            self.logger.info("Download Limit set to: " + limit)
 
         super().__init__()
 
@@ -88,9 +101,10 @@ class XDCCCLient(SimpleIRCClient):
         :return: The path to the downloaded file
         """
         completed = False
+        pause = 0
         try:
-            self.logger.debug("Connecting to " + self.server.address + ":" +
-                              str(self.server.port))
+            self.logger.info("Connecting to " + self.server.address + ":" +
+                             str(self.server.port))
             self.connect(
                 self.server.address,
                 self.server.port,
@@ -102,19 +116,26 @@ class XDCCCLient(SimpleIRCClient):
             self.logger.error("File already downloaded")
             completed = True
         except DownloadCompleted:
-            self.logger.info("File " + self.pack.filename +
-                             " downloaded successfully")
+            self.logger.print("File " + self.pack.filename +
+                              " downloaded successfully")
             completed = True
         except DownloadIncomplete:
-            self.logger.info("File " + self.pack.filename +
-                             " not downloaded completely")
+            self.logger.print("File " + self.pack.filename +
+                              " not downloaded completely")
             completed = False
+        except PackAlreadyRequested:
+            self.logger.print("Pack already requested.")
+            completed = False
+            pause = 60
         finally:
-            self.logger.debug("Disconnecting")
+            self.logger.info("Disconnecting")
             try:
                 self._disconnect()
             except (DownloadCompleted, ):
                 pass
+
+        self.logger.debug("Pausing for {}s".format(pause))
+        time.sleep(pause)
 
         if not completed:
             self.logger.error("Download Incomplete. Retrying.")
@@ -124,7 +145,7 @@ class XDCCCLient(SimpleIRCClient):
 
         if not self.retry:
             dl_time = str(int(abs(time.time() - self.connect_start_time)))
-            self.logger.debug("Download completed in " + dl_time + " seconds.")
+            self.logger.info("Download completed in " + dl_time + " seconds.")
 
         return self.pack.get_filepath()
 
@@ -136,7 +157,7 @@ class XDCCCLient(SimpleIRCClient):
         :param _: The 'welcome' event
         :return: None
         """
-        self.logger.debug("Connected to server")
+        self.logger.info("Connected to server")
         conn.whois(self.pack.bot)
 
     def on_whoischannels(self, conn: ServerConnection, event: Event):
@@ -148,7 +169,7 @@ class XDCCCLient(SimpleIRCClient):
         :param event: The 'whoischannels' event
         :return: None
         """
-        self.logger.debug("WHOIS: " + str(event.arguments))
+        self.logger.info("WHOIS: " + str(event.arguments))
         channels = event.arguments[1].split("#")
         channels.pop(0)
         channels = list(map(lambda x: "#" + x.split(" ")[0], channels))
@@ -167,7 +188,7 @@ class XDCCCLient(SimpleIRCClient):
         :param _: The 'endofwhois' event
         :return: None
         """
-        self.logger.debug("WHOIS End")
+        self.logger.info("WHOIS End")
         if self.channels is None:
             self.on_join(conn, _)
 
@@ -183,7 +204,7 @@ class XDCCCLient(SimpleIRCClient):
         # Make sure we were the ones joining
         if not event.source.startswith(self.user.get_name()):
             return
-        self.logger.debug("Joined Channel: " + event.target)
+        self.logger.info("Joined Channel: " + event.target)
 
         if not self.message_sent:
             self._send_xdcc_request_message(conn)
@@ -212,13 +233,13 @@ class XDCCCLient(SimpleIRCClient):
             self.downloading = True
             self.xdcc_timestamp = time.time()
             mode = "ab" if append else "wb"
-            self.logger.debug("Starting Download (" + mode + ")")
+            self.logger.info("Starting Download (" + mode + ")")
             self.xdcc_file = open(self.pack.get_filepath(), mode)
             self.xdcc_connection = \
                 self.dcc_connect(self.peer_address, self.peer_port, "raw")
             self.xdcc_connection.socket.settimeout(5)
 
-        self.logger.debug("CTCP Message: " + str(event.arguments))
+        self.logger.info("CTCP Message: " + str(event.arguments))
         if event.arguments[0] == "DCC":
             payload = shlex.split(event.arguments[1])
 
@@ -238,7 +259,7 @@ class XDCCCLient(SimpleIRCClient):
                     if position >= self.filesize:
                         raise AlreadyDownloadedException(self.pack.filename)
 
-                    self.logger.debug("Requesting Resume")
+                    self.logger.info("Requesting Resume")
                     self.progress = position
                     bot = event.source.split("!")[0]
                     resume_param = "\"" + filename + "\" " + \
@@ -280,9 +301,9 @@ class XDCCCLient(SimpleIRCClient):
                 time.sleep(sleep_time)
 
         percentage = "%.2f" % (100 * (self.progress / self.filesize))
-        self.logger.info("[" + self.pack.filename + "]: (" +
-                         percentage + "%) |" + str(self.progress) + "|",
-                         end="\r", back=Back.LIGHTYELLOW_EX, fore=Fore.BLACK)
+        self.logger.print("[" + self.pack.filename + "]: (" +
+                          percentage + "%) |" + str(self.progress) + "|",
+                          end="\r", back=Back.LIGHTYELLOW_EX, fore=Fore.BLACK)
 
         self._ack()
         self.xdcc_timestamp = time.time()
@@ -304,6 +325,28 @@ class XDCCCLient(SimpleIRCClient):
         else:
             raise DownloadIncomplete()
 
+    # noinspection PyMethodMayBeStatic
+    def on_privnotice(self, _: ServerConnection, event: Event):
+        """
+        Handles privnotices. Bots sometimes send privnotices when
+        a pack was already requested or the user is put into a queue.
+
+        If the privnotice indicates that a pack was already requested,
+        the downloader will pause for 60 seconds
+
+        :param _: The connection
+        :param event: The privnotice event
+        :return: None
+        """
+        if "you already requested this pack" in event.arguments[0].lower():
+            raise PackAlreadyRequested()
+        else:
+            self.logger.debug("privnotice: {}:{}".format(
+                str(event.source), str(event.arguments), back=Back.BLUE)
+            )
+
+        # TODO Handle queues
+
     def _send_xdcc_request_message(self, conn: ServerConnection):
         """
         Sends an XDCC request message
@@ -311,7 +354,7 @@ class XDCCCLient(SimpleIRCClient):
         :return: None
         """
         msg = self.pack.get_request_message()
-        self.logger.debug("Send XDCC Message: " + msg)
+        self.logger.info("Send XDCC Message: " + msg)
         self.message_sent = True
         conn.privmsg(self.pack.bot, msg)
 
