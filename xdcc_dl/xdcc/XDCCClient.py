@@ -340,6 +340,12 @@ class XDCCCLient(SimpleIRCClient):
         """
         if "you already requested this pack" in event.arguments[0].lower():
             raise PackAlreadyRequested()
+        else:
+            self.logger.debug("privnotice: {}:{}".format(
+                str(event.source), str(event.arguments), back=Back.BLUE)
+            )
+
+        # TODO Handle queues
 
     def _send_xdcc_request_message(self, conn: ServerConnection):
         """
