@@ -29,7 +29,7 @@ from xdcc_dl.entities import User, XDCCPack
 from xdcc_dl.logging import Logger
 from xdcc_dl.xdcc.exceptions import InvalidCTCPException, \
     AlreadyDownloadedException, DownloadCompleted, DownloadIncomplete, \
-    PackAlreadyRequested
+    PackAlreadyRequested, UnrecoverableError
 from irc.client import SimpleIRCClient, ServerConnection, Event, \
     ip_numstr_to_quad
 
@@ -100,6 +100,7 @@ class XDCCCLient(SimpleIRCClient):
         Downloads the pack
         :return: The path to the downloaded file
         """
+        error = False
         completed = False
         pause = 0
         try:
@@ -127,12 +128,18 @@ class XDCCCLient(SimpleIRCClient):
             self.logger.print("Pack already requested.")
             completed = False
             pause = 60
+        except UnrecoverableError:
+            error = True
         finally:
             self.logger.info("Disconnecting")
             try:
                 self._disconnect()
             except (DownloadCompleted, ):
                 pass
+
+        if error:
+            self.logger.info("Aborting because of unrecoverable error")
+            return "Failed"
 
         self.logger.debug("Pausing for {}s".format(pause))
         time.sleep(pause)
@@ -344,8 +351,19 @@ class XDCCCLient(SimpleIRCClient):
             self.logger.debug("privnotice: {}:{}".format(
                 str(event.source), str(event.arguments), back=Back.BLUE)
             )
-
         # TODO Handle queues
+
+    def on_error(self, _: ServerConnection, event: Event):
+        """
+        Sometimes, the connection gives an error which may prove fatal for
+        the download process. A possible cause of error events is a banned
+        IP address.
+        :param _: The connection
+        :param event: The error event
+        :return: None
+        """
+        self.logger.error("Unrecoverable Error: Is this IP banned?")
+        raise UnrecoverableError()
 
     def _send_xdcc_request_message(self, conn: ServerConnection):
         """
