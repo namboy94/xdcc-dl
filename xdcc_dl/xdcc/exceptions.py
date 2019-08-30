@@ -50,3 +50,9 @@ class PackAlreadyRequested(Exception):
     """
     Exception raised if a pack was already requested
     """
+
+
+class UnrecoverableError(Exception):
+    """
+    Exception raised when an unrecoverable error occurs
+    """

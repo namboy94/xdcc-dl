@@ -1,3 +1,5 @@
+V 3.1.1:
+  - Use docker in CI
 V 3.1.0:
   - Implemented xdcc-browse
   - Handles failed requests for packs better
