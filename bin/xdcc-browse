@@ -20,6 +20,8 @@ LICENSE"""
 
 import argparse
 from requests.exceptions import ConnectionError
+from puffotter.init import cli_start, argparse_add_verbosity
+from xdcc_dl import sentry_dsn
 from xdcc_dl.xdcc.exceptions import DownloadIncomplete
 from xdcc_dl.helper import set_throttle_value, set_logging_level, prepare_packs
 from xdcc_dl.entities import XDCCPack
@@ -28,39 +30,14 @@ from xdcc_dl.xdcc import download_packs
 from xdcc_dl.pack_search.SearchEngine import SearchEngineType
 
 
-def main():
+def main(args: argparse.Namespace):
     """
-    Conducts a XDCC pack search
+    Conducts a XDCC pack search with the option to immediately download any
+    found packs
+    :param args: The command line arguments
     :return: None
     """
-    parser = argparse.ArgumentParser()
-    parser.add_argument("search_term", help="The term to search for")
-    parser.add_argument("--search_engine",
-                        default=SearchEngineType.HORRIBLESUBS.name.lower(),
-                        choices=SearchEngineType.choices(True),
-                        help="The Search Engine to use")
-    parser.add_argument("-s", "--server",
-                        default="irc.rizon.net",
-                        help="Specifies the IRC Server. "
-                             "Defaults to irc.rizon.net")
-    parser.add_argument("-o", "--out",
-                        help="Specifies the target file. "
-                             "Defaults to the pack's file name. "
-                             "When downloading multiple packs, index "
-                             "numbers will be appended to the filename")
-    parser.add_argument("-v", "--verbose", action="store_true",
-                        help="Sets the verbosity of the program to INFO")
-    parser.add_argument("-d", "--debug", action="store_true",
-                        help="Sets the verbosity of the program to DEBUG")
-    parser.add_argument("-q", "--quiet", action="store_true",
-                        help="Disables all output")
-    parser.add_argument("-t", "--throttle",
-                        help="Limits the download speed of xdcc-dl. "
-                             "Append K,M or G for more convenient units")
-    args = parser.parse_args()
-
     try:
-
         set_logging_level(args.quiet, args.verbose, args.debug)
         set_throttle_value(args.throttle)
 
@@ -87,12 +64,34 @@ def main():
 
     except ConnectionError:
         print("Connection Error, could not conduct search")
-    except KeyboardInterrupt:
-        Logger().print("Thanks for using xdcc-dl!")
     except DownloadIncomplete:
         Logger().warning("Download incomplete.")
-        Logger().print("Thanks for using xdcc-dl!")
+        raise KeyboardInterrupt()
 
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("search_term", help="The term to search for")
+    parser.add_argument("--search_engine",
+                        default=SearchEngineType.HORRIBLESUBS.name.lower(),
+                        choices=SearchEngineType.choices(True),
+                        help="The Search Engine to use")
+    parser.add_argument("-s", "--server",
+                        default="irc.rizon.net",
+                        help="Specifies the IRC Server. "
+                             "Defaults to irc.rizon.net")
+    parser.add_argument("-o", "--out",
+                        help="Specifies the target file. "
+                             "Defaults to the pack's file name. "
+                             "When downloading multiple packs, index "
+                             "numbers will be appended to the filename")
+    parser.add_argument("-t", "--throttle",
+                        help="Limits the download speed of xdcc-dl. "
+                             "Append K,M or G for more convenient units")
+    argparse_add_verbosity(parser)
+    cli_start(
+        main, parser,
+        sentry_dsn=sentry_dsn,
+        package_name="xdcc-dl",
+        exit_msg="Thanks for using xdcc-dl!"
+    )

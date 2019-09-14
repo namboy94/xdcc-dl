@@ -19,22 +19,18 @@ along with xdcc-dl.  If not, see <http://www.gnu.org/licenses/>.
 LICENSE"""
 
 import argparse
+from puffotter.init import cli_start
 from requests.exceptions import ConnectionError
+from xdcc_dl import sentry_dsn
 from xdcc_dl.pack_search.SearchEngine import SearchEngineType
 
 
-def main():
+def main(args: argparse.Namespace):
     """
     Conducts a XDCC pack search
+    :param args: The command line arguments
     :return: None
     """
-    parser = argparse.ArgumentParser()
-    parser.add_argument("search_term", help="The term to search for")
-    parser.add_argument("search_engine",
-                        choices=SearchEngineType.choices(True),
-                        help="The Search Engine to use")
-    args = parser.parse_args()
-
     try:
         search_engine = SearchEngineType.resolve(args.search_engine)
         results = search_engine.search(args.search_term)
@@ -42,9 +38,18 @@ def main():
             print(result)
     except ConnectionError:
         print("Connection Error, could not conduct search")
-    except KeyboardInterrupt:
-        print("Thanks for using xdcc-dl!")
+        raise KeyboardInterrupt()
 
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("search_term", help="The term to search for")
+    parser.add_argument("search_engine",
+                        choices=SearchEngineType.choices(True),
+                        help="The Search Engine to use")
+    cli_start(
+        main, parser,
+        sentry_dsn=sentry_dsn,
+        package_name="xdcc-dl",
+        exit_msg="Thanks for using xdcc-dl!"
+    )

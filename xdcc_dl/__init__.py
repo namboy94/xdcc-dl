@@ -16,3 +16,9 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with xdcc-dl.  If not, see <http://www.gnu.org/licenses/>.
 LICENSE"""
+
+
+sentry_dsn = "https://f20c5998b8fc46109e71fd9ddeebd64b@sentry.namibsun.net/7"
+"""
+The sentry DSN used for logging exceptions
+"""
