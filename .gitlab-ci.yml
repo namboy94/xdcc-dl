@@ -31,8 +31,7 @@ type_check:
   stage: test
   tags: [docker]
   script:
-    - pip install mypy
-    - mypy -p xdcc_dl --ignore-missing-imports
+    - python-static-type-check
 
 unittest:
   stage: test

@@ -1,3 +1,6 @@
+V 3.1.2:
+  - Integrated sentry
+  - Integrated mypy static type checking
 V 3.1.1:
   - Use docker in CI
 V 3.1.0:
