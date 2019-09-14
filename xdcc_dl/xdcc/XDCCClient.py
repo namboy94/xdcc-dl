@@ -24,7 +24,9 @@ import shlex
 import socket
 import irc.events
 import irc.client
+from irc.client import DCCConnection
 from colorama import Fore, Back
+from typing import Optional, IO, Any, List
 from xdcc_dl.entities import User, XDCCPack
 from xdcc_dl.logging import Logger
 from xdcc_dl.xdcc.exceptions import InvalidCTCPException, \
@@ -72,18 +74,18 @@ class XDCCCLient(SimpleIRCClient):
         self.pack = pack
         self.server = pack.server
         self.downloading = False
-        self.xdcc_timestamp = 0
-        self.channels = None  # change to list if channel joins are required
+        self.xdcc_timestamp = 0.0
+        self.channels = None  # type: Optional[List[str]]
         self.message_sent = False
-        self.connect_start_time = 0
+        self.connect_start_time = 0.0
 
         # XDCC state variables
         self.peer_address = ""
         self.peer_port = -1
         self.filesize = -1
         self.progress = 0
-        self.xdcc_file = None
-        self.xdcc_connection = None
+        self.xdcc_file = None  # type: Optional[IO[Any]]
+        self.xdcc_connection = None  # type: Optional[DCCConnection]
         self.retry = retry
 
         if not self.retry:
@@ -182,7 +184,7 @@ class XDCCCLient(SimpleIRCClient):
         channels = list(map(lambda x: "#" + x.split(" ")[0], channels))
         self.channels = channels
 
-        for channel in self.channels:
+        for channel in channels:
             # Join all channels to avoid only joining a members-only channel
             conn.join(channel)
 
@@ -289,6 +291,9 @@ class XDCCCLient(SimpleIRCClient):
         :param event: The 'dccmsg' event
         :return: None
         """
+        if self.xdcc_file is None:
+            return
+
         data = event.arguments[0]
         chunk_size = len(data)
 

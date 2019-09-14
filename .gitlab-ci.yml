@@ -27,6 +27,13 @@ stylecheck:
   script:
     - python-codestyle-check
 
+type_check:
+  stage: test
+  tags: [docker]
+  script:
+    - pip install mypy
+    - mypy -p xdcc_dl --ignore-missing-imports
+
 unittest:
   stage: test
   tags: [docker]

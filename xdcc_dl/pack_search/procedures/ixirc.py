@@ -79,7 +79,7 @@ def find_ixirc_packs(search_phrase: str) -> List[XDCCPack]:
             analysing = False
 
     # Establish search results
-    results = []
+    results = []  # type: List[XDCCPack]
     for content in page_contents:
         results += get_page_results(content)
 
@@ -184,7 +184,7 @@ def get_page_results(page_content: BeautifulSoup) -> List[XDCCPack]:
             # Generate XDCCPack and append it to the list
             result = XDCCPack(IrcServer(server), bot, pack_number)
             result.set_filename(file_name)
-            result.set_size(size)
+            result.set_size(int(size))
             results.append(result)
 
         # Resets state after invalid pack
