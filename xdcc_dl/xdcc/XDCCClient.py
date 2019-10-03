@@ -32,7 +32,7 @@ from xdcc_dl.entities import User, XDCCPack
 from xdcc_dl.logging import Logger
 from xdcc_dl.xdcc.exceptions import InvalidCTCPException, \
     AlreadyDownloadedException, DownloadCompleted, DownloadIncomplete, \
-    PackAlreadyRequested, UnrecoverableError, Timeout
+    PackAlreadyRequested, UnrecoverableError, Timeout, BotDoesNotExist
 from irc.client import SimpleIRCClient, ServerConnection, Event, \
     ip_numstr_to_quad
 
@@ -76,11 +76,6 @@ class XDCCClient(SimpleIRCClient):
             event.source,
             event.arguments
         ), back=Back.BLUE)
-        if self.timeout < (time.time() - self.connect_start_time):
-            if not self.timed_out:
-                self.logger.error("Timeout")
-                self.timed_out = True
-                raise Timeout()
 
     def __init__(
             self,
@@ -109,6 +104,7 @@ class XDCCClient(SimpleIRCClient):
         self.connect_start_time = 0.0
         self.timeout = timeout
         self.timed_out = False
+        self.disconnected = False
 
         # XDCC state variables
         self.peer_address = ""
@@ -126,15 +122,24 @@ class XDCCClient(SimpleIRCClient):
                 limit = str(self.download_limit)
             self.logger.info("Download Limit set to: " + limit)
 
+        super().__init__()
+
         def timeout_watcher():
+            """
+            Monitors when the XDCC  message is sent. If it is not sent by the
+            timeout time, a ping will be sent and handled by the on_ping method
+            :return: None
+            """
             self.logger.info("Timeout watcher started")
-            time.sleep(self.timeout + 5)
-            self.logger.info("Timeout detected")
-            self.connection.ping(self.server.address)
+            while not self.message_sent and not self.disconnected:
+                time.sleep(1)
+                self.logger.debug("Iterating timeout thread")
+                if self.timeout < (time.time() - self.connect_start_time):
+                    self.logger.info("Timeout detected")
+                    self.connection.ping(self.server.address)
+                    time.sleep(2)
 
         Thread(target=timeout_watcher).start()
-
-        super().__init__()
 
     def download(self) -> str:
         """
@@ -174,6 +179,7 @@ class XDCCClient(SimpleIRCClient):
         finally:
             self.logger.info("Disconnecting")
             try:
+                self.disconnected = True
                 self._disconnect()
             except (DownloadCompleted, ):
                 pass
@@ -196,6 +202,32 @@ class XDCCClient(SimpleIRCClient):
             self.logger.info("Download completed in " + dl_time + " seconds.")
 
         return self.pack.get_filepath()
+
+    def on_ping(self, _: ServerConnection, __: Event):
+        """
+        Handles a ping event.
+        Used for timeout checks
+        :param _: The IRC connection
+        :param __: The received event
+        :return: None
+        """
+        self.logger.debug("PING")
+        if not self.message_sent \
+                and self.timeout < (time.time() - self.connect_start_time) \
+                and not self.timed_out:
+            self.logger.error("Timeout")
+            self.timed_out = True
+            raise Timeout()
+
+    def on_nosuchnick(self, _: ServerConnection, __: Event):
+        """
+        When a bot does not exist or is not online right now, aborts.
+        :param _: The IRC connection
+        :param __: The received event
+        :return: None
+        """
+        self.logger.error("This bot does not exist on this server")
+        raise BotDoesNotExist()
 
     def on_welcome(self, conn: ServerConnection, _: Event):
         """

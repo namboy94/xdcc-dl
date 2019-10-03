@@ -35,7 +35,10 @@ def main(args: argparse.Namespace):
         search_engine = SearchEngineType.resolve(args.search_engine)
         results = search_engine.search(args.search_term)
         for result in results:
-            print(result)
+            message = "{} (xdcc-dl \"{}\")".format(result.filename, result.get_request_message(True))
+            if result.server.address != "irc.rizon.net":
+                message = message[0:-1] + " --server " + result.server.address + ")"
+            print(message)
     except ConnectionError:
         print("Connection Error, could not conduct search")
         raise KeyboardInterrupt()
