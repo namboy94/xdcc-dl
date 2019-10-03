@@ -1,3 +1,8 @@
+V 3.2.0:
+  - Added notice that python 2 is no longer supported
+  - Fixed program hanging when no channels are joined
+  - Added timeout to xdcc-dl
+  - Improved xdcc-search to include server configuration
 V 3.1.2:
   - Integrated sentry
   - Integrated mypy static type checking

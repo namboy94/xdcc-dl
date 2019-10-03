@@ -22,7 +22,7 @@ import logging
 from typing import List, Optional
 from xdcc_dl.logging import Logger
 from xdcc_dl.entities.XDCCPack import XDCCPack
-from xdcc_dl.xdcc.XDCCClient import XDCCCLient
+from xdcc_dl.xdcc.XDCCClient import XDCCClient
 from puffotter.units import byte_string_to_byte_count
 
 
@@ -36,7 +36,7 @@ def set_throttle_value(throttle_string: str):
     try:
         if throttle_string is not None:
             limit = byte_string_to_byte_count(throttle_string)
-            XDCCCLient.download_limit = limit
+            XDCCClient.download_limit = limit
     except ValueError:
         print("Invalid throttle value")
         sys.exit(1)

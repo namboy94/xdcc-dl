@@ -24,6 +24,7 @@ import shlex
 import socket
 import irc.events
 import irc.client
+from threading import Thread
 from irc.client import DCCConnection
 from colorama import Fore, Back
 from typing import Optional, IO, Any, List
@@ -31,12 +32,12 @@ from xdcc_dl.entities import User, XDCCPack
 from xdcc_dl.logging import Logger
 from xdcc_dl.xdcc.exceptions import InvalidCTCPException, \
     AlreadyDownloadedException, DownloadCompleted, DownloadIncomplete, \
-    PackAlreadyRequested, UnrecoverableError
+    PackAlreadyRequested, UnrecoverableError, Timeout
 from irc.client import SimpleIRCClient, ServerConnection, Event, \
     ip_numstr_to_quad
 
 
-class XDCCCLient(SimpleIRCClient):
+class XDCCClient(SimpleIRCClient):
     """
     IRC Client that can download an XDCC pack
     """
@@ -53,17 +54,45 @@ class XDCCCLient(SimpleIRCClient):
     for event in irc.events.all:
         exec(
             "def on_{}(self, c, e):\n"
-            "   self.logger.debug("
-            "       \"{}:\" + str(e.source) + \" \" + str(e.arguments),"
-            "       back=Back.BLUE"
-            ")".format(event, event)
+            "   self.handle_generic_event(\"{}\", c, e)"
+            "".format(event, event)
         )
 
-    def __init__(self, pack: XDCCPack, retry: bool = False):
+    def handle_generic_event(
+            self,
+            event_type: str,
+            _: ServerConnection,
+            event: Event
+    ):
+        """
+        Handles a generic event that isn't handled explicitly
+        :param event_type: The event type to handle
+        :param _: The connection to use
+        :param event: The received event
+        :return: None
+        """
+        self.logger.debug("{}:{} {}".format(
+            event_type,
+            event.source,
+            event.arguments
+        ), back=Back.BLUE)
+        if self.timeout < (time.time() - self.connect_start_time):
+            if not self.timed_out:
+                self.logger.error("Timeout")
+                self.timed_out = True
+                raise Timeout()
+
+    def __init__(
+            self,
+            pack: XDCCPack,
+            retry: bool = False,
+            timeout: int = 300
+    ):
         """
         Initializes the XDCC IRC client
         :param pack: The pack to downloadX
         :param retry: Set to true for retried downloads.
+        :param timeout: Sets the timeout time for starting downloads
         """
         self.logger = Logger()
 
@@ -78,6 +107,8 @@ class XDCCCLient(SimpleIRCClient):
         self.channels = None  # type: Optional[List[str]]
         self.message_sent = False
         self.connect_start_time = 0.0
+        self.timeout = timeout
+        self.timed_out = False
 
         # XDCC state variables
         self.peer_address = ""
@@ -94,6 +125,14 @@ class XDCCCLient(SimpleIRCClient):
             else:
                 limit = str(self.download_limit)
             self.logger.info("Download Limit set to: " + limit)
+
+        def timeout_watcher():
+            self.logger.info("Timeout watcher started")
+            time.sleep(self.timeout + 5)
+            self.logger.info("Timeout detected")
+            self.connection.ping(self.server.address)
+
+        Thread(target=timeout_watcher).start()
 
         super().__init__()
 
@@ -148,7 +187,7 @@ class XDCCCLient(SimpleIRCClient):
 
         if not completed:
             self.logger.error("Download Incomplete. Retrying.")
-            retry_client = XDCCCLient(self.pack, True)
+            retry_client = XDCCClient(self.pack, True, self.timeout)
             retry_client.download_limit = self.download_limit
             retry_client.download()
 
@@ -199,21 +238,33 @@ class XDCCCLient(SimpleIRCClient):
         """
         self.logger.info("WHOIS End")
         if self.channels is None:
-            self.on_join(conn, _)
+            self.on_join(conn, _, True)
 
-    def on_join(self, conn: ServerConnection, event: Event):
+    def on_join(
+            self,
+            conn: ServerConnection,
+            event: Event,
+            force: bool = False
+    ):
         """
         The 'join' event indicates that a channel was successfully joined.
         The first on_join call will send a message to the bot that requests
         the initialization of the XDCC file transfer.
         :param conn: The connection
         :param event: The 'join' event
+        :param force: If set to True, will force sending an XDCC message
         :return: None
         """
         # Make sure we were the ones joining
-        if not event.source.startswith(self.user.get_name()):
+        if not event.source.startswith(self.user.get_name()):  #  TODO FIX and not force:
             return
-        self.logger.info("Joined Channel: " + event.target)
+        if force:
+            self.logger.info(
+                "Didn't find a channel using WHOIS, "
+                "trying to send message anyways"
+            )
+        else:
+            self.logger.info("Joined Channel: " + event.target)
 
         if not self.message_sent:
             self._send_xdcc_request_message(conn)

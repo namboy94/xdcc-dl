@@ -60,7 +60,7 @@ def main(args: argparse.Namespace):
         for pack in packs:
             Logger().info("Downloading pack {}".format(pack))
 
-        download_packs(packs)
+        download_packs(packs, timeout=args.timeout)
 
     except ConnectionError:
         print("Connection Error, could not conduct search")
@@ -88,6 +88,8 @@ if __name__ == "__main__":
     parser.add_argument("-t", "--throttle",
                         help="Limits the download speed of xdcc-dl. "
                              "Append K,M or G for more convenient units")
+    parser.add_argument("--timeout", default=300, type=int,
+                        help="Sets a timeout for starting the download")
     argparse_add_verbosity(parser)
     cli_start(
         main, parser,
