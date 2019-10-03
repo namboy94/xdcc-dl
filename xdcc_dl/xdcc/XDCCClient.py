@@ -81,7 +81,7 @@ class XDCCClient(SimpleIRCClient):
             self,
             pack: XDCCPack,
             retry: bool = False,
-            timeout: int = 300
+            timeout: int = 120
     ):
         """
         Initializes the XDCC IRC client
@@ -441,13 +441,13 @@ class XDCCClient(SimpleIRCClient):
             )
         # TODO Handle queues
 
-    def on_error(self, _: ServerConnection, event: Event):
+    def on_error(self, _: ServerConnection, __: Event):
         """
         Sometimes, the connection gives an error which may prove fatal for
         the download process. A possible cause of error events is a banned
         IP address.
         :param _: The connection
-        :param event: The error event
+        :param __: The error event
         :return: None
         """
         self.logger.error("Unrecoverable Error: Is this IP banned?")

@@ -72,7 +72,7 @@ def main(args: argparse.Namespace):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("search_term", help="The term to search for")
-    parser.add_argument("--search_engine",
+    parser.add_argument("--search-engine",
                         default=SearchEngineType.HORRIBLESUBS.name.lower(),
                         choices=SearchEngineType.choices(True),
                         help="The Search Engine to use")
@@ -88,7 +88,7 @@ if __name__ == "__main__":
     parser.add_argument("-t", "--throttle",
                         help="Limits the download speed of xdcc-dl. "
                              "Append K,M or G for more convenient units")
-    parser.add_argument("--timeout", default=300, type=int,
+    parser.add_argument("--timeout", default=120, type=int,
                         help="Sets a timeout for starting the download")
     argparse_add_verbosity(parser)
     cli_start(
