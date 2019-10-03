@@ -256,7 +256,7 @@ class XDCCClient(SimpleIRCClient):
         :return: None
         """
         # Make sure we were the ones joining
-        if not event.source.startswith(self.user.get_name()):  #  TODO FIX and not force:
+        if not event.source.startswith(self.user.get_name()) and not force:
             return
         if force:
             self.logger.info(
