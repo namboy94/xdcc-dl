@@ -12,6 +12,8 @@ An XDCC File downloader based on the [irclib](https://github.com/jaraco/irc) fra
 
 Either install the program using `pip install xdcc-dl` or `python setup.py install`
 
+Please not that python 2 is no longer supported, the project requires python 3 to run.
+
 ## Usage
 
 ### Message-based CLI
