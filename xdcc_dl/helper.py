@@ -22,7 +22,8 @@ import logging
 from typing import List, Optional
 from xdcc_dl.logging import Logger
 from xdcc_dl.entities.XDCCPack import XDCCPack
-from xdcc_dl.xdcc.XDCCClient import XDCCCLient
+from xdcc_dl.xdcc.XDCCClient import XDCCClient
+from puffotter.units import byte_string_to_byte_count
 
 
 def set_throttle_value(throttle_string: str):
@@ -34,20 +35,9 @@ def set_throttle_value(throttle_string: str):
     """
     try:
         if throttle_string is not None:
-            multiplier = 1
-            units = {"k": 1000, "m": 1000000, "g": 1000000000}
-            throttle_num = ""
-            for i, char in enumerate(throttle_string):
-                if char.isdigit():
-                    throttle_num += char
-                else:
-                    if len(throttle_string) - 1 != i:
-                        raise KeyError
-                    else:
-                        multiplier = units[char.lower()]
-            limit = multiplier * int(throttle_num)
-            XDCCCLient.download_limit = limit
-    except KeyError:
+            limit = byte_string_to_byte_count(throttle_string)
+            XDCCClient.download_limit = limit
+    except ValueError:
         print("Invalid throttle value")
         sys.exit(1)
 

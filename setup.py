@@ -46,7 +46,9 @@ if __name__ == "__main__":
             "cfscrape",
             "typing",
             "colorama",
-            "irc"
+            "irc",
+            "puffotter",
+            "sentry-sdk"
         ],
         include_package_data=True,
         zip_safe=False

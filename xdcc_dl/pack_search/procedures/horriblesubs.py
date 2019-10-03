@@ -94,6 +94,6 @@ def parse_result(result: str) -> Dict[str, str]:
 
         else:
             # Segment is a string
-            data[current_key] = segment
+            data[str(current_key)] = segment
 
     return data

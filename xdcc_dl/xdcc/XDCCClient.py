@@ -24,17 +24,20 @@ import shlex
 import socket
 import irc.events
 import irc.client
+from threading import Thread
+from irc.client import DCCConnection
 from colorama import Fore, Back
+from typing import Optional, IO, Any, List
 from xdcc_dl.entities import User, XDCCPack
 from xdcc_dl.logging import Logger
 from xdcc_dl.xdcc.exceptions import InvalidCTCPException, \
     AlreadyDownloadedException, DownloadCompleted, DownloadIncomplete, \
-    PackAlreadyRequested, UnrecoverableError
+    PackAlreadyRequested, UnrecoverableError, Timeout, BotDoesNotExist
 from irc.client import SimpleIRCClient, ServerConnection, Event, \
     ip_numstr_to_quad
 
 
-class XDCCCLient(SimpleIRCClient):
+class XDCCClient(SimpleIRCClient):
     """
     IRC Client that can download an XDCC pack
     """
@@ -51,17 +54,40 @@ class XDCCCLient(SimpleIRCClient):
     for event in irc.events.all:
         exec(
             "def on_{}(self, c, e):\n"
-            "   self.logger.debug("
-            "       \"{}:\" + str(e.source) + \" \" + str(e.arguments),"
-            "       back=Back.BLUE"
-            ")".format(event, event)
+            "   self.handle_generic_event(\"{}\", c, e)"
+            "".format(event, event)
         )
 
-    def __init__(self, pack: XDCCPack, retry: bool = False):
+    def handle_generic_event(
+            self,
+            event_type: str,
+            _: ServerConnection,
+            event: Event
+    ):
+        """
+        Handles a generic event that isn't handled explicitly
+        :param event_type: The event type to handle
+        :param _: The connection to use
+        :param event: The received event
+        :return: None
+        """
+        self.logger.debug("{}:{} {}".format(
+            event_type,
+            event.source,
+            event.arguments
+        ), back=Back.BLUE)
+
+    def __init__(
+            self,
+            pack: XDCCPack,
+            retry: bool = False,
+            timeout: int = 120
+    ):
         """
         Initializes the XDCC IRC client
         :param pack: The pack to downloadX
         :param retry: Set to true for retried downloads.
+        :param timeout: Sets the timeout time for starting downloads
         """
         self.logger = Logger()
 
@@ -72,18 +98,21 @@ class XDCCCLient(SimpleIRCClient):
         self.pack = pack
         self.server = pack.server
         self.downloading = False
-        self.xdcc_timestamp = 0
-        self.channels = None  # change to list if channel joins are required
+        self.xdcc_timestamp = 0.0
+        self.channels = None  # type: Optional[List[str]]
         self.message_sent = False
-        self.connect_start_time = 0
+        self.connect_start_time = 0.0
+        self.timeout = timeout
+        self.timed_out = False
+        self.disconnected = False
 
         # XDCC state variables
         self.peer_address = ""
         self.peer_port = -1
         self.filesize = -1
         self.progress = 0
-        self.xdcc_file = None
-        self.xdcc_connection = None
+        self.xdcc_file = None  # type: Optional[IO[Any]]
+        self.xdcc_connection = None  # type: Optional[DCCConnection]
         self.retry = retry
 
         if not self.retry:
@@ -94,6 +123,23 @@ class XDCCCLient(SimpleIRCClient):
             self.logger.info("Download Limit set to: " + limit)
 
         super().__init__()
+
+        def timeout_watcher():
+            """
+            Monitors when the XDCC  message is sent. If it is not sent by the
+            timeout time, a ping will be sent and handled by the on_ping method
+            :return: None
+            """
+            self.logger.info("Timeout watcher started")
+            while not self.message_sent and not self.disconnected:
+                time.sleep(1)
+                self.logger.debug("Iterating timeout thread")
+                if self.timeout < (time.time() - self.connect_start_time):
+                    self.logger.info("Timeout detected")
+                    self.connection.ping(self.server.address)
+                    time.sleep(2)
+
+        Thread(target=timeout_watcher).start()
 
     def download(self) -> str:
         """
@@ -133,6 +179,7 @@ class XDCCCLient(SimpleIRCClient):
         finally:
             self.logger.info("Disconnecting")
             try:
+                self.disconnected = True
                 self._disconnect()
             except (DownloadCompleted, ):
                 pass
@@ -146,7 +193,7 @@ class XDCCCLient(SimpleIRCClient):
 
         if not completed:
             self.logger.error("Download Incomplete. Retrying.")
-            retry_client = XDCCCLient(self.pack, True)
+            retry_client = XDCCClient(self.pack, True, self.timeout)
             retry_client.download_limit = self.download_limit
             retry_client.download()
 
@@ -155,6 +202,32 @@ class XDCCCLient(SimpleIRCClient):
             self.logger.info("Download completed in " + dl_time + " seconds.")
 
         return self.pack.get_filepath()
+
+    def on_ping(self, _: ServerConnection, __: Event):
+        """
+        Handles a ping event.
+        Used for timeout checks
+        :param _: The IRC connection
+        :param __: The received event
+        :return: None
+        """
+        self.logger.debug("PING")
+        if not self.message_sent \
+                and self.timeout < (time.time() - self.connect_start_time) \
+                and not self.timed_out:
+            self.logger.error("Timeout")
+            self.timed_out = True
+            raise Timeout()
+
+    def on_nosuchnick(self, _: ServerConnection, __: Event):
+        """
+        When a bot does not exist or is not online right now, aborts.
+        :param _: The IRC connection
+        :param __: The received event
+        :return: None
+        """
+        self.logger.error("This bot does not exist on this server")
+        raise BotDoesNotExist()
 
     def on_welcome(self, conn: ServerConnection, _: Event):
         """
@@ -182,7 +255,7 @@ class XDCCCLient(SimpleIRCClient):
         channels = list(map(lambda x: "#" + x.split(" ")[0], channels))
         self.channels = channels
 
-        for channel in self.channels:
+        for channel in channels:
             # Join all channels to avoid only joining a members-only channel
             conn.join(channel)
 
@@ -197,21 +270,33 @@ class XDCCCLient(SimpleIRCClient):
         """
         self.logger.info("WHOIS End")
         if self.channels is None:
-            self.on_join(conn, _)
+            self.on_join(conn, _, True)
 
-    def on_join(self, conn: ServerConnection, event: Event):
+    def on_join(
+            self,
+            conn: ServerConnection,
+            event: Event,
+            force: bool = False
+    ):
         """
         The 'join' event indicates that a channel was successfully joined.
         The first on_join call will send a message to the bot that requests
         the initialization of the XDCC file transfer.
         :param conn: The connection
         :param event: The 'join' event
+        :param force: If set to True, will force sending an XDCC message
         :return: None
         """
         # Make sure we were the ones joining
-        if not event.source.startswith(self.user.get_name()):
+        if not event.source.startswith(self.user.get_name()) and not force:
             return
-        self.logger.info("Joined Channel: " + event.target)
+        if force:
+            self.logger.info(
+                "Didn't find a channel using WHOIS, "
+                "trying to send message anyways"
+            )
+        else:
+            self.logger.info("Joined Channel: " + event.target)
 
         if not self.message_sent:
             self._send_xdcc_request_message(conn)
@@ -289,6 +374,9 @@ class XDCCCLient(SimpleIRCClient):
         :param event: The 'dccmsg' event
         :return: None
         """
+        if self.xdcc_file is None:
+            return
+
         data = event.arguments[0]
         chunk_size = len(data)
 
@@ -353,13 +441,13 @@ class XDCCCLient(SimpleIRCClient):
             )
         # TODO Handle queues
 
-    def on_error(self, _: ServerConnection, event: Event):
+    def on_error(self, _: ServerConnection, __: Event):
         """
         Sometimes, the connection gives an error which may prove fatal for
         the download process. A possible cause of error events is a banned
         IP address.
         :param _: The connection
-        :param event: The error event
+        :param __: The error event
         :return: None
         """
         self.logger.error("Unrecoverable Error: Is this IP banned?")

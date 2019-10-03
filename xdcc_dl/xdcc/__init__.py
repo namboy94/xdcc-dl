@@ -19,16 +19,17 @@ LICENSE"""
 
 from typing import List
 from xdcc_dl.entities.XDCCPack import XDCCPack
-from xdcc_dl.xdcc.XDCCClient import XDCCCLient
+from xdcc_dl.xdcc.XDCCClient import XDCCClient
 
 
-def download_packs(packs: List[XDCCPack]):
+def download_packs(packs: List[XDCCPack], timeout: int = 120):
     """
     Downloads a list of XDCC Packs
     :param packs: The packs to download
+    :param timeout: Specifies timeout time
     :return: None
     """
 
     for pack in packs:
-        client = XDCCCLient(pack)
+        client = XDCCClient(pack, timeout=timeout)
         client.download()

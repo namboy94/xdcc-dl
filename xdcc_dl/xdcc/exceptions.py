@@ -56,3 +56,15 @@ class UnrecoverableError(Exception):
     """
     Exception raised when an unrecoverable error occurs
     """
+
+
+class Timeout(UnrecoverableError):
+    """
+    Exception raised when a timeout occurs
+    """
+
+
+class BotDoesNotExist(UnrecoverableError):
+    """
+    Exception raised if a bot does not exist
+    """

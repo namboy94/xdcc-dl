@@ -221,8 +221,7 @@ class XDCCPack(object):
             return packs
 
         except ValueError:
-            packnumbers = xdcc_message.rsplit("#", 1)[1]
-            start, end = packnumbers.split("-")
+            start, end = xdcc_message.rsplit("#", 1)[1].split("-")
 
             try:
                 step = int(end.split(";")[1])

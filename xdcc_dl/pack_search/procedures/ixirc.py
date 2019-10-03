@@ -23,6 +23,7 @@ from typing import List
 from bs4 import BeautifulSoup
 from xdcc_dl.entities.XDCCPack import XDCCPack
 from xdcc_dl.entities.IrcServer import IrcServer
+from puffotter.units import byte_string_to_byte_count
 
 
 def find_ixirc_packs(search_phrase: str) -> List[XDCCPack]:
@@ -79,7 +80,7 @@ def find_ixirc_packs(search_phrase: str) -> List[XDCCPack]:
             analysing = False
 
     # Establish search results
-    results = []
+    results = []  # type: List[XDCCPack]
     for content in page_contents:
         results += get_page_results(content)
 
@@ -171,8 +172,7 @@ def get_page_results(page_content: BeautifulSoup) -> List[XDCCPack]:
             elif column_count == 5:
                 pass  # This is the 'gets' section, we don't need that
             elif column_count == 6:
-                # File Size
-                size = line_part.text
+                size = line_part.text.replace("\xa0", " ").replace(" ", "")
 
         # Resets state after a pack was successfully parsed,
         # and adds xdcc pack to results
@@ -184,7 +184,7 @@ def get_page_results(page_content: BeautifulSoup) -> List[XDCCPack]:
             # Generate XDCCPack and append it to the list
             result = XDCCPack(IrcServer(server), bot, pack_number)
             result.set_filename(file_name)
-            result.set_size(size)
+            result.set_size(byte_string_to_byte_count(size))
             results.append(result)
 
         # Resets state after invalid pack

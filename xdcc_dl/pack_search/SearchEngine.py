@@ -18,7 +18,7 @@ along with xdcc-dl.  If not, see <http://www.gnu.org/licenses/>.
 LICENSE"""
 
 from enum import Enum
-from typing import List, Set
+from typing import List, Set, Callable, Optional
 from xdcc_dl.entities.XDCCPack import XDCCPack
 from xdcc_dl.pack_search.procedures.nibl import find_nibl_packs
 from xdcc_dl.pack_search.procedures.ixirc import find_ixirc_packs
@@ -30,7 +30,7 @@ class SearchEngine:
     An XDCC Pack Search Engine
     """
 
-    def __init__(self, name: str, procedure: callable):
+    def __init__(self, name: str, procedure: Callable):
         """
         Initializes the Search Engine
         :param name: The name of the search engine
@@ -72,7 +72,7 @@ class SearchEngineType(Enum):
         return set(choices)
 
     @classmethod
-    def resolve(cls, name: str) -> SearchEngine or None:
+    def resolve(cls, name: str) -> Optional[SearchEngine]:
         """
         Resolves a string identifier of a search engine and provides
         the correct search engine
