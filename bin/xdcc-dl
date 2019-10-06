@@ -44,7 +44,11 @@ def main(args: argparse.Namespace):
         )
         prepare_packs(packs, args.out)
 
-        download_packs(packs, timeout=args.timeout)
+        download_packs(
+            packs,
+            timeout=args.timeout,
+            fallback_channel=args.fallback_channel
+        )
 
     except DownloadIncomplete:
         Logger().warning("Download incomplete.")
@@ -71,6 +75,8 @@ if __name__ == "__main__":
                              "Append K,M or G for more convenient units")
     parser.add_argument("--timeout", default=120, type=int,
                         help="Sets a timeout for starting the download")
+    parser.add_argument("--fallback-channel",
+                        help="Fallback channel in case ")
     argparse_add_verbosity(parser)
     parser.add_argument("--silent", action="store_true",
                         help="Disables all print output")

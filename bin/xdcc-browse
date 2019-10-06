@@ -60,7 +60,11 @@ def main(args: argparse.Namespace):
         for pack in packs:
             Logger().info("Downloading pack {}".format(pack))
 
-        download_packs(packs, timeout=args.timeout)
+        download_packs(
+            packs,
+            timeout=args.timeout,
+            fallback_channel=args.fallback_channel
+        )
 
     except ConnectionError:
         print("Connection Error, could not conduct search")
@@ -92,6 +96,8 @@ if __name__ == "__main__":
                         help="Sets a timeout for starting the download")
     parser.add_argument("--silent", action="store_true",
                         help="Disables all print output")
+    parser.add_argument("--fallback-channel",
+                        help="Fallback channel in case ")
     argparse_add_verbosity(parser)
     cli_start(
         main, parser,

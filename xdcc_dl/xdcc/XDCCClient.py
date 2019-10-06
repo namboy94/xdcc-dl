@@ -81,13 +81,16 @@ class XDCCClient(SimpleIRCClient):
             self,
             pack: XDCCPack,
             retry: bool = False,
-            timeout: int = 120
+            timeout: int = 120,
+            fallback_channel: Optional[str] = None
     ):
         """
         Initializes the XDCC IRC client
         :param pack: The pack to downloadX
         :param retry: Set to true for retried downloads.
         :param timeout: Sets the timeout time for starting downloads
+        :param fallback_channel: A fallback channel for when whois
+                                 fails to find a valid channel
         """
         self.logger = Logger()
 
@@ -104,6 +107,7 @@ class XDCCClient(SimpleIRCClient):
         self.connect_start_time = 0.0
         self.timeout = timeout
         self.timed_out = False
+        self.fallback_channel = fallback_channel
         self.connected = True
         self.disconnected = False
 
@@ -269,7 +273,14 @@ class XDCCClient(SimpleIRCClient):
         """
         self.logger.info("WHOIS End")
         if self.channels is None:
-            self.on_join(conn, _, True)
+            if self.fallback_channel is not None:
+                channel = self.fallback_channel
+                if not channel.startswith("#"):
+                    channel = "#" + channel
+                conn.join(channel)
+                return
+            else:
+                self.on_join(conn, _, True)
 
     def on_join(
             self,
