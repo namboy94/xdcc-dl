@@ -64,11 +64,12 @@ class Logger(object):
             log_message += " " + fore + back + message
 
             try:
-                rows, columns = check_output(['stty', 'size']).split()
+                rows, _columns = check_output(['stty', 'size']).split()
+                columns = int(_columns)
             except (ValueError, CalledProcessError):
                 columns = 80
 
-            log_message = log_message[0:int(columns)]
+            log_message = log_message[0:columns]
 
             print(log_message + Style.RESET_ALL, end=end)
 
