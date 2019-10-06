@@ -1,3 +1,8 @@
+V 3.3.0:
+  - Added download speed progress
+  - Fixed slow download speeds
+  - Fixed crashes when running without a tty
+  - Added --silent flag
 V 3.2.0:
   - Added notice that python 2 is no longer supported
   - Fixed program hanging when no channels are joined
