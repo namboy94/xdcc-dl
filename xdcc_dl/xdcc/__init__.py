@@ -17,19 +17,27 @@ You should have received a copy of the GNU General Public License
 along with xdcc-dl.  If not, see <http://www.gnu.org/licenses/>.
 LICENSE"""
 
-from typing import List
+from typing import List, Optional
 from xdcc_dl.entities.XDCCPack import XDCCPack
 from xdcc_dl.xdcc.XDCCClient import XDCCClient
 
 
-def download_packs(packs: List[XDCCPack], timeout: int = 120):
+def download_packs(
+        packs: List[XDCCPack],
+        timeout: int = 120,
+        fallback_channel: Optional[str] = None
+):
     """
     Downloads a list of XDCC Packs
     :param packs: The packs to download
     :param timeout: Specifies timeout time
+    :param fallback_channel: A fallback channel for when no channels were found
     :return: None
     """
-
     for pack in packs:
-        client = XDCCClient(pack, timeout=timeout)
+        client = XDCCClient(
+            pack,
+            timeout=timeout,
+            fallback_channel=fallback_channel
+        )
         client.download()

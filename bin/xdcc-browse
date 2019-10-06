@@ -38,7 +38,7 @@ def main(args: argparse.Namespace):
     :return: None
     """
     try:
-        set_logging_level(args.quiet, args.verbose, args.debug)
+        set_logging_level(args.quiet, args.verbose, args.debug, args.silent)
         set_throttle_value(args.throttle)
 
         search_engine = SearchEngineType.resolve(args.search_engine)
@@ -60,7 +60,11 @@ def main(args: argparse.Namespace):
         for pack in packs:
             Logger().info("Downloading pack {}".format(pack))
 
-        download_packs(packs, timeout=args.timeout)
+        download_packs(
+            packs,
+            timeout=args.timeout,
+            fallback_channel=args.fallback_channel
+        )
 
     except ConnectionError:
         print("Connection Error, could not conduct search")
@@ -90,6 +94,10 @@ if __name__ == "__main__":
                              "Append K,M or G for more convenient units")
     parser.add_argument("--timeout", default=120, type=int,
                         help="Sets a timeout for starting the download")
+    parser.add_argument("--silent", action="store_true",
+                        help="Disables all print output")
+    parser.add_argument("--fallback-channel",
+                        help="Fallback channel in case ")
     argparse_add_verbosity(parser)
     cli_start(
         main, parser,

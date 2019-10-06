@@ -37,14 +37,18 @@ def main(args: argparse.Namespace):
     """
     try:
         set_throttle_value(args.throttle)
-        set_logging_level(args.quiet, args.verbose, args.debug)
+        set_logging_level(args.quiet, args.verbose, args.debug, args.silent)
 
         packs = XDCCPack.from_xdcc_message(
             args.message, os.getcwd(), args.server
         )
         prepare_packs(packs, args.out)
 
-        download_packs(packs, timeout=args.timeout)
+        download_packs(
+            packs,
+            timeout=args.timeout,
+            fallback_channel=args.fallback_channel
+        )
 
     except DownloadIncomplete:
         Logger().warning("Download incomplete.")
@@ -71,7 +75,11 @@ if __name__ == "__main__":
                              "Append K,M or G for more convenient units")
     parser.add_argument("--timeout", default=120, type=int,
                         help="Sets a timeout for starting the download")
+    parser.add_argument("--fallback-channel",
+                        help="Fallback channel in case ")
     argparse_add_verbosity(parser)
+    parser.add_argument("--silent", action="store_true",
+                        help="Disables all print output")
     cli_start(
         main, parser,
         sentry_dsn=sentry_dsn,

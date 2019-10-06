@@ -42,16 +42,19 @@ def set_throttle_value(throttle_string: str):
         sys.exit(1)
 
 
-def set_logging_level(quiet: bool, verbose: bool, debug: bool):
+def set_logging_level(quiet: bool, verbose: bool, debug: bool, silent: bool):
     """
     Sets the logging level based on a combination of flags
     If all flags are False, the logging level will be set to WARNING
     :param quiet: If set to True, will set logging to ERROR
     :param verbose: If set to True, will set logging to INFO
     :param debug: If set to True, will set logging to DEBUG
+    :param silent: If set to True, will disable ALL printing
     :return: None
     """
-    if quiet:
+    if silent:
+        Logger.logging_level = -1
+    elif quiet:
         Logger.logging_level = logging.ERROR
     elif verbose:
         Logger.logging_level = logging.INFO
