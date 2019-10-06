@@ -145,8 +145,6 @@ class XDCCClient(SimpleIRCClient):
         message = ""
 
         try:
-            self.timeout_watcher_thread.start()
-            self.progress_printer_thread.start()
             self.logger.info("Connecting to " + self.server.address + ":" +
                              str(self.server.port))
             self.connect(
@@ -156,6 +154,10 @@ class XDCCClient(SimpleIRCClient):
             )
             self.connected = True
             self.connect_start_time = time.time()
+
+            self.timeout_watcher_thread.start()
+            self.progress_printer_thread.start()
+
             self.start()
         except AlreadyDownloadedException:
             self.logger.error("File already downloaded")
@@ -557,7 +559,9 @@ class XDCCClient(SimpleIRCClient):
             log_message = "[{}]: ({}%) |{}/{}| ({})".format(
                 self.pack.filename,
                 percentage,
-                human_readable_bytes(self.progress),
+                human_readable_bytes(
+                    self.progress, remove_trailing_zeroes=False
+                ),
                 human_readable_bytes(self.filesize),
                 speed
             )
