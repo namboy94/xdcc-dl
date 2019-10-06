@@ -21,13 +21,13 @@ import os
 import time
 import struct
 import shlex
-import socket
 import irc.events
 import irc.client
 from threading import Thread
 from irc.client import DCCConnection
 from colorama import Fore, Back
 from typing import Optional, IO, Any, List
+from puffotter.units import human_readable_bytes
 from xdcc_dl.entities import User, XDCCPack
 from xdcc_dl.logging import Logger
 from xdcc_dl.xdcc.exceptions import InvalidCTCPException, \
@@ -104,6 +104,7 @@ class XDCCClient(SimpleIRCClient):
         self.connect_start_time = 0.0
         self.timeout = timeout
         self.timed_out = False
+        self.connected = True
         self.disconnected = False
 
         # XDCC state variables
@@ -114,6 +115,7 @@ class XDCCClient(SimpleIRCClient):
         self.xdcc_file = None  # type: Optional[IO[Any]]
         self.xdcc_connection = None  # type: Optional[DCCConnection]
         self.retry = retry
+        self.struct_format = b"!I"
 
         if not self.retry:
             if self.download_limit == -1:
@@ -122,24 +124,10 @@ class XDCCClient(SimpleIRCClient):
                 limit = str(self.download_limit)
             self.logger.info("Download Limit set to: " + limit)
 
+        self.timeout_watcher_thread = Thread(target=self.timeout_watcher)
+        self.progress_printer_thread = Thread(target=self.progress_printer)
+
         super().__init__()
-
-        def timeout_watcher():
-            """
-            Monitors when the XDCC  message is sent. If it is not sent by the
-            timeout time, a ping will be sent and handled by the on_ping method
-            :return: None
-            """
-            self.logger.info("Timeout watcher started")
-            while not self.message_sent and not self.disconnected:
-                time.sleep(1)
-                self.logger.debug("Iterating timeout thread")
-                if self.timeout < (time.time() - self.connect_start_time):
-                    self.logger.info("Timeout detected")
-                    self.connection.ping(self.server.address)
-                    time.sleep(2)
-
-        Thread(target=timeout_watcher).start()
 
     def download(self) -> str:
         """
@@ -149,7 +137,12 @@ class XDCCClient(SimpleIRCClient):
         error = False
         completed = False
         pause = 0
+
+        message = ""
+
         try:
+            self.timeout_watcher_thread.start()
+            self.progress_printer_thread.start()
             self.logger.info("Connecting to " + self.server.address + ":" +
                              str(self.server.port))
             self.connect(
@@ -157,29 +150,35 @@ class XDCCClient(SimpleIRCClient):
                 self.server.port,
                 self.user.username
             )
+            self.connected = True
             self.connect_start_time = time.time()
             self.start()
         except AlreadyDownloadedException:
             self.logger.error("File already downloaded")
             completed = True
         except DownloadCompleted:
-            self.logger.print("File " + self.pack.filename +
-                              " downloaded successfully")
+            message = "File {} downloaded successfully"\
+                .format(self.pack.filename)
             completed = True
         except DownloadIncomplete:
-            self.logger.print("File " + self.pack.filename +
-                              " not downloaded completely")
+            message = "File {} not downloaded successfully" \
+                .format(self.pack.filename)
             completed = False
         except PackAlreadyRequested:
-            self.logger.print("Pack already requested.")
+            message = "Pack already requested."
             completed = False
             pause = 60
         except UnrecoverableError:
             error = True
         finally:
+            self.connected = False
+            self.disconnected = True
+            self.timeout_watcher_thread.join()
+            self.progress_printer_thread.join()
+            self.logger.print(message)
+
             self.logger.info("Disconnecting")
             try:
-                self.disconnected = True
                 self._disconnect()
             except (DownloadCompleted, ):
                 pass
@@ -322,10 +321,11 @@ class XDCCClient(SimpleIRCClient):
             :param append: If set to True, opens the file in append mode
             :return: None
             """
-            self.downloading = True
             self.xdcc_timestamp = time.time()
             mode = "ab" if append else "wb"
             self.logger.info("Starting Download (" + mode + ")")
+            self.downloading = True
+
             self.xdcc_file = open(self.pack.get_filepath(), mode)
             self.xdcc_connection = \
                 self.dcc_connect(self.peer_address, self.peer_port, "raw")
@@ -395,11 +395,6 @@ class XDCCClient(SimpleIRCClient):
                 )
                 time.sleep(sleep_time)
 
-        percentage = "%.2f" % (100 * (self.progress / self.filesize))
-        self.logger.print("[" + self.pack.filename + "]: (" +
-                          percentage + "%) |" + str(self.progress) + "|",
-                          end="\r", back=Back.LIGHTYELLOW_EX, fore=Fore.BLACK)
-
         self._ack()
         self.xdcc_timestamp = time.time()
 
@@ -466,18 +461,35 @@ class XDCCClient(SimpleIRCClient):
 
     def _ack(self):
         """
-        Sends the acknowledgement to the XDCC bot that a
-        chunk has been received.
-        This process is responsible for the program hanging due to a stuck
-        socket.send.
+        Sends the acknowledgement to the XDCC bot that a chunk
+        has been received.
+        This process is sometimes responsible for the program hanging due to a
+        stuck socket.send.
         This is mitigated by completely disconnecting the client and restarting
         the download process with a new XDCC CLient
         :return: None
         """
+        # It seems the DCC connection dies when downloading with
+        # max speed and using Q structs. Why that is I do not know.
+        # But because of this we'll use progressively larger struct types
+        # Whenever the old one gets too small
         try:
-            self.xdcc_connection.socket.send(struct.pack(b"!Q", self.progress))
-        except socket.error:
-            self._disconnect()
+            payload = struct.pack(self.struct_format, self.progress)
+        except struct.error:
+
+            if self.struct_format == b"!I":
+                self.struct_format = b"!L"
+            elif self.struct_format == b"!L":
+                self.struct_format = b"!Q"
+            else:
+                self.logger.error("File too large for structs")
+                self._disconnect()
+                return
+
+            self._ack()
+            return
+
+        self.xdcc_connection.socket.send(payload)
 
     def _disconnect(self):
         """
@@ -485,3 +497,62 @@ class XDCCClient(SimpleIRCClient):
         :return: None
         """
         self.connection.reactor.disconnect_all()
+
+    def timeout_watcher(self):
+        """
+        Monitors when the XDCC  message is sent. If it is not sent by the
+        timeout time, a ping will be sent and handled by the on_ping method
+        :return: None
+        """
+        self.logger.info("Timeout watcher started")
+        while not self.connected:
+            pass
+        while not self.message_sent and not self.disconnected:
+            time.sleep(1)
+            self.logger.debug("Iterating timeout thread")
+            if self.timeout < (time.time() - self.connect_start_time):
+                self.logger.info("Timeout detected")
+                self.connection.ping(self.server.address)
+                time.sleep(2)
+
+    def progress_printer(self):
+        """
+        Prints the download progress
+        Should run in a separate thread to avoid blocking up the IO which
+        could lead to reduced download speeds
+        :return: None
+        """
+        speed_progress = []
+        while not self.downloading and not self.disconnected:
+            pass
+        while self.downloading and not self.disconnected:
+            speed_progress.append({
+                "timestamp": time.time(),
+                "progress": self.progress
+            })
+            while time.time() - speed_progress[0]["timestamp"] > 7:
+                speed_progress.pop(0)
+
+            if len(speed_progress) > 0:
+                bytes_delta = self.progress - speed_progress[0]["progress"]
+                time_delta = time.time() - speed_progress[0]["timestamp"]
+                ratio = int(bytes_delta / time_delta)
+                speed = human_readable_bytes(ratio) + "/s"
+            else:
+                speed = "0B/s"
+
+            percentage = "%.2f" % (100 * (self.progress / self.filesize))
+
+            log_message = "[{}]: ({}%) |{}/{}| ({})".format(
+                self.pack.filename,
+                percentage,
+                human_readable_bytes(self.progress),
+                human_readable_bytes(self.filesize),
+                speed
+            )
+            self.logger.print(
+                log_message,
+                end="\r",
+                back=Back.LIGHTYELLOW_EX,
+                fore=Fore.BLACK
+            )

@@ -20,7 +20,7 @@ LICENSE"""
 import logging
 from typing import Optional
 from datetime import datetime
-from subprocess import check_output
+from subprocess import check_output, CalledProcessError
 from colorama import Fore, Back, Style
 
 
@@ -52,6 +52,9 @@ class Logger(object):
         :param end: Characters to append to the string (Default newline)
         :return: None
         """
+        if self.logging_level == -1:
+            return
+
         if level is None or self.logging_level <= level:
 
             if self.last_end == "\r" and end != "\r":
@@ -60,7 +63,11 @@ class Logger(object):
             log_message = datetime.now().strftime("[%Y-%d-%m:%H-%M-%S]")
             log_message += " " + fore + back + message
 
-            rows, columns = check_output(['stty', 'size']).split()
+            try:
+                rows, columns = check_output(['stty', 'size']).split()
+            except (ValueError, CalledProcessError):
+                columns = 80
+
             log_message = log_message[0:int(columns)]
 
             print(log_message + Style.RESET_ALL, end=end)

@@ -37,7 +37,7 @@ def main(args: argparse.Namespace):
     """
     try:
         set_throttle_value(args.throttle)
-        set_logging_level(args.quiet, args.verbose, args.debug)
+        set_logging_level(args.quiet, args.verbose, args.debug, args.silent)
 
         packs = XDCCPack.from_xdcc_message(
             args.message, os.getcwd(), args.server
@@ -72,6 +72,8 @@ if __name__ == "__main__":
     parser.add_argument("--timeout", default=120, type=int,
                         help="Sets a timeout for starting the download")
     argparse_add_verbosity(parser)
+    parser.add_argument("--silent", action="store_true",
+                        help="Disables all print output")
     cli_start(
         main, parser,
         sentry_dsn=sentry_dsn,
