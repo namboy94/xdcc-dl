@@ -21,10 +21,10 @@ import os
 import time
 import struct
 import shlex
+import socket
 import irc.events
 import irc.client
 from threading import Thread
-from irc.client import DCCConnection
 from colorama import Fore, Back
 from typing import Optional, IO, Any, List
 from puffotter.units import human_readable_bytes
@@ -34,7 +34,7 @@ from xdcc_dl.xdcc.exceptions import InvalidCTCPException, \
     AlreadyDownloadedException, DownloadCompleted, DownloadIncomplete, \
     PackAlreadyRequested, UnrecoverableError, Timeout, BotDoesNotExist
 from irc.client import SimpleIRCClient, ServerConnection, Event, \
-    ip_numstr_to_quad
+    ip_numstr_to_quad, DCCConnection
 
 
 class XDCCClient(SimpleIRCClient):
@@ -502,7 +502,10 @@ class XDCCClient(SimpleIRCClient):
             self._ack()
             return
 
-        self.xdcc_connection.socket.send(payload)
+        try:
+            self.xdcc_connection.socket.send(payload)
+        except socket.timeout:
+            self._disconnect()
 
     def _disconnect(self):
         """
