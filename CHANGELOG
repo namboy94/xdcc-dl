@@ -1,3 +1,7 @@
+V 4.0.0:
+  - Went over to completely rely on python's built-in logging
+  - Throttle value is now passed as parameter
+  - Logging to files now active by default
 V 3.3.0:
   - Added download speed progress
   - Fixed slow download speeds
