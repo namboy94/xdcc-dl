@@ -40,6 +40,12 @@ class Logger(object):
     Keeps track of the last character to be printed
     """
 
+    def __init__(self):
+        """
+        Initializes an internal logging logger
+        """
+        self.logger = logging.getLogger("xdcc-dl")
+
     def log(self, message: str, level: Optional[int], back: Back = Back.BLACK,
             fore: Fore = Fore.GREEN, end: str = "\n"):
         """
@@ -70,8 +76,20 @@ class Logger(object):
                 columns = 80
 
             log_message = log_message[0:columns]
+            log_message += Style.RESET_ALL
 
-            print(log_message + Style.RESET_ALL, end=end)
+            if level is not None and end != "\r":
+                if level == logging.ERROR:
+                    self.logger.error(log_message)
+                elif level == logging.WARNING:
+                    self.logger.warning(log_message)
+                elif level == logging.INFO:
+                    self.logger.info(log_message)
+                elif level == logging.DEBUG:
+                    self.logger.debug(log_message)
+
+            else:
+                print(log_message, end=end)
 
             self.last_end = end
 
