@@ -79,8 +79,6 @@ if __name__ == "__main__":
                         help="Fallback channel in case a channel could not"
                              "be joined automatically using WHOIS commands")
     argparse_add_verbosity(parser)
-    parser.add_argument("--silent", action="store_true",
-                        help="Disables all print output")
     cli_start(
         main, parser,
         sentry_dsn=sentry_dsn,

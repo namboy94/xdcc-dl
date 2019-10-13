@@ -22,14 +22,14 @@ import time
 import struct
 import shlex
 import socket
+import logging
 import irc.events
 import irc.client
 from threading import Thread
-from colorama import Fore, Back
 from typing import Optional, IO, Any, List
 from puffotter.units import human_readable_bytes
+from puffotter.print import pprint
 from xdcc_dl.entities import User, XDCCPack
-from xdcc_dl.logging import Logger
 from xdcc_dl.xdcc.exceptions import InvalidCTCPException, \
     AlreadyDownloadedException, DownloadCompleted, DownloadIncomplete, \
     PackAlreadyRequested, UnrecoverableError, Timeout, BotDoesNotExist
@@ -71,11 +71,11 @@ class XDCCClient(SimpleIRCClient):
         :param event: The received event
         :return: None
         """
-        self._logger.debug("{}:{} {}".format(
+        self.logger.debug("{}:{} {}".format(
             event_type,
             event.source,
             event.arguments
-        ), back=Back.BLUE)
+        ))
 
     def __init__(
             self,
@@ -92,10 +92,12 @@ class XDCCClient(SimpleIRCClient):
         :param fallback_channel: A fallback channel for when whois
                                  fails to find a valid channel
         """
-        self._logger = Logger()
+        self.logger = logging.getLogger(self.__class__.__name__)
 
         # Save us from decoding errors!
         irc.client.ServerConnection.buffer_class.errors = "replace"
+
+        irc.client.log.setLevel(logging.ERROR)
 
         self.user = User()
         self.pack = pack
@@ -126,7 +128,7 @@ class XDCCClient(SimpleIRCClient):
                 limit = "\"unlimited\""
             else:
                 limit = str(self.download_limit)
-            self._logger.info("Download Limit set to: " + limit)
+            self.logger.info("Download Limit set to: " + limit)
 
         self.timeout_watcher_thread = Thread(target=self.timeout_watcher)
         self.progress_printer_thread = Thread(target=self.progress_printer)
@@ -145,8 +147,8 @@ class XDCCClient(SimpleIRCClient):
         message = ""
 
         try:
-            self._logger.info("Connecting to " + self.server.address + ":" +
-                              str(self.server.port))
+            self.logger.info("Connecting to " + self.server.address + ":" +
+                             str(self.server.port))
             self.connect(
                 self.server.address,
                 self.server.port,
@@ -160,7 +162,7 @@ class XDCCClient(SimpleIRCClient):
 
             self.start()
         except AlreadyDownloadedException:
-            self._logger.error("File already downloaded")
+            self.logger.warning("File already downloaded")
             completed = True
         except DownloadCompleted:
             message = "File {} downloaded successfully"\
@@ -181,30 +183,30 @@ class XDCCClient(SimpleIRCClient):
             self.disconnected = True
             self.timeout_watcher_thread.join()
             self.progress_printer_thread.join()
-            self._logger.print(message)
+            print(message)
 
-            self._logger.info("Disconnecting")
+            self.logger.info("Disconnecting")
             try:
                 self._disconnect()
             except (DownloadCompleted, ):
                 pass
 
         if error:
-            self._logger.info("Aborting because of unrecoverable error")
+            self.logger.info("Aborting because of unrecoverable error")
             return "Failed"
 
-        self._logger.debug("Pausing for {}s".format(pause))
+        self.logger.debug("Pausing for {}s".format(pause))
         time.sleep(pause)
 
         if not completed:
-            self._logger.error("Download Incomplete. Retrying.")
+            self.logger.warning("Download Incomplete. Retrying.")
             retry_client = XDCCClient(self.pack, True, self.timeout)
             retry_client.download_limit = self.download_limit
             retry_client.download()
 
         if not self.retry:
             dl_time = str(int(abs(time.time() - self.connect_start_time)))
-            self._logger.info("Download completed in " + dl_time + " seconds.")
+            self.logger.info("Download completed in " + dl_time + " seconds.")
 
         return self.pack.get_filepath()
 
@@ -216,11 +218,11 @@ class XDCCClient(SimpleIRCClient):
         :param __: The received event
         :return: None
         """
-        self._logger.debug("PING")
+        self.logger.debug("PING")
         if not self.message_sent \
                 and self.timeout < (time.time() - self.connect_start_time) \
                 and not self.timed_out:
-            self._logger.error("Timeout")
+            self.logger.warning("Timeout")
             self.timed_out = True
             raise Timeout()
 
@@ -231,7 +233,7 @@ class XDCCClient(SimpleIRCClient):
         :param __: The received event
         :return: None
         """
-        self._logger.error("This bot does not exist on this server")
+        self.logger.warning("This bot does not exist on this server")
         raise BotDoesNotExist()
 
     def on_welcome(self, conn: ServerConnection, _: Event):
@@ -242,7 +244,7 @@ class XDCCClient(SimpleIRCClient):
         :param _: The 'welcome' event
         :return: None
         """
-        self._logger.info("Connected to server")
+        self.logger.info("Connected to server")
         conn.whois(self.pack.bot)
 
     def on_whoischannels(self, conn: ServerConnection, event: Event):
@@ -254,7 +256,7 @@ class XDCCClient(SimpleIRCClient):
         :param event: The 'whoischannels' event
         :return: None
         """
-        self._logger.info("WHOIS: " + str(event.arguments))
+        self.logger.info("WHOIS: " + str(event.arguments))
         channels = event.arguments[1].split("#")
         channels.pop(0)
         channels = list(map(lambda x: "#" + x.split(" ")[0], channels))
@@ -273,7 +275,7 @@ class XDCCClient(SimpleIRCClient):
         :param _: The 'endofwhois' event
         :return: None
         """
-        self._logger.info("WHOIS End")
+        self.logger.info("WHOIS End")
         if self.channels is None:
             if self.fallback_channel is not None:
                 channel = self.fallback_channel
@@ -303,12 +305,12 @@ class XDCCClient(SimpleIRCClient):
         if not event.source.startswith(self.user.get_name()) and not force:
             return
         if force:
-            self._logger.info(
+            self.logger.info(
                 "Didn't find a channel using WHOIS, "
                 "trying to send message anyways"
             )
         else:
-            self._logger.info("Joined Channel: " + event.target)
+            self.logger.info("Joined Channel: " + event.target)
 
         if not self.message_sent:
             self._send_xdcc_request_message(conn)
@@ -336,7 +338,7 @@ class XDCCClient(SimpleIRCClient):
             """
             self.xdcc_timestamp = time.time()
             mode = "ab" if append else "wb"
-            self._logger.info("Starting Download (" + mode + ")")
+            self.logger.info("Starting Download (" + mode + ")")
             self.downloading = True
 
             self.xdcc_file = open(self.pack.get_filepath(), mode)
@@ -344,7 +346,7 @@ class XDCCClient(SimpleIRCClient):
                 self.dcc_connect(self.peer_address, self.peer_port, "raw")
             self.xdcc_connection.socket.settimeout(5)
 
-        self._logger.info("CTCP Message: " + str(event.arguments))
+        self.logger.info("CTCP Message: " + str(event.arguments))
         if event.arguments[0] == "DCC":
             payload = shlex.split(event.arguments[1])
 
@@ -364,7 +366,7 @@ class XDCCClient(SimpleIRCClient):
                     if position >= self.filesize:
                         raise AlreadyDownloadedException(self.pack.filename)
 
-                    self._logger.info("Requesting Resume")
+                    self.logger.info("Requesting Resume")
                     self.progress = position
                     bot = event.source.split("!")[0]
                     resume_param = "\"" + filename + "\" " + \
@@ -403,8 +405,8 @@ class XDCCClient(SimpleIRCClient):
             sleep_time = chunk_time - delta
 
             if sleep_time > 0:
-                self._logger.debug(
-                    "{Throttling for %.2f seconds} " % sleep_time, end=""
+                self.logger.debug(
+                    "{Throttling for %.2f seconds} " % sleep_time
                 )
                 time.sleep(sleep_time)
 
@@ -444,8 +446,8 @@ class XDCCClient(SimpleIRCClient):
         if "you already requested this pack" in event.arguments[0].lower():
             raise PackAlreadyRequested()
         else:
-            self._logger.debug("privnotice: {}:{}".format(
-                str(event.source), str(event.arguments), back=Back.BLUE)
+            self.logger.debug("privnotice: {}:{}".format(
+                str(event.source), str(event.arguments))
             )
         # TODO Handle queues
 
@@ -458,7 +460,7 @@ class XDCCClient(SimpleIRCClient):
         :param __: The error event
         :return: None
         """
-        self._logger.error("Unrecoverable Error: Is this IP banned?")
+        self.logger.warning("Unrecoverable Error: Is this IP banned?")
         raise UnrecoverableError()
 
     def _send_xdcc_request_message(self, conn: ServerConnection):
@@ -468,7 +470,7 @@ class XDCCClient(SimpleIRCClient):
         :return: None
         """
         msg = self.pack.get_request_message()
-        self._logger.info("Send XDCC Message: " + msg)
+        self.logger.info("Send XDCC Message: " + msg)
         self.message_sent = True
         conn.privmsg(self.pack.bot, msg)
 
@@ -495,7 +497,7 @@ class XDCCClient(SimpleIRCClient):
             elif self.struct_format == b"!L":
                 self.struct_format = b"!Q"
             else:
-                self._logger.error("File too large for structs")
+                self.logger.error("File too large for structs")
                 self._disconnect()
                 return
 
@@ -520,14 +522,14 @@ class XDCCClient(SimpleIRCClient):
         timeout time, a ping will be sent and handled by the on_ping method
         :return: None
         """
-        self._logger.info("Timeout watcher started")
+        self.logger.info("Timeout watcher started")
         while not self.connected:
             pass
         while not self.message_sent and not self.disconnected:
             time.sleep(1)
-            self._logger.debug("Iterating timeout thread")
+            self.logger.debug("Iterating timeout thread")
             if self.timeout < (time.time() - self.connect_start_time):
-                self._logger.info("Timeout detected")
+                self.logger.info("Timeout detected")
                 self.connection.ping(self.server.address)
                 time.sleep(2)
 
@@ -546,7 +548,8 @@ class XDCCClient(SimpleIRCClient):
                 "timestamp": time.time(),
                 "progress": self.progress
             })
-            while time.time() - speed_progress[0]["timestamp"] > 7:
+            while len(speed_progress) > 0 \
+                    and time.time() - speed_progress[0]["timestamp"] > 7:
                 speed_progress.pop(0)
 
             if len(speed_progress) > 0:
@@ -568,9 +571,4 @@ class XDCCClient(SimpleIRCClient):
                 human_readable_bytes(self.filesize),
                 speed
             )
-            self._logger.print(
-                log_message,
-                end="\r",
-                back=Back.LIGHTYELLOW_EX,
-                fore=Fore.BLACK
-            )
+            pprint(log_message, end="\r", bg="lyellow", fg="black")
