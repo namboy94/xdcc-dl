@@ -18,59 +18,54 @@ You should have received a copy of the GNU General Public License
 along with xdcc-dl.  If not, see <http://www.gnu.org/licenses/>.
 LICENSE"""
 
+import logging
 import argparse
+from typing import List
 from requests.exceptions import ConnectionError
 from puffotter.init import cli_start, argparse_add_verbosity
+from puffotter.prompt import selection_prompt
 from xdcc_dl import sentry_dsn
 from xdcc_dl.xdcc.exceptions import DownloadIncomplete
-from xdcc_dl.helper import set_throttle_value, set_logging_level, prepare_packs
+from xdcc_dl.helper import prepare_packs
 from xdcc_dl.entities import XDCCPack
-from xdcc_dl.logging import Logger
 from xdcc_dl.xdcc import download_packs
 from xdcc_dl.pack_search.SearchEngine import SearchEngineType
 
 
-def main(args: argparse.Namespace):
+def main(args: argparse.Namespace, logger: logging.Logger):
     """
     Conducts a XDCC pack search with the option to immediately download any
     found packs
     :param args: The command line arguments
+    :param logger: The logger to use
     :return: None
     """
     try:
-        set_logging_level(args.quiet, args.verbose, args.debug, args.silent)
-        set_throttle_value(args.throttle)
-
         search_engine = SearchEngineType.resolve(args.search_engine)
 
         results = search_engine.search(args.search_term)
-        for i, result in enumerate(results):
-            Logger().print("{}: {}".format(i + 1, result))
 
-        selection = input("Enter the packs to download: ")
-        parsepacks = XDCCPack.from_xdcc_message(
-            "/msg A xdcc send #{}".format(selection)
-        )
-
-        packs = []
-        for pack in parsepacks:  # type: XDCCPack
-            packs.append(results[pack.packnumber - 1])
+        # noinspection PyTypeChecker
+        packs = selection_prompt(results)  # type: List[XDCCPack]
         prepare_packs(packs, args.out)
 
         for pack in packs:
-            Logger().info("Downloading pack {}".format(pack))
+            logger.info("Downloading pack {}".format(pack))
 
         download_packs(
             packs,
             timeout=args.timeout,
-            fallback_channel=args.fallback_channel
+            fallback_channel=args.fallback_channel,
+            throttle=args.throttle
         )
 
     except ConnectionError:
         print("Connection Error, could not conduct search")
     except DownloadIncomplete:
-        Logger().warning("Download incomplete.")
+        logger.warning("Download incomplete.")
         raise KeyboardInterrupt()
+    except ValueError:
+        print("Invalid throttle value {}".format(args.throttle))
 
 
 if __name__ == "__main__":
@@ -89,7 +84,7 @@ if __name__ == "__main__":
                              "Defaults to the pack's file name. "
                              "When downloading multiple packs, index "
                              "numbers will be appended to the filename")
-    parser.add_argument("-t", "--throttle",
+    parser.add_argument("-t", "--throttle", default=-1,
                         help="Limits the download speed of xdcc-dl. "
                              "Append K,M or G for more convenient units")
     parser.add_argument("--timeout", default=120, type=int,

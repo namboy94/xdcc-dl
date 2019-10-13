@@ -19,26 +19,24 @@ along with xdcc-dl.  If not, see <http://www.gnu.org/licenses/>.
 LICENSE"""
 
 import os
+import logging
 import argparse
 from puffotter.init import cli_start, argparse_add_verbosity
 from xdcc_dl import sentry_dsn
 from xdcc_dl.xdcc import download_packs
-from xdcc_dl.helper import set_throttle_value, set_logging_level, prepare_packs
+from xdcc_dl.helper import prepare_packs
 from xdcc_dl.entities import XDCCPack
-from xdcc_dl.logging import Logger
 from xdcc_dl.xdcc.exceptions import DownloadIncomplete
 
 
-def main(args: argparse.Namespace):
+def main(args: argparse.Namespace, logger: logging.Logger):
     """
     Starts the main method of the program
     :param args: The command line arguments
+    :param logger: The logger to use
     :return: None
     """
     try:
-        set_throttle_value(args.throttle)
-        set_logging_level(args.quiet, args.verbose, args.debug, args.silent)
-
         packs = XDCCPack.from_xdcc_message(
             args.message, os.getcwd(), args.server
         )
@@ -47,12 +45,15 @@ def main(args: argparse.Namespace):
         download_packs(
             packs,
             timeout=args.timeout,
-            fallback_channel=args.fallback_channel
+            fallback_channel=args.fallback_channel,
+            throttle=args.throttle
         )
 
     except DownloadIncomplete:
-        Logger().warning("Download incomplete.")
+        logger.warning("Download incomplete.")
         raise KeyboardInterrupt()
+    except ValueError:
+        print("Invalid throttle value {}".format(args.throttle))
 
 
 if __name__ == "__main__":
@@ -70,7 +71,7 @@ if __name__ == "__main__":
                              "Defaults to the pack's file name. "
                              "When downloading multiple packs, index "
                              "numbers will be appended to the filename")
-    parser.add_argument("-t", "--throttle",
+    parser.add_argument("-t", "--throttle", default=-1,
                         help="Limits the download speed of xdcc-dl. "
                              "Append K,M or G for more convenient units")
     parser.add_argument("--timeout", default=120, type=int,
