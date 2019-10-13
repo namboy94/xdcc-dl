@@ -94,10 +94,9 @@ if __name__ == "__main__":
                              "Append K,M or G for more convenient units")
     parser.add_argument("--timeout", default=120, type=int,
                         help="Sets a timeout for starting the download")
-    parser.add_argument("--silent", action="store_true",
-                        help="Disables all print output")
     parser.add_argument("--fallback-channel",
-                        help="Fallback channel in case ")
+                        help="Fallback channel in case a channel could not"
+                             "be joined automatically using WHOIS commands")
     argparse_add_verbosity(parser)
     cli_start(
         main, parser,
