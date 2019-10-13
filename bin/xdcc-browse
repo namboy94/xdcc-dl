@@ -26,7 +26,7 @@ from puffotter.init import cli_start, argparse_add_verbosity
 from puffotter.prompt import selection_prompt
 from xdcc_dl import sentry_dsn
 from xdcc_dl.xdcc.exceptions import DownloadIncomplete
-from xdcc_dl.helper import prepare_packs
+from xdcc_dl.helper import prepare_packs, add_xdcc_argparse_arguments
 from xdcc_dl.entities import XDCCPack
 from xdcc_dl.xdcc import download_packs
 from xdcc_dl.pack_search.SearchEngine import SearchEngineType
@@ -75,22 +75,7 @@ if __name__ == "__main__":
                         default=SearchEngineType.HORRIBLESUBS.name.lower(),
                         choices=SearchEngineType.choices(True),
                         help="The Search Engine to use")
-    parser.add_argument("-s", "--server",
-                        default="irc.rizon.net",
-                        help="Specifies the IRC Server. "
-                             "Defaults to irc.rizon.net")
-    parser.add_argument("-o", "--out",
-                        help="Specifies the target file. "
-                             "Defaults to the pack's file name. "
-                             "When downloading multiple packs, index "
-                             "numbers will be appended to the filename")
-    parser.add_argument("-t", "--throttle", default=-1,
-                        help="Limits the download speed of xdcc-dl. "
-                             "Append K,M or G for more convenient units")
-    parser.add_argument("--timeout", default=120, type=int,
-                        help="Sets a timeout for starting the download")
-    parser.add_argument("--fallback-channel",
-                        help="Fallback channel in case ")
+    add_xdcc_argparse_arguments(parser)
     argparse_add_verbosity(parser)
     cli_start(
         main, parser,

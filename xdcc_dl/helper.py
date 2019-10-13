@@ -17,6 +17,7 @@ You should have received a copy of the GNU General Public License
 along with xdcc-dl.  If not, see <http://www.gnu.org/licenses/>.
 LICENSE"""
 
+from argparse import ArgumentParser
 from typing import List, Optional
 from xdcc_dl.entities.XDCCPack import XDCCPack
 
@@ -35,3 +36,28 @@ def prepare_packs(packs: List[XDCCPack], location: Optional[str]):
             # Generate unique names for each pack file
             for i, pack in enumerate(packs):
                 pack.set_filename(location + "-" + str(i).zfill(3), True)
+
+
+def add_xdcc_argparse_arguments(parser: ArgumentParser):
+    """
+    Adds relevant command line arguments for an argument parser for xdcc-dl
+    :param parser: The parser to modify
+    :return: None
+    """
+    parser.add_argument("-s", "--server",
+                        default="irc.rizon.net",
+                        help="Specifies the IRC Server. "
+                             "Defaults to irc.rizon.net")
+    parser.add_argument("-o", "--out",
+                        help="Specifies the target file. "
+                             "Defaults to the pack's file name. "
+                             "When downloading multiple packs, index "
+                             "numbers will be appended to the filename")
+    parser.add_argument("-t", "--throttle", default=-1,
+                        help="Limits the download speed of xdcc-dl. "
+                             "Append K,M or G for more convenient units")
+    parser.add_argument("--timeout", default=120, type=int,
+                        help="Sets a timeout for starting the download")
+    parser.add_argument("--fallback-channel",
+                        help="Fallback channel in case a channel could not"
+                             "be joined automatically using WHOIS commands")

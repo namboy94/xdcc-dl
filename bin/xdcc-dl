@@ -24,7 +24,7 @@ import argparse
 from puffotter.init import cli_start, argparse_add_verbosity
 from xdcc_dl import sentry_dsn
 from xdcc_dl.xdcc import download_packs
-from xdcc_dl.helper import prepare_packs
+from xdcc_dl.helper import prepare_packs, add_xdcc_argparse_arguments
 from xdcc_dl.entities import XDCCPack
 from xdcc_dl.xdcc.exceptions import DownloadIncomplete
 
@@ -62,23 +62,7 @@ if __name__ == "__main__":
                         help="An XDCC Message. Supports ranges (1-100), "
                              "ranges with steps (1-100;2) as well as "
                              "comma-separated packs: (1,2,3).")
-    parser.add_argument("-s", "--server",
-                        default="irc.rizon.net",
-                        help="Specifies the IRC Server. "
-                             "Defaults to irc.rizon.net")
-    parser.add_argument("-o", "--out",
-                        help="Specifies the target file. "
-                             "Defaults to the pack's file name. "
-                             "When downloading multiple packs, index "
-                             "numbers will be appended to the filename")
-    parser.add_argument("-t", "--throttle", default=-1,
-                        help="Limits the download speed of xdcc-dl. "
-                             "Append K,M or G for more convenient units")
-    parser.add_argument("--timeout", default=120, type=int,
-                        help="Sets a timeout for starting the download")
-    parser.add_argument("--fallback-channel",
-                        help="Fallback channel in case a channel could not"
-                             "be joined automatically using WHOIS commands")
+    add_xdcc_argparse_arguments(parser)
     argparse_add_verbosity(parser)
     cli_start(
         main, parser,
