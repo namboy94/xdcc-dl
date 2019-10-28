@@ -26,7 +26,8 @@ def download_packs(
         packs: List[XDCCPack],
         timeout: int = 120,
         fallback_channel: Optional[str] = None,
-        throttle: Union[int, str] = -1
+        throttle: Union[int, str] = -1,
+        wait_time: int = 0
 ):
     """
     Downloads a list of XDCC Packs
@@ -36,6 +37,8 @@ def download_packs(
     :param throttle: Throttles the download to n bytes per second.
                      If this value is <= 0, the download speed will be
                      unlimited
+    :param wait_time: Waits for the specified amount of time before sending
+                      a message
     :return: None
     """
     for pack in packs:
@@ -43,6 +46,7 @@ def download_packs(
             pack,
             timeout=timeout,
             fallback_channel=fallback_channel,
-            throttle=throttle
+            throttle=throttle,
+            wait_time=wait_time
         )
         client.download()

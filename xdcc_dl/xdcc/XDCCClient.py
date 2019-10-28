@@ -51,7 +51,8 @@ class XDCCClient(SimpleIRCClient):
             retry: bool = False,
             timeout: int = 120,
             fallback_channel: Optional[str] = None,
-            throttle: Union[int, str] = -1
+            throttle: Union[int, str] = -1,
+            wait_time: int = 0
     ):
         """
         Initializes the XDCC IRC client
@@ -63,6 +64,8 @@ class XDCCClient(SimpleIRCClient):
         :param throttle: Throttles the download to n bytes per second.
                          If this value is <= 0, the download speed will be
                          unlimited
+        :param wait_time: Waits for the specified amount of time before sending
+                          a message
         """
         self.logger = ColorLogger(
             logging.getLogger(self.__class__.__name__),
@@ -92,6 +95,7 @@ class XDCCClient(SimpleIRCClient):
         self.timeout = timeout
         self.timed_out = False
         self.fallback_channel = fallback_channel
+        self.wait_time = wait_time
         self.connected = True
         self.disconnected = False
 
@@ -481,6 +485,10 @@ class XDCCClient(SimpleIRCClient):
         :param conn: The connection to use
         :return: None
         """
+        self.logger.info("Waiting for {}s before sending message"
+                         .format(self.wait_time))
+        time.sleep(self.wait_time)
+
         msg = self.pack.get_request_message()
         self.logger.info("Send XDCC Message: " + msg)
         self.message_sent = True
