@@ -27,6 +27,7 @@ import irc.events
 import irc.client
 from colorama import Fore, Back
 from threading import Thread, Lock
+from subprocess import check_output, CalledProcessError
 from typing import Optional, IO, Any, List, Union
 from puffotter.units import human_readable_bytes, byte_string_to_byte_count
 from puffotter.print import pprint
@@ -601,6 +602,14 @@ class XDCCClient(SimpleIRCClient):
                 human_readable_bytes(self.filesize),
                 speed
             )
+
+            try:
+                rows, _columns = check_output(['stty', 'size']).split()
+                columns = int(_columns)
+            except (ValueError, CalledProcessError):
+                columns = 80
+            log_message = log_message[0:columns]
+
             pprint(log_message, end="\r", bg="lyellow", fg="black")
             time.sleep(0.1)
         self.logger.info("Progress Printer stopped")
