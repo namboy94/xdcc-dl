@@ -5,7 +5,7 @@ stages:
   - release
 
 default:
-  image: namboy94/ci-docker-environment:0.8.0
+  image: namboy94/ci-docker-environment:0.14.0
   before_script:
     - echo "$SERVER_ACCESS_KEY" > ~/.ssh/id_rsa
     - chmod 0600 ~/.ssh/id_rsa

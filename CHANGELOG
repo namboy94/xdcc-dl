@@ -1,3 +1,5 @@
+V 4.2.0:
+  - Replaced horriblesubs search engine with subsplease
 V 4.1.0:
   - Avoid overlap if terminal window is too small during download
   - Added wait_time parameter
