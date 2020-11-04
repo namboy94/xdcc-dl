@@ -22,6 +22,7 @@ import time
 import struct
 import shlex
 import socket
+import random
 import logging
 import irc.events
 import irc.client
@@ -165,12 +166,18 @@ class XDCCClient(SimpleIRCClient):
         try:
             self.logger.info("Connecting to " + self.server.address + ":" +
                              str(self.server.port))
+            self.user = User("Toni")
             self.connect(
                 self.server.address,
                 self.server.port,
                 self.user.username
             )
+            delay = random.randint(5, 10)
+            self.logger.info(f"Delaying download initialization by {delay}s")
+            time.sleep(delay)
+
             self.connected = True
+
             self.connect_start_time = time.time()
 
             self.timeout_watcher_thread.start()
@@ -280,6 +287,8 @@ class XDCCClient(SimpleIRCClient):
 
         for channel in channels:
             # Join all channels to avoid only joining a members-only channel
+            time.sleep(random.randint(1, 3))
+            self.logger.info(f"Joining channel {channel}")
             conn.join(channel)
 
     def on_endofwhois(self, conn: ServerConnection, _: Event):

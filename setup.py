@@ -48,7 +48,8 @@ if __name__ == "__main__":
             "colorama",
             "irc",
             "puffotter",
-            "sentry-sdk"
+            "sentry-sdk",
+            "names"
         ],
         include_package_data=True,
         zip_safe=False
