@@ -172,7 +172,10 @@ def get_page_results(page_content: BeautifulSoup) -> List[XDCCPack]:
             elif column_count == 5:
                 pass  # This is the 'gets' section, we don't need that
             elif column_count == 6:
-                size = line_part.text.replace("\xa0", " ").replace(" ", "")
+                size = line_part.text\
+                    .replace("\xa0", " ")\
+                    .replace(" ", "")\
+                    .replace("B", "")
 
         # Resets state after a pack was successfully parsed,
         # and adds xdcc pack to results
@@ -184,7 +187,17 @@ def get_page_results(page_content: BeautifulSoup) -> List[XDCCPack]:
             # Generate XDCCPack and append it to the list
             result = XDCCPack(IrcServer(server), bot, pack_number)
             result.set_filename(file_name)
-            result.set_size(byte_string_to_byte_count(size))
+
+            # TODO Make this nicer
+            try:
+                result.set_size(byte_string_to_byte_count(size))
+            except ValueError:
+                size_parts = size.split(".", 1)
+                for char in size_parts[1]:
+                    if not char.isdigit():
+                        size_parts[0] += char
+                result.set_size(byte_string_to_byte_count(size_parts[0]))
+
             results.append(result)
 
         # Resets state after invalid pack
