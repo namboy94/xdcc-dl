@@ -70,16 +70,7 @@ def find_nibl_packs(search_phrase: str) -> List[XDCCPack]:
 
         result = XDCCPack(IrcServer(server), bot, packnumber)
 
-        # TODO Make this nicer
-        try:
-            result.set_size(byte_string_to_byte_count(size))
-        except ValueError:
-            size_parts = size.split(".", 1)
-            for char in size_parts[1]:
-                if not char.isdigit():
-                    size_parts[0] += char
-            result.set_size(byte_string_to_byte_count(size_parts[0]))
-
+        result.set_size(byte_string_to_byte_count(size))
         result.set_filename(filename)
         results.append(result)
         i += 1
