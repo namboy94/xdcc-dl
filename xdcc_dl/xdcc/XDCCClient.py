@@ -53,7 +53,9 @@ class XDCCClient(SimpleIRCClient):
             timeout: int = 120,
             fallback_channel: Optional[str] = None,
             throttle: Union[int, str] = -1,
-            wait_time: int = 0
+            wait_time: int = 0,
+            username: str = "",
+            channel_join_delay: Optional[int] = None
     ):
         """
         Initializes the XDCC IRC client
@@ -67,6 +69,8 @@ class XDCCClient(SimpleIRCClient):
                          unlimited
         :param wait_time: Waits for the specified amount of time before sending
                           a message
+        :param username: If specified sets the username to log on with
+        :param channel_join_delay: If specifies sets the channel join delay
         """
         self.logger = ColorLogger(
             logging.getLogger(self.__class__.__name__),
@@ -85,7 +89,7 @@ class XDCCClient(SimpleIRCClient):
         if self.download_limit <= 0:
             self.download_limit = -1
 
-        self.user = User()
+        self.user = User(username)
         self.pack = pack
         self.server = pack.server
         self.downloading = False
@@ -99,6 +103,11 @@ class XDCCClient(SimpleIRCClient):
         self.wait_time = wait_time
         self.connected = True
         self.disconnected = False
+
+        if channel_join_delay is None:
+            self.channel_join_delay = random.randint(5, 10)
+        else:
+            self.channel_join_delay = channel_join_delay
 
         # XDCC state variables
         self.peer_address = ""
@@ -166,15 +175,15 @@ class XDCCClient(SimpleIRCClient):
         try:
             self.logger.info("Connecting to " + self.server.address + ":" +
                              str(self.server.port))
-            self.user = User("Toni")
             self.connect(
                 self.server.address,
                 self.server.port,
                 self.user.username
             )
-            delay = random.randint(5, 10)
-            self.logger.info(f"Delaying download initialization by {delay}s")
-            time.sleep(delay)
+
+            self.logger.info(f"Delaying download initialization by "
+                             f"{self.channel_join_delay}s")
+            time.sleep(self.channel_join_delay)
 
             self.connected = True
 

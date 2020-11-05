@@ -65,3 +65,9 @@ def add_xdcc_argparse_arguments(parser: ArgumentParser):
     parser.add_argument("--wait-time", default=0, type=int,
                         help="Waits for the specified amount of time before "
                              "sending the xdcc send request")
+    parser.add_argument("--username",
+                        help="Specifies a user name for the downloader bot")
+    parser.add_argument("--channel-join-delay",
+                        help="Specifies a delay in seconds for how long the"
+                             "downloader should wait before connecting to"
+                             "channels")
