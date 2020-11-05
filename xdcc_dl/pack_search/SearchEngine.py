@@ -23,6 +23,7 @@ from xdcc_dl.entities.XDCCPack import XDCCPack
 from xdcc_dl.pack_search.procedures.nibl import find_nibl_packs
 from xdcc_dl.pack_search.procedures.ixirc import find_ixirc_packs
 from xdcc_dl.pack_search.procedures.subsplease import find_subsplease_packs
+from xdcc_dl.pack_search.procedures.xdcc_eu import find_xdcc_eu_packs
 
 
 class SearchEngine:
@@ -56,6 +57,7 @@ class SearchEngineType(Enum):
     SUBSPLEASE = SearchEngine("SubsPlease", find_subsplease_packs)
     NIBL = SearchEngine("Nibl", find_nibl_packs)
     IXIRC = SearchEngine("iXirc", find_ixirc_packs)
+    XDCC_EU = SearchEngine("xdcc-eu", find_xdcc_eu_packs)
 
     @classmethod
     def choices(cls, lower: bool = True) -> Set[str]:

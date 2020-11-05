@@ -1,9 +1,10 @@
-V 4.1.0:
+V 5.0.0:
   - Replaced horriblesubs search engine with subsplease
   - Fixed issues with the bot being banned due to bot detection mechanisms
   - Avoid overlap if terminal window is too small during download
   - Added wait_time parameter
   - Added file size display to xdcc-search and xdcc-browse
+  - Added xdcc.eu search engine
 V 4.0.0:
   - Went over to completely rely on python's built-in logging
   - Throttle value is now passed as parameter
