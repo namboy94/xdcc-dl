@@ -19,6 +19,7 @@ LICENSE"""
 
 # imports
 import names
+import random
 
 
 class User(object):
@@ -36,7 +37,10 @@ class User(object):
                          An empty string will also result in a random username
         """
         if username == "random" or username == "":
-            self.username = names.get_first_name()
+            self.username = \
+                names.get_first_name() + \
+                names.get_last_name() + \
+                str(random.randint(10, 100))
         else:
             self.username = username
 

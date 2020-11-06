@@ -5,6 +5,7 @@ V 5.0.0:
   - Added wait_time parameter
   - Added file size display to xdcc-search and xdcc-browse
   - Added xdcc.eu search engine
+  - Added --username and --channel
 V 4.0.0:
   - Went over to completely rely on python's built-in logging
   - Throttle value is now passed as parameter

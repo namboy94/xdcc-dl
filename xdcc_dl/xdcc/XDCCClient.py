@@ -97,7 +97,7 @@ class XDCCClient(SimpleIRCClient):
         self.channels = None  # type: Optional[List[str]]
         self.message_sent = False
         self.connect_start_time = 0.0
-        self.timeout = timeout
+        self.timeout = timeout + wait_time
         self.timed_out = False
         self.fallback_channel = fallback_channel
         self.wait_time = wait_time
@@ -173,8 +173,9 @@ class XDCCClient(SimpleIRCClient):
         message = ""
 
         try:
-            self.logger.info("Connecting to " + self.server.address + ":" +
-                             str(self.server.port))
+            self.logger.info(f"Connecting to "
+                             f"{self.server.address}:{self.server.port} "
+                             f"as user '{self.user.username}'")
             self.connect(
                 self.server.address,
                 self.server.port,
@@ -572,7 +573,8 @@ class XDCCClient(SimpleIRCClient):
         timeout time, a ping will be sent and handled by the on_ping method
         :return: None
         """
-        while not self.connected:
+        while not self.connected \
+                or self.connect_start_time + self.wait_time > time.time():
             pass
         self.logger.info("Timeout watcher started")
         while not self.message_sent and not self.disconnected:
@@ -581,7 +583,7 @@ class XDCCClient(SimpleIRCClient):
             if self.timeout < (time.time() - self.connect_start_time):
                 self.logger.info("Timeout detected")
                 self.connection.ping(self.server.address)
-                time.sleep(2)
+                break
         self.logger.info("Message sent without timeout")
 
     def progress_printer(self):
