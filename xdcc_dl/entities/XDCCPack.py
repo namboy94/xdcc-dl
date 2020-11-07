@@ -21,6 +21,7 @@ LICENSE"""
 import os
 import re
 from xdcc_dl.entities.IrcServer import IrcServer
+from puffotter.units import human_readable_bytes
 
 
 class XDCCPack(object):
@@ -107,7 +108,7 @@ class XDCCPack(object):
 
     def set_size(self, size: int):
         """
-        Sets the file size of the XDCC pack
+        Sets the file size of the XDCC pack in Bytes
 
         :param size: the size of the pack
         :return:     None
@@ -168,8 +169,9 @@ class XDCCPack(object):
         """
         :return: A string representation of the pack
         """
-        return self.filename + " (/msg " + self.bot + " " + \
-            self.get_request_message() + ")"
+        return f"{self.filename} (/msg {self.bot} " \
+               f"{self.get_request_message()}) " \
+               f"[{human_readable_bytes(self.size)}]"
 
     def __eq__(self, other) -> bool:
         """

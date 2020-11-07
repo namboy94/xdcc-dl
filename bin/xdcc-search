@@ -23,6 +23,7 @@ from puffotter.init import cli_start
 from requests.exceptions import ConnectionError
 from xdcc_dl import sentry_dsn
 from xdcc_dl.pack_search.SearchEngine import SearchEngineType
+from puffotter.units import human_readable_bytes
 
 
 def main(args: argparse.Namespace):
@@ -35,9 +36,10 @@ def main(args: argparse.Namespace):
         search_engine = SearchEngineType.resolve(args.search_engine)
         results = search_engine.search(args.search_term)
         for result in results:
-            message = "{} (xdcc-dl \"{}\")".format(
+            message = "{} [{}] (xdcc-dl \"{}\")".format(
                 result.filename,
-                result.get_request_message(True)
+                human_readable_bytes(result.get_size()),
+                result.get_request_message(True),
             )
             if result.server.address != "irc.rizon.net":
                 message = message[0:-1]

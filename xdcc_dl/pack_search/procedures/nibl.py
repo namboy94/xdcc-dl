@@ -23,6 +23,7 @@ from typing import List
 from bs4 import BeautifulSoup
 from xdcc_dl.entities.XDCCPack import XDCCPack
 from xdcc_dl.entities.IrcServer import IrcServer
+from puffotter.units import byte_string_to_byte_count
 
 
 def find_nibl_packs(search_phrase: str) -> List[XDCCPack]:
@@ -65,10 +66,11 @@ def find_nibl_packs(search_phrase: str) -> List[XDCCPack]:
 
         server = "irc.rizon.net"
         packnumber = int(pack_numbers[i].text)
-        size = file_sizes[i].text
+        size = file_sizes[i].text.lower()
 
         result = XDCCPack(IrcServer(server), bot, packnumber)
-        result.set_size(size)
+
+        result.set_size(byte_string_to_byte_count(size))
         result.set_filename(filename)
         results.append(result)
         i += 1

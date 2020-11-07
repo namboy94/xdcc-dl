@@ -57,7 +57,17 @@ def add_xdcc_argparse_arguments(parser: ArgumentParser):
                         help="Limits the download speed of xdcc-dl. "
                              "Append K,M or G for more convenient units")
     parser.add_argument("--timeout", default=120, type=int,
-                        help="Sets a timeout for starting the download")
+                        help="If the download didn't start during the "
+                             "specified timeout, the program will stop")
     parser.add_argument("--fallback-channel",
                         help="Fallback channel in case a channel could not"
                              "be joined automatically using WHOIS commands")
+    parser.add_argument("--wait-time", default=0, type=int,
+                        help="Waits for the specified amount of time before "
+                             "sending the xdcc send request")
+    parser.add_argument("--username",
+                        help="Specifies a user name for the downloader bot")
+    parser.add_argument("--channel-join-delay", type=int,
+                        help="Specifies a delay in seconds for how long the"
+                             "downloader should wait before connecting to"
+                             "channels")

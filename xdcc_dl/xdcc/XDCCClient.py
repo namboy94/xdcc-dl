@@ -22,11 +22,13 @@ import time
 import struct
 import shlex
 import socket
+import random
 import logging
 import irc.events
 import irc.client
 from colorama import Fore, Back
 from threading import Thread, Lock
+from subprocess import check_output, CalledProcessError
 from typing import Optional, IO, Any, List, Union
 from puffotter.units import human_readable_bytes, byte_string_to_byte_count
 from puffotter.print import pprint
@@ -50,7 +52,10 @@ class XDCCClient(SimpleIRCClient):
             retry: bool = False,
             timeout: int = 120,
             fallback_channel: Optional[str] = None,
-            throttle: Union[int, str] = -1
+            throttle: Union[int, str] = -1,
+            wait_time: int = 0,
+            username: str = "",
+            channel_join_delay: Optional[int] = None
     ):
         """
         Initializes the XDCC IRC client
@@ -62,6 +67,10 @@ class XDCCClient(SimpleIRCClient):
         :param throttle: Throttles the download to n bytes per second.
                          If this value is <= 0, the download speed will be
                          unlimited
+        :param wait_time: Waits for the specified amount of time before sending
+                          a message
+        :param username: If specified sets the username to log on with
+        :param channel_join_delay: If specifies sets the channel join delay
         """
         self.logger = ColorLogger(
             logging.getLogger(self.__class__.__name__),
@@ -80,7 +89,7 @@ class XDCCClient(SimpleIRCClient):
         if self.download_limit <= 0:
             self.download_limit = -1
 
-        self.user = User()
+        self.user = User(username)
         self.pack = pack
         self.server = pack.server
         self.downloading = False
@@ -88,11 +97,17 @@ class XDCCClient(SimpleIRCClient):
         self.channels = None  # type: Optional[List[str]]
         self.message_sent = False
         self.connect_start_time = 0.0
-        self.timeout = timeout
+        self.timeout = timeout + wait_time
         self.timed_out = False
         self.fallback_channel = fallback_channel
+        self.wait_time = wait_time
         self.connected = True
         self.disconnected = False
+
+        if channel_join_delay is None:
+            self.channel_join_delay = random.randint(5, 10)
+        else:
+            self.channel_join_delay = channel_join_delay
 
         # XDCC state variables
         self.peer_address = ""
@@ -158,14 +173,21 @@ class XDCCClient(SimpleIRCClient):
         message = ""
 
         try:
-            self.logger.info("Connecting to " + self.server.address + ":" +
-                             str(self.server.port))
+            self.logger.info(f"Connecting to "
+                             f"{self.server.address}:{self.server.port} "
+                             f"as user '{self.user.username}'")
             self.connect(
                 self.server.address,
                 self.server.port,
                 self.user.username
             )
+
+            self.logger.info(f"Delaying download initialization by "
+                             f"{self.channel_join_delay}s")
+            time.sleep(self.channel_join_delay)
+
             self.connected = True
+
             self.connect_start_time = time.time()
 
             self.timeout_watcher_thread.start()
@@ -275,6 +297,8 @@ class XDCCClient(SimpleIRCClient):
 
         for channel in channels:
             # Join all channels to avoid only joining a members-only channel
+            time.sleep(random.randint(1, 3))
+            self.logger.info(f"Joining channel {channel}")
             conn.join(channel)
 
     def on_endofwhois(self, conn: ServerConnection, _: Event):
@@ -480,6 +504,10 @@ class XDCCClient(SimpleIRCClient):
         :param conn: The connection to use
         :return: None
         """
+        self.logger.info("Waiting for {}s before sending message"
+                         .format(self.wait_time))
+        time.sleep(self.wait_time)
+
         msg = self.pack.get_request_message()
         self.logger.info("Send XDCC Message: " + msg)
         self.message_sent = True
@@ -545,7 +573,8 @@ class XDCCClient(SimpleIRCClient):
         timeout time, a ping will be sent and handled by the on_ping method
         :return: None
         """
-        while not self.connected:
+        while not self.connected \
+                or self.connect_start_time + self.wait_time > time.time():
             pass
         self.logger.info("Timeout watcher started")
         while not self.message_sent and not self.disconnected:
@@ -554,7 +583,7 @@ class XDCCClient(SimpleIRCClient):
             if self.timeout < (time.time() - self.connect_start_time):
                 self.logger.info("Timeout detected")
                 self.connection.ping(self.server.address)
-                time.sleep(2)
+                break
         self.logger.info("Message sent without timeout")
 
     def progress_printer(self):
@@ -601,6 +630,14 @@ class XDCCClient(SimpleIRCClient):
                 human_readable_bytes(self.filesize),
                 speed
             )
+
+            try:
+                rows, _columns = check_output(['stty', 'size']).split()
+                columns = int(_columns)
+            except (ValueError, CalledProcessError):
+                columns = 80
+            log_message = log_message[0:columns]
+
             pprint(log_message, end="\r", bg="lyellow", fg="black")
             time.sleep(0.1)
         self.logger.info("Progress Printer stopped")

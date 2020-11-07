@@ -24,9 +24,9 @@ from xdcc_dl.entities.XDCCPack import XDCCPack
 from xdcc_dl.entities.IrcServer import IrcServer
 
 
-def find_horriblesubs_packs(search_phrase: str) -> List[XDCCPack]:
+def find_subsplease_packs(search_phrase: str) -> List[XDCCPack]:
     """
-    Method that conducts the xdcc pack search for xdcc.horriblesubs.info
+    Method that conducts the xdcc pack search for subsplease.org
 
     :return: the search results as a list of XDCCPack objects
     """
@@ -36,7 +36,7 @@ def find_horriblesubs_packs(search_phrase: str) -> List[XDCCPack]:
     search_query = search_phrase.replace(" ", "%20")
     search_query = search_query.replace("!", "%21")
 
-    url = "http://xdcc.horriblesubs.info/search.php?t=" + search_query
+    url = "https://subsplease.org/xdcc/search.php?t=" + search_query
     scraper = cfscrape.create_scraper()
     results = scraper.get(url).text.split(";")
 
@@ -51,7 +51,7 @@ def find_horriblesubs_packs(search_phrase: str) -> List[XDCCPack]:
             packnumber = int(result["n"])
             pack = XDCCPack(IrcServer("irc.rizon.net"), botname, packnumber)
             pack.set_filename(filename)
-            pack.set_size(filesize)
+            pack.set_size(filesize * 1000 * 1000)
             packs.append(pack)
 
         except IndexError:  # In case the line is not parseable
@@ -62,7 +62,7 @@ def find_horriblesubs_packs(search_phrase: str) -> List[XDCCPack]:
 
 def parse_result(result: str) -> Dict[str, str]:
     """
-    Turns the weird horriblesubs response syntax into a useable dictionary
+    Turns the weird subsplease response syntax into a useable dictionary
     :param result: The result to parse
     :return: The result as a dictionary
     """

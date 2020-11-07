@@ -18,8 +18,8 @@ along with xdcc-dl.  If not, see <http://www.gnu.org/licenses/>.
 LICENSE"""
 
 # imports
+import names
 import random
-import string
 
 
 class User(object):
@@ -32,12 +32,15 @@ class User(object):
         Initializes the User
 
         :param username: the user's username. If left empty, or the string
-                         'random' is passed, a random username consisting only
-                         of ASCII characters will be generated as the username.
+                         'random' is passed, a random username is generated
+                         using the names package.
                          An empty string will also result in a random username
         """
         if username == "random" or username == "":
-            self.username = self.generate_random_username()
+            self.username = \
+                names.get_first_name() + \
+                names.get_last_name() + \
+                str(random.randint(10, 100))
         else:
             self.username = username
 
@@ -46,14 +49,3 @@ class User(object):
         :return: The user's username
         """
         return self.username
-
-    @staticmethod
-    def generate_random_username(length: int = 10) -> str:
-        """
-        Generates a random username of given length
-
-        :param length: The length of the username
-        :return:       The random username
-        """
-        return "".join(random.choice(string.ascii_uppercase)
-                       for _ in range(length))

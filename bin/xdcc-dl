@@ -46,7 +46,10 @@ def main(args: argparse.Namespace, logger: logging.Logger):
             packs,
             timeout=args.timeout,
             fallback_channel=args.fallback_channel,
-            throttle=args.throttle
+            throttle=args.throttle,
+            wait_time=args.wait_time,
+            username=args.username,
+            channel_join_delay=args.channel_join_delay
         )
 
     except DownloadIncomplete:
