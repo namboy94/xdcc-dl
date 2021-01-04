@@ -1,3 +1,5 @@
+V 5.1.0:
+  - iXIRC search now uses the API, courtesy of Jean Wicht
 V 5.0.0:
   - Replaced horriblesubs search engine with subsplease
   - Fixed issues with the bot being banned due to bot detection mechanisms
