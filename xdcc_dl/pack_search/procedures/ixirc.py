@@ -1,5 +1,6 @@
 """LICENSE
 Copyright 2016 Hermann Krumrey <hermann@krumreyh.com>
+          2020 Jean Wicht <jean.wicht@gmail.com>
 
 This file is part of xdcc-dl.
 
@@ -17,7 +18,6 @@ You should have received a copy of the GNU General Public License
 along with xdcc-dl.  If not, see <http://www.gnu.org/licenses/>.
 LICENSE"""
 
-# imports
 import requests
 from typing import List
 from xdcc_dl.entities.XDCCPack import XDCCPack
@@ -27,6 +27,7 @@ from xdcc_dl.entities.IrcServer import IrcServer
 def find_ixirc_packs(search_phrase: str) -> List[XDCCPack]:
     """
     Searches for XDCC Packs matching the specified search string on ixirc.com
+    Implementation courtesy of Jean Wicht <jean.wicht@gmail.com>.
 
     :param search_phrase: The search phrase to search for
     :return:              The list of found XDCC Packs
@@ -35,32 +36,37 @@ def find_ixirc_packs(search_phrase: str) -> List[XDCCPack]:
     if not search_phrase:
         return []
 
-    packs = []
+    packs: List[XDCCPack] = []
     page_id = 0
-    n_pages = 42 # the number of pages of results will be set properly in the request below
-    while page_id < n_pages:
-        r = requests.get("https://ixirc.com/api/", {"q": search_phrase, "pn": page_id})
+    # the number of pages of results will be set properly in the request below
+    page_count = 42
+    while page_id < page_count:
+        request = requests.get(
+            "https://ixirc.com/api/",
+            params={"q": search_phrase, "pn": str(page_id)},
+        )
 
-        if r.status_code != 200:
+        if request.status_code != 200:
             return packs
 
-        j = r.json()
-        n_pages = int(j["pc"])
+        data = request.json()
+        page_count = int(data["pc"])
 
-        if "results" not in j:
+        if "results" not in data:
             # no results
             return []
 
-        for r in j["results"]:
-            if "uname" not in r:
+        for result in data["results"]:
+            if "uname" not in result:
                 # bot not online
                 continue
 
-            pack = XDCCPack(IrcServer(r["naddr"], r["nport"]), r["uname"], int(r["n"]))
-            pack.set_filename(r["name"])
-            pack.set_size(r["sz"])
+            server = IrcServer(result["naddr"], result["nport"])
+            pack = XDCCPack(server, result["uname"], int(result["n"]))
+            pack.set_filename(result["name"])
+            pack.set_size(result["sz"])
             packs.append(pack)
 
-        page_id += 1 # next page
+        page_id += 1  # next page
 
     return packs
