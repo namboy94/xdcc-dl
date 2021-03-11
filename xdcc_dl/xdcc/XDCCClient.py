@@ -27,7 +27,7 @@ import logging
 import irc.events
 import irc.client
 from colorama import Fore, Back
-from threading import Thread, Lock
+from threading import Thread
 from subprocess import check_output, CalledProcessError
 from typing import Optional, IO, Any, List, Union
 from puffotter.units import human_readable_bytes, byte_string_to_byte_count
@@ -118,7 +118,8 @@ class XDCCClient(SimpleIRCClient):
         self.xdcc_connection = None  # type: Optional[DCCConnection]
         self.retry = retry
         self.struct_format = b"!I"
-        self.ack_lock = Lock()
+        self.ack_queue: List[bytes] = []
+        self.ack_thread = Thread(target=self.send_acks)
 
         if not self.retry:
             if self.download_limit == -1:
@@ -192,6 +193,7 @@ class XDCCClient(SimpleIRCClient):
 
             self.timeout_watcher_thread.start()
             self.progress_printer_thread.start()
+            self.ack_thread.start()
 
             self.start()
         except AlreadyDownloadedException:
@@ -529,6 +531,7 @@ class XDCCClient(SimpleIRCClient):
         # Whenever the old one gets too small
         try:
             payload = struct.pack(self.struct_format, self.progress)
+            self.ack_queue.append(payload)
         except struct.error:
 
             if self.struct_format == b"!I":
@@ -542,23 +545,6 @@ class XDCCClient(SimpleIRCClient):
 
             self._ack()
             return
-
-        def acker():
-            """
-            The actual ack will be sent using a different thread since that
-            somehow avoids the socket timing out for some reason.
-            :return: None
-            """
-
-            self.ack_lock.acquire()
-            try:
-                self.xdcc_connection.socket.send(payload)
-            except socket.timeout:
-                self.logger.debug("ACK timed out")
-                self._disconnect()
-            finally:
-                self.ack_lock.release()
-        Thread(target=acker).start()
 
     def _disconnect(self):
         """
@@ -585,6 +571,25 @@ class XDCCClient(SimpleIRCClient):
                 self.connection.ping(self.server.address)
                 break
         self.logger.info("Message sent without timeout")
+
+    def send_acks(self):
+
+        while not self.downloading:
+            pass
+
+        while self.downloading:
+            if len(self.ack_queue) > 0:
+                payload = self.ack_queue.pop()
+                try:
+                    self.xdcc_connection.socket.send(payload)
+                except socket.timeout:
+                    self.logger.debug("ACK timed out")
+                    self._disconnect()
+                    self._disconnect()
+                except AttributeError:
+                    self.logger.warning("Missing XDCC socket")
+                    self._disconnect()
+                    return
 
     def progress_printer(self):
         """

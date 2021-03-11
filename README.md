@@ -78,7 +78,7 @@ from xdcc_dl.entities import XDCCPack, IrcServer
 # Generate packs
 manual = XDCCPack(IrcServer("irc.rizon.net"), "bot", 1)
 from_message = XDCCPack.from_xdcc_message("/msg bot xdcc send #2-10")
-search_results = SearchEngines.HORRIBLESUBS.value.search("Test")
+search_results = SearchEngines.SUBSPLEASE.value.search("Test")
 combined = [manual] + from_message + search_results
 
 # Start download
