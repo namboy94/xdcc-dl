@@ -27,7 +27,7 @@ import logging
 import irc.events
 import irc.client
 from colorama import Fore, Back
-from threading import Thread
+from threading import Thread, Lock
 from subprocess import check_output, CalledProcessError
 from typing import Optional, IO, Any, List, Union
 from puffotter.units import human_readable_bytes, byte_string_to_byte_count
@@ -120,6 +120,7 @@ class XDCCClient(SimpleIRCClient):
         self.struct_format = b"!I"
         self.ack_queue: List[bytes] = []
         self.ack_thread = Thread(target=self.send_acks)
+        self.ack_lock = Lock()
 
         if not self.retry:
             if self.download_limit == -1:
@@ -193,7 +194,6 @@ class XDCCClient(SimpleIRCClient):
 
             self.timeout_watcher_thread.start()
             self.progress_printer_thread.start()
-            self.ack_thread.start()
 
             self.start()
         except AlreadyDownloadedException:
@@ -216,8 +216,10 @@ class XDCCClient(SimpleIRCClient):
         finally:
             self.connected = False
             self.disconnected = True
+            self.logger.info("Joining threads")
             self.timeout_watcher_thread.join()
             self.progress_printer_thread.join()
+            self.ack_thread.join()
             print("\n" + message)
 
             self.logger.info("Disconnecting")
@@ -381,7 +383,9 @@ class XDCCClient(SimpleIRCClient):
             self.xdcc_file = open(self.pack.get_filepath(), mode)
             self.xdcc_connection = self.dcc("raw")
             self.xdcc_connection.connect(self.peer_address, self.peer_port)
-            self.xdcc_connection.socket.settimeout(5)
+            # self.xdcc_connection.socket.settimeout(5)
+
+            self.ack_thread.start()
 
         self.logger.info("CTCP Message: " + str(event.arguments))
         if event.arguments[0] == "DCC":
@@ -551,6 +555,7 @@ class XDCCClient(SimpleIRCClient):
         Disconnects all connections of the XDCC Client
         :return: None
         """
+        self.logger.info("Initializing Disconnect")
         self.connection.reactor.disconnect_all()
 
     def timeout_watcher(self):
@@ -561,11 +566,11 @@ class XDCCClient(SimpleIRCClient):
         """
         while not self.connected \
                 or self.connect_start_time + self.wait_time > time.time():
-            pass
+            time.sleep(0.5)
+
         self.logger.info("Timeout watcher started")
         while not self.message_sent and not self.disconnected:
             time.sleep(1)
-            self.logger.debug("Iterating timeout thread")
             if self.timeout < (time.time() - self.connect_start_time):
                 self.logger.info("Timeout detected")
                 self.connection.ping(self.server.address)
@@ -573,23 +578,22 @@ class XDCCClient(SimpleIRCClient):
         self.logger.info("Message sent without timeout")
 
     def send_acks(self):
-
-        while not self.downloading:
-            pass
-
         while self.downloading:
-            if len(self.ack_queue) > 0:
-                payload = self.ack_queue.pop()
-                try:
-                    self.xdcc_connection.socket.send(payload)
-                except socket.timeout:
-                    self.logger.debug("ACK timed out")
-                    self._disconnect()
-                    self._disconnect()
-                except AttributeError:
-                    self.logger.warning("Missing XDCC socket")
-                    self._disconnect()
-                    return
+            self.ack_lock.acquire()
+            try:
+                if len(self.ack_queue) > 0:
+                    self.xdcc_connection.socket.send(self.ack_queue.pop(0))
+                else:
+                    time.sleep(0.5)
+            except socket.timeout:
+                self.logger.debug("ACK timed out")
+                continue
+            except AttributeError:
+                self.logger.warning("Missing XDCC socket")
+                # This happens sometimes, don't ask me why though
+                continue
+            finally:
+                self.ack_lock.release()
 
     def progress_printer(self):
         """
