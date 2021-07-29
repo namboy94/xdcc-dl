@@ -38,6 +38,10 @@ def find_nibl_packs(search_phrase: str) -> List[XDCCPack]:
 
     content = BeautifulSoup(html, "html.parser")
     rows = content.find_all("tr")
+
+    if len(rows) == 0:
+        return []
+
     header = rows.pop(0)
     keys = [x.text for x in header.find_all("th")]
     results = [

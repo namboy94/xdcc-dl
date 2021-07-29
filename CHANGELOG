@@ -1,3 +1,5 @@
+V 5.2.1:
+  - Fixed nibl search engine with 0 search results
 V 5.2.0:
   - Made XDCC Client slightly more reliable
   - Fixed nibl search engine
