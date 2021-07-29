@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with xdcc-dl.  If not, see <http://www.gnu.org/licenses/>.
 LICENSE"""
 
-# imports
+import logging
 import cfscrape
 from typing import List, Dict
 from xdcc_dl.entities.XDCCPack import XDCCPack
@@ -38,7 +38,15 @@ def find_subsplease_packs(search_phrase: str) -> List[XDCCPack]:
 
     url = "https://subsplease.org/xdcc/search.php?t=" + search_query
     scraper = cfscrape.create_scraper()
-    results = scraper.get(url).text.split(";")
+    response = scraper.get(url)
+
+    if response.status_code >= 300:
+        logging.warning("Failed to load data from subsplease. "
+                        "Most likely has something to do with CloudFlare's "
+                        "DDoS protection")
+        return []
+
+    results = response.text.split(";")
 
     packs = []
     for result in results:
