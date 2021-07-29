@@ -1,3 +1,7 @@
+V 5.2.0:
+  - Made XDCC Client slightly more reliable
+  - Fixed nibl search engine
+  - Better error handling for subsplease engine (which is currently broken due to CloudFlare DDoS protection)
 V 5.1.0:
   - iXIRC search now uses the API, courtesy of Jean Wicht
 V 5.0.0:

@@ -17,7 +17,6 @@ You should have received a copy of the GNU General Public License
 along with xdcc-dl.  If not, see <http://www.gnu.org/licenses/>.
 LICENSE"""
 
-# imports
 import requests
 from typing import List
 from bs4 import BeautifulSoup
@@ -33,46 +32,27 @@ def find_nibl_packs(search_phrase: str) -> List[XDCCPack]:
     :param search_phrase: The search phrase to search for
     :return:              The list of found XDCC Packs
     """
-
-    # Prepare the search term, nibl.co.uk uses + symbols as spaces.
-    split_search_term = search_phrase.split(" ")
-    prepared_search_term = split_search_term[0]
-    i = 1
-    while i < len(split_search_term):
-        prepared_search_term += "+" + split_search_term[i]
-        i += 1
-
-    # Get the data from the website
-
-    url = "https://nibl.co.uk/bots.php?search=" + prepared_search_term
+    query = "+".join(search_phrase.split(" "))
+    url = f"https://nibl.co.uk/search?query={query}"
     html = requests.get(url).text
 
     content = BeautifulSoup(html, "html.parser")
-    file_names = content.select(".filename")
-    pack_numbers = content.select(".packnumber")
-    bot_names = content.select(".name")
-    file_sizes = content.select(".filesize")
+    rows = content.find_all("tr")
+    header = rows.pop(0)
+    keys = [x.text for x in header.find_all("th")]
+    results = [
+        {
+            keys[i]: column.text.strip()
+            for i, column in enumerate(row.find_all("td"))
+        }
+        for row in rows
+    ]
 
-    results = []
-    i = 0  # We need a counter variable since we have four lists of data
-
-    while i < len(file_names):
-
-        # The filename has two links after it, which need to be cut out
-        filename = file_names[i].text.rsplit(" \n", 1)[0]
-
-        # The bot name has a link after it, which needs to be cut out
-        bot = bot_names[i].text.rsplit(" ", 1)[0]
-
-        server = "irc.rizon.net"
-        packnumber = int(pack_numbers[i].text)
-        size = file_sizes[i].text.lower()
-
-        result = XDCCPack(IrcServer(server), bot, packnumber)
-
-        result.set_size(byte_string_to_byte_count(size))
-        result.set_filename(filename)
-        results.append(result)
-        i += 1
-
-    return results
+    server = IrcServer("irc.rizon.net")
+    packs = []
+    for result in results:
+        pack = XDCCPack(server, result["Bot"], int(result["Pack"]))
+        pack.set_size(byte_string_to_byte_count(result["Size"]))
+        pack.set_filename(result["Filename"])
+        packs.append(pack)
+    return packs

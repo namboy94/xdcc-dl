@@ -118,6 +118,8 @@ class XDCCClient(SimpleIRCClient):
         self.xdcc_connection = None  # type: Optional[DCCConnection]
         self.retry = retry
         self.struct_format = b"!I"
+        self.ack_queue: List[bytes] = []
+        self.ack_thread = Thread(target=self.send_acks)
         self.ack_lock = Lock()
 
         if not self.retry:
@@ -214,8 +216,10 @@ class XDCCClient(SimpleIRCClient):
         finally:
             self.connected = False
             self.disconnected = True
+            self.logger.info("Joining threads")
             self.timeout_watcher_thread.join()
             self.progress_printer_thread.join()
+            self.ack_thread.join()
             print("\n" + message)
 
             self.logger.info("Disconnecting")
@@ -379,7 +383,9 @@ class XDCCClient(SimpleIRCClient):
             self.xdcc_file = open(self.pack.get_filepath(), mode)
             self.xdcc_connection = self.dcc("raw")
             self.xdcc_connection.connect(self.peer_address, self.peer_port)
-            self.xdcc_connection.socket.settimeout(5)
+            # self.xdcc_connection.socket.settimeout(5)
+
+            self.ack_thread.start()
 
         self.logger.info("CTCP Message: " + str(event.arguments))
         if event.arguments[0] == "DCC":
@@ -529,6 +535,7 @@ class XDCCClient(SimpleIRCClient):
         # Whenever the old one gets too small
         try:
             payload = struct.pack(self.struct_format, self.progress)
+            self.ack_queue.append(payload)
         except struct.error:
 
             if self.struct_format == b"!I":
@@ -543,28 +550,12 @@ class XDCCClient(SimpleIRCClient):
             self._ack()
             return
 
-        def acker():
-            """
-            The actual ack will be sent using a different thread since that
-            somehow avoids the socket timing out for some reason.
-            :return: None
-            """
-
-            self.ack_lock.acquire()
-            try:
-                self.xdcc_connection.socket.send(payload)
-            except socket.timeout:
-                self.logger.debug("ACK timed out")
-                self._disconnect()
-            finally:
-                self.ack_lock.release()
-        Thread(target=acker).start()
-
     def _disconnect(self):
         """
         Disconnects all connections of the XDCC Client
         :return: None
         """
+        self.logger.info("Initializing Disconnect")
         self.connection.reactor.disconnect_all()
 
     def timeout_watcher(self):
@@ -575,16 +566,34 @@ class XDCCClient(SimpleIRCClient):
         """
         while not self.connected \
                 or self.connect_start_time + self.wait_time > time.time():
-            pass
+            time.sleep(0.5)
+
         self.logger.info("Timeout watcher started")
         while not self.message_sent and not self.disconnected:
             time.sleep(1)
-            self.logger.debug("Iterating timeout thread")
             if self.timeout < (time.time() - self.connect_start_time):
                 self.logger.info("Timeout detected")
                 self.connection.ping(self.server.address)
                 break
         self.logger.info("Message sent without timeout")
+
+    def send_acks(self):
+        while self.downloading:
+            self.ack_lock.acquire()
+            try:
+                if len(self.ack_queue) > 0:
+                    self.xdcc_connection.socket.send(self.ack_queue.pop(0))
+                else:
+                    time.sleep(0.5)
+            except socket.timeout:
+                self.logger.debug("ACK timed out")
+                continue
+            except AttributeError:
+                self.logger.warning("Missing XDCC socket")
+                # This happens sometimes, don't ask me why though
+                continue
+            finally:
+                self.ack_lock.release()
 
     def progress_printer(self):
         """
