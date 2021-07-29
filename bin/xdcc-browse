@@ -52,30 +52,31 @@ def main(args: argparse.Namespace, logger: logging.Logger):
         for pack in packs:
             logger.info("Downloading pack {}".format(pack))
 
-        download_packs(
-            packs,
-            timeout=args.timeout,
-            fallback_channel=args.fallback_channel,
-            throttle=args.throttle,
-            wait_time=args.wait_time,
-            username=args.username,
-            channel_join_delay=args.channel_join_delay
-        )
+        try:
+            download_packs(
+                packs,
+                timeout=args.timeout,
+                fallback_channel=args.fallback_channel,
+                throttle=args.throttle,
+                wait_time=args.wait_time,
+                username=args.username,
+                channel_join_delay=args.channel_join_delay
+            )
+        except ValueError:
+            print("Invalid throttle value {}".format(args.throttle))
 
     except ConnectionError:
         print("Connection Error, could not conduct search")
     except DownloadIncomplete:
         logger.warning("Download incomplete.")
         raise KeyboardInterrupt()
-    except ValueError:
-        print("Invalid throttle value {}".format(args.throttle))
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("search_term", help="The term to search for")
     parser.add_argument("--search-engine",
-                        default=SearchEngineType.SUBSPLEASE.name.lower(),
+                        default=SearchEngineType.NIBL.name.lower(),
                         choices=SearchEngineType.choices(True),
                         help="The Search Engine to use")
     add_xdcc_argparse_arguments(parser)

@@ -19,7 +19,7 @@ along with xdcc-dl.  If not, see <http://www.gnu.org/licenses/>.
 LICENSE"""
 
 import argparse
-from puffotter.init import cli_start
+from puffotter.init import cli_start, argparse_add_verbosity
 from requests.exceptions import ConnectionError
 from xdcc_dl import sentry_dsn
 from xdcc_dl.pack_search.SearchEngine import SearchEngineType
@@ -56,6 +56,7 @@ if __name__ == "__main__":
     parser.add_argument("search_engine",
                         choices=SearchEngineType.choices(True),
                         help="The Search Engine to use")
+    argparse_add_verbosity(parser)
     cli_start(
         main, parser,
         sentry_dsn=sentry_dsn,
