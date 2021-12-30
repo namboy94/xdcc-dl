@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with xdcc-dl.  If not, see <http://www.gnu.org/licenses/>.
 LICENSE"""
 
-from typing import List, Optional, Union
+from typing import List, Optional, Union, Dict
 from xdcc_dl.entities.XDCCPack import XDCCPack
 from xdcc_dl.xdcc.XDCCClient import XDCCClient
 
@@ -29,7 +29,8 @@ def download_packs(
         throttle: Union[int, str] = -1,
         wait_time: int = 0,
         username: Optional[str] = None,
-        channel_join_delay: Optional[int] = None
+        channel_join_delay: Optional[int] = None,
+        additional_channel_to_join: Optional[Dict[str, str]] = None
 ):
     """
     Downloads a list of XDCC Packs
@@ -46,6 +47,7 @@ def download_packs(
     :param channel_join_delay: Delays the joining of channels by a set amount
                                of seconds. If not specified, the bot will wait
                                a random amount of time
+    :param additional_channel_to_join: map of a channel name that indicates to join a second channel
     :return: None
     """
     for pack in packs:
@@ -56,6 +58,7 @@ def download_packs(
             throttle=throttle,
             wait_time=wait_time,
             username="" if username is None else username,
-            channel_join_delay=channel_join_delay
+            channel_join_delay=channel_join_delay,
+            additional_channel_to_join = additional_channel_to_join
         )
         client.download()

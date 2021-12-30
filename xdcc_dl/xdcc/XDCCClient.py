@@ -29,7 +29,7 @@ import irc.client
 from colorama import Fore, Back
 from threading import Thread, Lock
 from subprocess import check_output, CalledProcessError
-from typing import Optional, IO, Any, List, Union
+from typing import Optional, IO, Any, List, Union, Dict
 from puffotter.units import human_readable_bytes, byte_string_to_byte_count
 from puffotter.print import pprint
 from puffotter.logging import ColorLogger
@@ -55,7 +55,8 @@ class XDCCClient(SimpleIRCClient):
             throttle: Union[int, str] = -1,
             wait_time: int = 0,
             username: str = "",
-            channel_join_delay: Optional[int] = None
+            channel_join_delay: Optional[int] = None,
+            additional_channel_to_join: Optional[Dict[str, str]] = None
     ):
         """
         Initializes the XDCC IRC client
@@ -103,6 +104,10 @@ class XDCCClient(SimpleIRCClient):
         self.wait_time = wait_time
         self.connected = True
         self.disconnected = False
+        if additional_channel_to_join:
+            self.additional_channel_to_join = additional_channel_to_join
+        else:
+            self.additional_channel_to_join = {}
 
         if channel_join_delay is None:
             self.channel_join_delay = random.randint(5, 10)
@@ -237,7 +242,10 @@ class XDCCClient(SimpleIRCClient):
 
         if not completed:
             self.logger.warning("Download Incomplete. Retrying.")
-            retry_client = XDCCClient(self.pack, True, self.timeout)
+            retry_client = XDCCClient(self.pack,
+                                      True,
+                                      self.timeout,
+                                      additional_channel_to_join=self.additional_channel_to_join)
             retry_client.download_limit = self.download_limit
             retry_client.download()
 
@@ -298,6 +306,10 @@ class XDCCClient(SimpleIRCClient):
         channels.pop(0)
         channels = list(map(lambda x: "#" + x.split(" ")[0], channels))
         self.channels = channels
+
+        for channel in self.additional_channel_to_join:
+            if channel in channels:
+                channels.append(self.additional_channel_to_join[channel])
 
         for channel in channels:
             # Join all channels to avoid only joining a members-only channel

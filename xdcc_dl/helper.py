@@ -62,6 +62,9 @@ def add_xdcc_argparse_arguments(parser: ArgumentParser):
     parser.add_argument("--fallback-channel",
                         help="Fallback channel in case a channel could not"
                              "be joined automatically using WHOIS commands")
+    parser.add_argument("--additional-channel-map",
+                        help="2 channels; if the bot uses the first channel"
+                             "then the second is joined too. Format: #bot-chan:#additional-chan")
     parser.add_argument("--wait-time", default=0, type=int,
                         help="Waits for the specified amount of time before "
                              "sending the xdcc send request")

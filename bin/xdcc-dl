@@ -42,6 +42,11 @@ def main(args: argparse.Namespace, logger: logging.Logger):
         )
         prepare_packs(packs, args.out)
 
+        additional_channel_map = {}
+        if args.additional_channel_map:
+            splits = args.additional_channel_map.split(":")
+            additional_channel_map[splits[0]] = splits[1]
+
         download_packs(
             packs,
             timeout=args.timeout,

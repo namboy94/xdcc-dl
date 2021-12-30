@@ -53,6 +53,12 @@ def main(args: argparse.Namespace, logger: logging.Logger):
             logger.info("Downloading pack {}".format(pack))
 
         try:
+
+            additional_channel_map = {}
+            if args.additional_channel_map:
+                splits = args.additional_channel_map.split(":")
+                additional_channel_map[splits[0]] = splits[1]
+
             download_packs(
                 packs,
                 timeout=args.timeout,
@@ -60,7 +66,8 @@ def main(args: argparse.Namespace, logger: logging.Logger):
                 throttle=args.throttle,
                 wait_time=args.wait_time,
                 username=args.username,
-                channel_join_delay=args.channel_join_delay
+                channel_join_delay=args.channel_join_delay,
+                additional_channel_to_join=additional_channel_map
             )
         except ValueError:
             print("Invalid throttle value {}".format(args.throttle))
